@@ -1,4 +1,11 @@
 # -*- coding: utf-8 -*-
+import sys
+
+
+def read_line(message: str) -> str:
+    if sys.version_info[0]  == 2:
+        return str(raw_input(message))
+    return str(input(message))
 
 
 def print_line(message: str) -> None:

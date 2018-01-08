@@ -5,9 +5,12 @@ import sys
 import argparse
 
 from core.api import API
+from core.interface import print_line
+
 api = API()
 
-def argument_parser():
+
+def create_parser():
     # Create argument parser
     parser = argparse.ArgumentParser(
         description="SurePatch Argument Parser")
@@ -47,7 +50,7 @@ def argument_parser():
     parser.add_argument(
         '--format',
         type=str,
-        requred=False,
+        required=False,
         help='Define file format (system/user)')
 
     parser.add_argument(
@@ -91,7 +94,25 @@ def argument_parser():
     return parser.parse_args()
 
 def main():
-    pass
+    arguments = create_parser()
+    api_data = dict()
+    api_data['action'] = arguments.action
+    api_data['team'] = arguments.team
+    api_data['user'] = arguments.user
+    api_data['password'] = arguments.password
+    api_data['file'] = arguments.file
+    api_data['target'] = arguments.target
+    api_data['method'] = arguments.method
+    api_data['format'] = arguments.format
+    api_data['platform'] = arguments.platform
+    api_data['description'] = arguments.description
+    api_data['project'] = arguments.project
+    api_data['set'] = arguments.set
+    if api.run_action(api_data=api_data):
+        print_line('Complete successfully.')
+        return 0
+    print_line('Complete with errors.')
+    return 1
 
 
 if __name__ == '__main__':

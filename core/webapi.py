@@ -1,10 +1,10 @@
 # -*- coding: utf-8 -*-
 
 import json
-import time
 import requests
 
 from core.interface import print_line
+
 
 class WebAPI(object):
 
@@ -44,7 +44,6 @@ class WebAPI(object):
         self.login_payload['password'] = api_data['password']
         self.login_payload['referalToken'] = None
         self.login_payload['organization'] = api_data['team']
-
         try:
             response = requests.post(
                 url=self.login_url,
@@ -157,3 +156,115 @@ class WebAPI(object):
         except requests.exceptions.RequestException as request_exception:
             print_line(f'Request exception: {request_exception}')
             return False
+
+    def create_new_platform(self, api_data: dict, platform: str, description: str) -> bool:
+        self.headers['token'] = api_data['token']
+        self.platform_payload['name'] = platform
+        self.platform_payload['description'] = description
+        try:
+            response = requests.post(
+                url=self.platform_url,
+                headers=self.headers,
+                json=self.platform_payload)
+            if response.status_code == 200:
+                return True
+            print_line(f'Create platform failed. Status code: {response.status_code}')
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line(f'HTTP Error: {http_exception}')
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line(f'Connection error: {connection_exception}')
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line(f'Connection timeout: {timeout_exception}')
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line(f'Request exception: {request_exception}')
+            return False
+
+    def create_new_project(self, api_data: dict, platform: str, project: str, components: list) -> bool:
+        platform_id = self.get_platform_id_from_name(api_data=api_data, platform_name=platform)
+        if platform_id == -1:
+            print_line(f'No such platform: {platform}')
+            return False
+        self.headers['token'] = api_data['token']
+        self.project_payload['name'] = project
+        self.project_payload['platform_id'] = platform_id
+        self.project_payload['components'] = components
+        try:
+            response = requests.post(
+                url=self.project_url,
+                headers=self.headers,
+                json=self.project_payload)
+            if response.status_code == 200:
+                return True
+            print_line(f'Create project failed. Status code: {response.status_code}')
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line(f'HTTP Error: {http_exception}')
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line(f'Connection error: {connection_exception}')
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line(f'Connection timeout: {timeout_exception}')
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line(f'Request exception: {request_exception}')
+            return False
+
+    def create_new_component_set(self, api_data: dict, platform: str, project: str, name: str, components: list) -> bool:
+        platform_number = self.get_platform_number_from_name(platform_name=platform)
+        if platform_number == -1:
+            print_line(f'No such platform: {platform}')
+            return False
+        project_number = self.get_project_number_from_name(platform_number=platform_number, project_name=project)
+        if project_number == -1:
+            print_line(f'No such project: {project}')
+            return False
+        self.headers['token'] = api_data['token']
+        self.components_payload['set_name'] = name
+        self.components_payload['components'] = components
+        try:
+            response = requests.post(
+                url=self.project_url,
+                headers=self.headers,
+                json=self.project_payload)
+            if response.status_code == 200:
+                return True
+            print_line(f'Create component set failed. Status code: {response.status_code}')
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line(f'HTTP Error: {http_exception}')
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line(f'Connection error: {connection_exception}')
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line(f'Connection timeout: {timeout_exception}')
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line(f'Request exception: {request_exception}')
+            return False
+
+    @staticmethod
+    def get_platform_id_from_name(api_data: dict, platform_name: str) -> int:
+        for platform in api_data['organization']['platforms']:
+            if platform.name == platform_name:
+                return platform.id
+        return -1
+
+    @staticmethod
+    def get_platform_number_from_name(api_data: dict, platform_name: str) -> int:
+        for index, platform in enumerate(api_data['organization']['platforms']):
+            if platform.name == platform_name:
+                return index
+        return -1
+
+    @staticmethod
+    def get_project_number_from_name(api_data: dict, platform_number: int, project_name: str) -> int:
+        for index, project in api_data['organization']['platforms'][platform_number].projects:
+            if project.name == project_name:
+                return index
+        return -1
