@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*- 
 
 import sys
+import platform
 import argparse
 
 from core.api import API
@@ -93,21 +94,62 @@ def create_parser():
             set name will be incremented automatically')
     return parser.parse_args()
 
+
+def get_os_platform() -> str:
+    if sys.platform == 'darwin' or platform.system() == 'Darwin':
+        return 'macos'
+    if sys.platform == 'linux2' or sys.platform == 'linux':
+        dist = platform.dist()[0]
+        if 'debian' in dist:
+            return 'debian'
+        if 'fedora' in dist:
+            return 'fedora'
+    if sys.platform == 'win32' or sys.platform == 'win64':
+        return 'windows'
+
+
+def get_os_version(os_platform: str) -> str:
+    if os_platform == 'windows':
+        return platform.uname()[2]
+    return ''
+
+
+def get_os_sp(os_platform: str) -> str:
+    if os_platform == 'windows':
+        return platform.win32_ver()[2][2:]
+    return ''
+
+
+def get_os_release() -> str:
+    return platform.release()
+
+
+def get_os_machine() -> str:
+    return platform.machine()
+
+
 def main():
     arguments = create_parser()
-    api_data = dict()
-    api_data['action'] = arguments.action
-    api_data['team'] = arguments.team
-    api_data['user'] = arguments.user
-    api_data['password'] = arguments.password
-    api_data['file'] = arguments.file
-    api_data['target'] = arguments.target
-    api_data['method'] = arguments.method
-    api_data['format'] = arguments.format
-    api_data['platform'] = arguments.platform
-    api_data['description'] = arguments.description
-    api_data['project'] = arguments.project
-    api_data['set'] = arguments.set
+    api_data = dict(
+        action=arguments.action,
+        team=arguments.team,
+        user=arguments.user,
+        password=arguments.password,
+        file=arguments.file,
+        target=arguments.target,
+        method=arguments.method,
+        format=arguments.format,
+        platform=arguments.platform,
+        description=arguments.description,
+        project=arguments.project,
+        set=arguments.set,
+        os=get_os_platform(),
+        os_version=get_os_version(get_os_platform()),
+        os_sp=get_os_sp(get_os_platform()),
+        os_release=get_os_release(),
+        os_machine=get_os_machine()
+    )
+
     if api.run_action(api_data=api_data):
         print_line('Complete successfully.')
         return 0

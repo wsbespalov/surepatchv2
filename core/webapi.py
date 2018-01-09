@@ -11,6 +11,13 @@ class WebAPI(object):
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:45.0) Gecko/20100101 Firefox/45.0',
         'token': ''}
+    # a = "http://192.168.1.134:3000/"
+    # b = "http://192.168.1.134:5555/api"
+    # login_url = b + "/auth/login"
+    # organization_url = b + "/organization"
+    # platform_url = b + "/platforms"
+    # project_url = b + "/projects"
+    # components_url = b + "/components"
     login_url = "https://surepatch.com/api/auth/login"
     organization_url = "https://surepatch.com/api/organization"
     platform_url = "https://surepatch.com/api/platforms"
@@ -157,7 +164,9 @@ class WebAPI(object):
             print_line(f'Request exception: {request_exception}')
             return False
 
-    def create_new_platform(self, api_data: dict, platform: str, description: str) -> bool:
+    def create_new_platform(self, api_data: dict) -> bool:
+        platform = api_data['platform']
+        description = api_data['description']
         self.headers['token'] = api_data['token']
         self.platform_payload['name'] = platform
         self.platform_payload['description'] = description
@@ -183,11 +192,10 @@ class WebAPI(object):
             print_line(f'Request exception: {request_exception}')
             return False
 
-    def create_new_project(self, api_data: dict, platform: str, project: str, components: list) -> bool:
-        platform_id = self.get_platform_id_from_name(api_data=api_data, platform_name=platform)
-        if platform_id == -1:
-            print_line(f'No such platform: {platform}')
-            return False
+    def create_new_project(self, api_data: dict) -> bool:
+        project = api_data['project']
+        components = api_data['components']
+        platform_id = self.get_platform_id_from_name(api_data=api_data)
         self.headers['token'] = api_data['token']
         self.project_payload['name'] = project
         self.project_payload['platform_id'] = platform_id
@@ -214,12 +222,16 @@ class WebAPI(object):
             print_line(f'Request exception: {request_exception}')
             return False
 
-    def create_new_component_set(self, api_data: dict, platform: str, project: str, name: str, components: list) -> bool:
-        platform_number = self.get_platform_number_from_name(platform_name=platform)
+    def create_new_component_set(self, api_data: dict) -> bool:
+        platform = api_data['platform']
+        project = api_data['project']
+        components = api_data['components']
+        name = api_data['set']
+        platform_number = self.get_platform_number_from_name(api_data=api_data)
         if platform_number == -1:
             print_line(f'No such platform: {platform}')
             return False
-        project_number = self.get_project_number_from_name(platform_number=platform_number, project_name=project)
+        project_number = self.get_project_number_from_name(api_data=api_data)
         if project_number == -1:
             print_line(f'No such project: {project}')
             return False
@@ -249,21 +261,24 @@ class WebAPI(object):
             return False
 
     @staticmethod
-    def get_platform_id_from_name(api_data: dict, platform_name: str) -> int:
+    def get_platform_id_from_name(api_data: dict) -> int:
+        platform_name = api_data['platform']
         for platform in api_data['organization']['platforms']:
             if platform.name == platform_name:
                 return platform.id
         return -1
 
     @staticmethod
-    def get_platform_number_from_name(api_data: dict, platform_name: str) -> int:
+    def get_platform_number_from_name(api_data: dict)-> int:
+        platform_name = api_data['platform']
         for index, platform in enumerate(api_data['organization']['platforms']):
             if platform.name == platform_name:
                 return index
         return -1
 
-    @staticmethod
-    def get_project_number_from_name(api_data: dict, platform_number: int, project_name: str) -> int:
+    def get_project_number_from_name(self, api_data: dict) -> int:
+        project_name = api_data['project']
+        platform_number = self.get_platform_number_from_name(api_data=api_data)
         for index, project in api_data['organization']['platforms'][platform_number].projects:
             if project.name == project_name:
                 return index

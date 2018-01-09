@@ -2,6 +2,7 @@
 
 import os
 import yaml
+import subprocess
 
 from core.interface import print_line
 from core.webapi import WebAPI
@@ -26,7 +27,7 @@ class API(object):
         if not self.action_login(api_data=api_data):
             return False
 
-        if not self.web_api.get_organization_parameters(api_data=api_data):
+        if not self.get_organization_parameters(api_data=api_data):
             return False
 
         if api_data['action'] == Actions.CREATE_PLATFORM:
@@ -96,17 +97,213 @@ class API(object):
             finally:
                 yaml_config_file.close()
 
+    # LOGIN
+
     def action_login(self, api_data: dict) -> bool:
         return self.web_api.login(api_data=api_data)
 
+    # GET ORGANIZATION PARAMETERS
+
+    def get_organization_parameters(self, api_data: dict) -> bool:
+        return self.web_api.get_organization_parameters(api_data=api_data)
+
+    # CREATE PLATFORM
+
     def action_create_platform(self, api_data: dict) -> bool:
-        pass
+        if api_data['platform'] is None or api_data['platform'] == '':
+            print_line('Empty platform name, please use --platform flag.')
+            return False
+        if api_data['description'] is None or api_data['description'] == '':
+            print_line('Empty platform description. Change description to "default platform".')
+            api_data['description'] = "default platform"
+        return self.web_api.create_new_platform(api_data=api_data)
+
+    # CREATE PROJECT
 
     def action_create_project(self, api_data: dict) -> bool:
+        # Check parameters
+
+        if api_data['platform'] is None:
+            return False
+        platforms = self.get_platforms(api_data=api_data)
+        if api_data['platform'] not in platforms:
+            print_line(f"Platform {api_data['platform']} does not exists.")
+            return False
+        projects = self.get_projects(api_data=api_data)
+        if api_data['project'] in projects:
+            print_line(f"Project {api_data['project']} already exists.")
+            return False
+
+        # Select variant
+
+        # Create new project with OS packages {from shell request}
+        if api_data['target'] == Targets.OS and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+
+            return self.create_project_os_auto_system_none(api_data=api_data)
+
+        # Create new project with OS packages from shell request unloading file {from path}
+        if api_data['target'] == Targets.OS and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_os_auto_system_path(api_data=api_data)
+
+        # Create new project with PIP packages {from shell request}
+        if api_data['target'] == Targets.PIP and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return self.create_project_pip_auto_system_none(api_data=api_data)
+
+        # Create new project with PIP requirements.txt {from path}
+        if api_data['target'] == Targets.REQ and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_requirements_auto_system_path(api_data=api_data)
+
+        # Create new project with NPM packages {from shell request}
+        if api_data['target'] == Targets.NPM and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return self.create_project_npm_auto_system_none(api_data=api_data)
+
+        # Create new project with NPM package.json file {from path}
+        if api_data['target'] == Targets.PACKAGE_JSON and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_package_json_auto_system_path(api_data=api_data)
+
+        # Create new project with GEM packages {from shell request}
+        if api_data['target'] == Targets.GEM and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return self.create_project_gem_auto_system_none(api_data=api_data)
+
+        # Create new project with GEM packages from shell request unloading file {from path}
+        if api_data['target'] == Targets.GEM and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_gem_auto_system_path(api_data=api_data)
+
+        # Create new project with GEMLIST file {from path}
+        if api_data['target'] == Targets.GEMLIST and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_gemlist_auto_system_path(api_data=api_data)
+
+    def create_project_os_auto_system_none(self, api_data: dict) -> bool:
+        return self.web_api.create_new_project(api_data=api_data)
+
+
+    def create_project_os_auto_system_path(self, api_data: dict) -> bool:
         pass
 
-    def action_create_set(self, api_data: dict) -> bool:
+    def create_project_pip_auto_system_none(self, api_data: dict) -> bool:
         pass
+
+    def create_project_requirements_auto_system_path(self, api_data: dict) -> bool:
+        pass
+
+    def create_project_npm_auto_system_none(self, api_data: dict) -> bool:
+        pass
+
+    def create_project_package_json_auto_system_path(self, api_data: dict) -> bool:
+        pass
+
+    def create_project_gem_auto_system_none(self, api_data: dict) -> bool:
+        pass
+
+    def create_project_gem_auto_system_path(self, api_data: dict) -> bool:
+        pass
+
+    def create_project_gemlist_auto_system_path(self, api_data: dict) -> bool:
+        pass
+
+    # CREATE SET
+
+    def action_create_set(self, api_data: dict) -> bool:
+        return True
+
+    # ADDITION METHODS
+
+    @staticmethod
+    def get_windows_packages(api_data: dict):
+        if api_data['os'] != 'windows':
+            print_line('Wrong platform defined.')
+            return False
+        if api_data['os_version'] == 10:
+            cmd = "Get-AppxPackage -AllUsers | Select Name, PackageFullName"
+            try:
+                proc = subprocess.Popen(
+                    ["powershell", cmd],
+                    stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                if error:
+                    print_line(f'Powershell command throw {proc.returncode} code and {error.strip()} error message.')
+                if output:
+                    return output
+            except OSError as os_error:
+                print_line(f'Powershell command throw errno: {os_error.errno}, strerror: {os_error.strerror} and '
+                           f'filename: {os_error.filename}.')
+                return None
+            except:
+                print_line(f'Powershell command throw an exception.')
+                return None
+        return None
+
+    @staticmethod
+    def parse_windows_packages(_report):
+        packages = []
+        try:
+            report = _report.decode('utf-8').replace('\r', '').split('\n')[9:]
+            for report_element in report:
+                if len(report_element) > 0:
+                    splitted_report_element = report_element.split()
+                    component_and_version = splitted_report_element[len(splitted_report_element) - 1]
+                    element_array = component_and_version.split('_')
+                    if len(element_array) >= 2:
+                        common_component_name = element_array[0]
+                        common_component_version = element_array[1]
+                        component = {'name': common_component_name.split('.')}
+                        if len(common_component_name.split('.')) >= 3 and component['name'][1] == 'NET':
+                            component['name'] = 'net_framework'
+                        else:
+                            component['name'] = common_component_name.split('.')
+                            component['name'] = component['name'][len(component['name']) - 1]
+                        component['version'] = common_component_version.split('.')
+                        component['version'] = component['version'][0] + '.' + component['version'][1]
+                        packages.append(component)
+        except:
+            print_line('Exception occured. Try run app with Administrator rights.')
+            return None
+        return packages
+
+    @staticmethod
+    def get_platforms(api_data: dict) -> list:
+        if api_data['organization'] is None:
+            return []
+        if api_data['platforms'] is None:
+            return []
+        return [platform.name for platform in api_data['organization']['platforms']]
+
+    def get_projects(self, api_data: dict) -> list:
+        if api_data['organization'] is None:
+            return []
+        if api_data['platforms'] is None:
+            return []
+        platform_number = self.web_api.get_platform_number_from_name(api_data['platform'])
+        if platform_number == -1:
+            return []
+        return [project.name for project in api_data['organization']['platforms'][platform_number]['projects']]
 
 
 class Actions(object):
@@ -114,3 +311,24 @@ class Actions(object):
     CREATE_PLATFORM = 'create_platform'
     CREATE_PROJECT = 'create_project'
     CREATE_SET = 'create_set'
+
+
+class Targets(object):
+    OS = 'os'
+    PIP = 'pip'
+    REQ = 'requirements'
+    NPM = 'npm'
+    PACKAGE_JSON = 'package_json'
+    GEM = 'gem'
+    GEMLIST = 'gemlist'
+    GEMFILE = 'gemfile'
+
+
+class Methods(object):
+    AUTO = 'auto'
+    MANUAL = 'manual'
+
+
+class Formats(object):
+    SYSTEM = 'system'
+    MANUAL = 'manual'
