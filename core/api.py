@@ -90,6 +90,7 @@ class API(object):
                 api_data['user'] = config['user']
                 if 'password' not in config or config['password'] is None or config['password'] == '':
                     return False
+                api_data['password'] = config['password']
                 return True
             except yaml.YAMLError as yaml_exception:
                 print_line(f'Config file save in yaml format exception: {yaml_exception}')
@@ -123,7 +124,11 @@ class API(object):
     def action_create_project(self, api_data: dict) -> bool:
         # Check parameters
 
-        if api_data['platform'] is None:
+        if api_data['platform'] is None or api_data['platform'] == '':
+            print_line('Empty platform name.')
+            return False
+        if api_data['project'] is None or api_data['project'] == '':
+            print_line('Empty project name.')
             return False
         platforms = self.get_platforms(api_data=api_data)
         if api_data['platform'] not in platforms:
@@ -201,6 +206,17 @@ class API(object):
             return self.create_project_gemlist_auto_system_path(api_data=api_data)
 
     def create_project_os_auto_system_none(self, api_data: dict) -> bool:
+        os_packages = []
+        components = []
+        if api_data['os'] == 'windows':
+            os_packages = self.get_windows_packages(api_data=api_data)
+            if os_packages is None:
+                components = []
+            else:
+                components = self.parse_windows_packages(os_packages)
+                if components is None:
+                    components = []
+        api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
 
@@ -239,8 +255,8 @@ class API(object):
     def get_windows_packages(api_data: dict):
         if api_data['os'] != 'windows':
             print_line('Wrong platform defined.')
-            return False
-        if api_data['os_version'] == 10:
+            return None
+        if api_data['os_version'] == '10':
             cmd = "Get-AppxPackage -AllUsers | Select Name, PackageFullName"
             try:
                 proc = subprocess.Popen(
@@ -289,21 +305,27 @@ class API(object):
 
     @staticmethod
     def get_platforms(api_data: dict) -> list:
+        platforms = []
         if api_data['organization'] is None:
-            return []
-        if api_data['platforms'] is None:
-            return []
-        return [platform.name for platform in api_data['organization']['platforms']]
+            return platforms
+        if api_data['organization']['platforms'] is None:
+            return platforms
+        for platform in api_data['organization']['platforms']:
+            platforms.append(platform['name'])
+        return platforms
 
     def get_projects(self, api_data: dict) -> list:
+        projects = []
         if api_data['organization'] is None:
-            return []
-        if api_data['platforms'] is None:
-            return []
-        platform_number = self.web_api.get_platform_number_from_name(api_data['platform'])
+            return projects
+        if api_data['organization']['platforms'] is None:
+            return projects
+        platform_number = self.web_api.get_platform_number_from_name(api_data=api_data)
         if platform_number == -1:
-            return []
-        return [project.name for project in api_data['organization']['platforms'][platform_number]['projects']]
+            return projects
+        for project in api_data['organization']['platforms'][platform_number]['projects']:
+            projects.append(project['name'])
+        return projects
 
 
 class Actions(object):

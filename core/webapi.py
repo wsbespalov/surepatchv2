@@ -18,11 +18,12 @@ class WebAPI(object):
     # platform_url = b + "/platforms"
     # project_url = b + "/projects"
     # components_url = b + "/components"
-    login_url = "https://surepatch.com/api/auth/login"
-    organization_url = "https://surepatch.com/api/organization"
-    platform_url = "https://surepatch.com/api/platforms"
-    project_url = "https://surepatch.com/api/projects"
-    components_url = "https://surepatch.com/api/components"
+    base_url = "https://beta.surepatch.net"
+    login_url = base_url + "/api/auth/login"
+    organization_url = base_url + "/api/organization"
+    platform_url = base_url + "/api/platforms"
+    project_url = base_url + "/api/projects"
+    components_url = base_url + "/api/components"
     login_payload = dict(
         username=None,
         password=None,
@@ -264,15 +265,15 @@ class WebAPI(object):
     def get_platform_id_from_name(api_data: dict) -> int:
         platform_name = api_data['platform']
         for platform in api_data['organization']['platforms']:
-            if platform.name == platform_name:
-                return platform.id
+            if platform['name'] == platform_name:
+                return platform['id']
         return -1
 
     @staticmethod
     def get_platform_number_from_name(api_data: dict)-> int:
         platform_name = api_data['platform']
         for index, platform in enumerate(api_data['organization']['platforms']):
-            if platform.name == platform_name:
+            if platform['name'] == platform_name:
                 return index
         return -1
 
@@ -280,6 +281,6 @@ class WebAPI(object):
         project_name = api_data['project']
         platform_number = self.get_platform_number_from_name(api_data=api_data)
         for index, project in api_data['organization']['platforms'][platform_number].projects:
-            if project.name == project_name:
+            if project['name'] == project_name:
                 return index
         return -1

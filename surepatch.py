@@ -147,7 +147,8 @@ def main():
         os_version=get_os_version(get_os_platform()),
         os_sp=get_os_sp(get_os_platform()),
         os_release=get_os_release(),
-        os_machine=get_os_machine()
+        os_machine=get_os_machine(),
+        components=[]
     )
 
     if api.run_action(api_data=api_data):
