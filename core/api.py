@@ -206,22 +206,38 @@ class API(object):
             return self.create_project_gemlist_auto_system_path(api_data=api_data)
 
     def create_project_os_auto_system_none(self, api_data: dict) -> bool:
-        os_packages = []
         components = []
         if api_data['os'] == 'windows':
             os_packages = self.get_windows_packages(api_data=api_data)
             if os_packages is None:
                 components = []
             else:
-                components = self.parse_windows_packages(os_packages)
+                report = os_packages.decode('utf-8').replace('\r', '').split('\n')[9:]
+                components = self.parse_windows_packages(report)
                 if components is None:
                     components = []
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
-
     def create_project_os_auto_system_path(self, api_data: dict) -> bool:
-        pass
+        filename = api_data['file']
+        components = []
+        if api_data['os'] == 'windows':
+            if os.path.exists(filename):
+                with open(filename, encoding='utf-16') as cf:
+                    os_packages = cf.read()
+                    if os_packages is None:
+                        components = []
+                    else:
+                        report = os_packages.replace('\r', '').split('\n')[9:]
+                        components = self.parse_windows_packages(report)
+                        if components is None:
+                            components = []
+            else:
+                print_line(f'File {filename} not exists. Return empty component set')
+                return False
+        api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_pip_auto_system_none(self, api_data: dict) -> bool:
         pass
@@ -279,8 +295,8 @@ class API(object):
     @staticmethod
     def parse_windows_packages(_report):
         packages = []
+        report = _report
         try:
-            report = _report.decode('utf-8').replace('\r', '').split('\n')[9:]
             for report_element in report:
                 if len(report_element) > 0:
                     splitted_report_element = report_element.split()
