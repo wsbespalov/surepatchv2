@@ -8,6 +8,7 @@
 |OS|auto|system|path|create_project_os_auto_system_path|Create new project with OS packages from shell request unloading file {from path}|
 |---|---|---|---|---|---|
 |PIP|auto|system|None|create_project_pip_auto_system_none|Create new project with PIP packages {from shell request}
+|PIP|auto|system|path|create_project_pip_auto_system_path|Create new project with PIP packages {from shell request}
 |requirements|auto|system|path|create_project_requirements_auto_system_path|Create new project with PIP requirements.txt {from path}|
 |---|---|---|---|---|---|
 |npm|auto|system|None|create_project_npm_auto_system_none|Create new project with NPM packages {from shell request}|
