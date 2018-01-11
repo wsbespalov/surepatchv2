@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
 
 import os
+import sys
 import yaml
+import json
+import importlib
 import subprocess
 
 from core.interface import print_line
 from core.webapi import WebAPI
+
+try:
+    import pip
+    from pip.utils import get_installed_distributions
+except ImportError as import_exception:
+    print_line(f"Can't import pip get_installed_distributions. Get an exception: {import_exception}.")
+    sys.exit(0)
 
 
 class API(object):
@@ -240,7 +250,19 @@ class API(object):
         return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_pip_auto_system_none(self, api_data: dict) -> bool:
-        pass
+        components = list()
+        installations = {}
+        try:
+            for dist in get_installed_distributions(local_only=False, skip=[]):
+                req = pip.FrozenRequirement.from_dist(dist, [])
+                installations[req.name] = dist.version
+            for key in installations:
+                components.append({'name': key, 'version': installations[key]})
+            api_data['components'] = components
+            return self.web_api.create_new_project(api_data=api_data)
+        except Exception as e:
+            print_line(f'Get an exception: {e}.')
+            return False
 
     def create_project_requirements_auto_system_path(self, api_data: dict) -> bool:
         pass
