@@ -187,6 +187,12 @@ class API(object):
                 api_data['file'] is not None:
             return self.create_project_requirements_auto_system_path(api_data=api_data)
 
+        if api_data['target'] == Targets.REQUIREMENTS and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_requirements_auto_system_path(api_data=api_data)
+
         # Create new project with NPM packages {from shell request}
         if api_data['target'] == Targets.NPM and \
                 api_data['method'] == Methods.AUTO and \
@@ -275,37 +281,13 @@ class API(object):
         components = list()
         filename = api_data['file']
         if os.path.exists(filename):
-            with open(filename, encoding='utf-16') as cf:
-                rfp = cf.read()
-                rfps = rfp.replace(' ', '').split('\n')
-                for ref in rfps:
-                    if len(ref) > 0:
-                        if '==' in ref:
-                            refs = ref.split('==')
-                            components.append({'name': refs[0], 'version': refs[1]})
-                        elif '>' in ref:
-                            refs = ref.split('>')
-                            components.append({'name': refs[0], 'version': refs[1]})
-                        elif '<' in ref:
-                            refs = ref.split('<')
-                            components.append({'name': refs[0], 'version': refs[1]})
-                        elif '>=' in ref:
-                            refs = ref.split('>=')
-                            components.append({'name': refs[0], 'version': refs[1]})
-                        elif '<=' in ref:
-                            refs = ref.split('<-')
-                            components.append({'name': refs[0], 'version': refs[1]})
-                        else:
-                            # if undefined version
-                            try:
-                                mm = importlib.import_module(ref)
-                                components.append({'name': ref, 'version': mm.__version__})
-                            except ImportError as import_exception:
-                                print_line(f'Get an exception {import_exception} when define component version.')
-                                return False
-            pass
-            api_data['components'] = components
-            return self.web_api.create_new_project(api_data=api_data)
+            components = self.load_pip_components_from_path(api_data=api_data)
+            if components is not None:
+                api_data['components'] = components
+                return self.web_api.create_new_project(api_data=api_data)
+            else:
+                print_line('Cant load components.')
+                return False
         else:
             print_line(f'File {filename} not exists. Return empty component set')
             return False
@@ -314,40 +296,70 @@ class API(object):
         components = list()
         filename = api_data['file']
         if os.path.exists(filename):
-            with open(filename, encoding='utf-16') as cf:
-                rfp = cf.read()
-                rfps = rfp.replace(' ', '').split('\n')
-                for ref in rfps:
-                    if len(ref) > 0:
-                        if '==' in ref:
-                            refs = ref.split('==')
-                        components.append({'name': refs[0], 'version': refs[1]})
-                        if '>' in ref:
-                            refs = ref.split('>')
-                            components.append({'name': refs[0], 'version': refs[1]})
-                        elif '<' in ref:
-                            refs = ref.split('<')
-                            components.append({'name': refs[0], 'version': refs[1]})
-                        elif '>=' in ref:
-                            refs = ref.split('>=')
-                            components.append({'name': refs[0], 'version': refs[1]})
-                        elif '<=' in ref:
-                            refs = ref.split('<-')
-                            components.append({'name': refs[0], 'version': refs[1]})
-                        else:
-                            # if undefined version
-                            try:
-                                mm = importlib.import_module(ref)
-                                components.append({'name': ref, 'version': mm.__version__})
-                            except ImportError as import_exception:
-                                print_line(f'Get an exception {import_exception} when define component version.')
-                                return False
-            pass
-            api_data['components'] = components
-            return self.web_api.create_new_project(api_data=api_data)
+            components = self.load_pip_components_from_path(api_data=api_data)
+            if components is not None:
+                api_data['components'] = components
+                return self.web_api.create_new_project(api_data=api_data)
+            else:
+                print_line('Cant load components.')
+                return False
         else:
             print_line(f'File {filename} not exists. Return empty component set')
             return False
+
+    @staticmethod
+    def define_file_encoding(filename: str) -> str:
+        encodings = ['utf-16', 'utf-8', 'windows-1250', 'windows-1252', 'iso-8859-7', 'macgreek']
+        for e in encodings:
+            try:
+                import codecs
+                fh = codecs.open(filename, 'r', encoding=e)
+                fh.readlines()
+                fh.seek(0)
+                return e
+            except:
+                continue
+        return 'undefined'
+
+    def load_pip_components_from_path(self, api_data: dict):
+        components = []
+        filename = api_data['file']
+
+        enc = self.define_file_encoding(filename)
+
+        if enc == 'undefined':
+            print_line(f'Undefined file {filename} encoding.')
+            return None
+
+        with open(filename, encoding=enc) as cf:
+            rfp = cf.read()
+            rfps = rfp.replace(' ', '').split('\n')
+            for ref in rfps:
+                if len(ref) > 0:
+                    if '==' in ref:
+                        refs = ref.split('==')
+                        components.append({'name': refs[0], 'version': refs[1]})
+                    elif '>' in ref:
+                        refs = ref.split('>')
+                        components.append({'name': refs[0], 'version': refs[1]})
+                    elif '<' in ref:
+                        refs = ref.split('<')
+                        components.append({'name': refs[0], 'version': refs[1]})
+                    elif '>=' in ref:
+                        refs = ref.split('>=')
+                        components.append({'name': refs[0], 'version': refs[1]})
+                    elif '<=' in ref:
+                        refs = ref.split('<-')
+                        components.append({'name': refs[0], 'version': refs[1]})
+                    else:
+                        # if undefined version
+                        try:
+                            mm = importlib.import_module(ref)
+                            components.append({'name': ref, 'version': mm.__version__})
+                        except ImportError as import_exception:
+                            print_line(f'Get an exception {import_exception} when define component version.')
+                            return None
+            return components
 
     def create_project_npm_auto_system_none(self, api_data: dict) -> bool:
         pass
@@ -458,7 +470,8 @@ class Actions(object):
 class Targets(object):
     OS = 'os'
     PIP = 'pip'
-    REQ = 'requirements'
+    REQ = 'req'
+    REQUIREMENTS = 'requirements'
     NPM = 'npm'
     PACKAGE_JSON = 'package_json'
     GEM = 'gem'
