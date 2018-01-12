@@ -345,7 +345,7 @@ class API(object):
                 return False
 
             try:
-                with open(filename, 'r') as pf:
+                with open(filename, 'r', encoding=enc) as pf:
                     data = json.load(pf)
                     walkdict(data)
                     components = self.parse_npm_packages(raw_npm_components)
@@ -358,7 +358,34 @@ class API(object):
         return False
 
     def create_project_package_json_auto_system_path(self, api_data: dict) -> bool:
-        pass
+        components = []
+        filename = api_data['file']
+
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename)
+
+            if enc == 'undefined':
+                print_line(f'Undefined file {filename} encoding.')
+                return False
+
+            try:
+                with open(filename, 'r', encoding=enc) as pf:
+                    packages = json.load(pf)
+                    dependencies = packages['dependencies']
+                    devDependencies = packages['devDependencies']
+                    if devDependencies != {}:
+                        for key in devDependencies.keys():
+                            components.append({'name': key, 'version': str(devDependencies[key]).replace('^', '')})
+                    if dependencies != {}:
+                        for key in dependencies.keys():
+                            components.append({'name': key, 'version': str(dependencies[key]).replace('^', '')})
+                    api_data['components'] = components
+                    return self.web_api.create_new_project(api_data=api_data)
+            except Exception as e:
+                print_line(f'File {filename} read exception: {e}')
+                return False
+        print_line('File does not exist.')
+        return False
 
     def create_project_gem_auto_system_none(self, api_data: dict) -> bool:
         pass
