@@ -259,23 +259,11 @@ class API(object):
         return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_os_auto_system_path(self, api_data: dict) -> bool:
-        filename = api_data['file']
-        components = []
-        if api_data['os'] == 'windows':
-            if os.path.exists(filename):
-                with open(filename, encoding='utf-16') as cf:
-                    os_packages = cf.read()
-                    if os_packages is None:
-                        components = []
-                    else:
-                        report = os_packages.replace('\r', '').split('\n')[9:]
-                        components = self.parse_windows_packages(report)
-                        if components is None:
-                            components = []
-            else:
-                print_line(f'File {filename} not exists. Return empty component set')
-                return False
-        api_data['components'] = components
+        components = self.load_and_parse_os_components_from_file(os_type=api_data['os'], filename=api_data['file'])
+        if not components:
+            api_data['components'] = []
+        else:
+            api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_pip_auto_system_none(self, api_data: dict) -> bool:
@@ -294,34 +282,20 @@ class API(object):
             return False
 
     def create_project_pip_auto_system_path(self, api_data: dict) -> bool:
-        components = list()
-        filename = api_data['file']
-        if os.path.exists(filename):
-            components = self.load_pip_components_from_path(api_data=api_data)
-            if components is not None:
-                api_data['components'] = components
-                return self.web_api.create_new_project(api_data=api_data)
-            else:
-                print_line('Cant load components.')
-                return False
+        components = self.load_and_parse_pip_components_from_path(filename=api_data['file'])
+        if not components:
+            api_data['components'] = []
         else:
-            print_line(f'File {filename} not exists. Return empty component set')
-            return False
+            api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_requirements_auto_system_path(self, api_data: dict) -> bool:
-        components = list()
-        filename = api_data['file']
-        if os.path.exists(filename):
-            components = self.load_pip_components_from_path(api_data=api_data)
-            if components is not None:
-                api_data['components'] = components
-                return self.web_api.create_new_project(api_data=api_data)
-            else:
-                print_line('Cant load components.')
-                return False
+        components = self.load_and_parse_pip_components_from_path(filename=api_data['file'])
+        if not components:
+            api_data['components'] = []
         else:
-            print_line(f'File {filename} not exists. Return empty component set')
-            return False
+            api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_npm_auto_system_none(self, api_data: dict) -> bool:
         if api_data['os'] == 'windows':
@@ -334,67 +308,36 @@ class API(object):
             return False
 
     def create_project_npm_auto_system_path(self, api_data: dict) -> bool:
-        components = []
-        filename = api_data['file']
-
-        if os.path.exists(filename):
-            enc = self.define_file_encoding(filename)
-
-            if enc == 'undefined':
-                print_line(f'Undefined file {filename} encoding.')
-                return False
-
-            try:
-                with open(filename, 'r', encoding=enc) as pf:
-                    data = json.load(pf)
-                    walkdict(data)
-                    components = self.parse_npm_packages(raw_npm_components)
-                    api_data['components'] = components
-                    return self.web_api.create_new_project(api_data=api_data)
-            except Exception as e:
-                print_line(f'File read exception: {e}')
-                return False
-        print_line('File does not exist.')
-        return False
+        components = self.load_and_parse_npm_components_from_file(filename=api_data['file'])
+        if not components:
+            api_data['components'] = []
+        else:
+            api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_package_json_auto_system_path(self, api_data: dict) -> bool:
-        components = []
-        filename = api_data['file']
-
-        if os.path.exists(filename):
-            enc = self.define_file_encoding(filename)
-
-            if enc == 'undefined':
-                print_line(f'Undefined file {filename} encoding.')
-                return False
-
-            try:
-                with open(filename, 'r', encoding=enc) as pf:
-                    packages = json.load(pf)
-                    dependencies = packages['dependencies']
-                    devDependencies = packages['devDependencies']
-                    if devDependencies != {}:
-                        for key in devDependencies.keys():
-                            components.append({'name': key, 'version': str(devDependencies[key]).replace('^', '')})
-                    if dependencies != {}:
-                        for key in dependencies.keys():
-                            components.append({'name': key, 'version': str(dependencies[key]).replace('^', '')})
-                    api_data['components'] = components
-                    return self.web_api.create_new_project(api_data=api_data)
-            except Exception as e:
-                print_line(f'File {filename} read exception: {e}')
-                return False
-        print_line('File does not exist.')
-        return False
+        components = self.load_and_parse_package_json_components_from_path(filename=api_data['file'])
+        if not components:
+            api_data['components'] = []
+        else:
+            api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_gem_auto_system_none(self, api_data: dict) -> bool:
-        pass
+        print_line('Dont check yet')
+        return False
 
     def create_project_gem_auto_system_path(self, api_data: dict) -> bool:
-        pass
+        components = self.load_and_parse_gem_components_from_path(filename=api_data['file'])
+        if not components:
+            api_data['components'] = []
+        else:
+            api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_gemlist_auto_system_path(self, api_data: dict) -> bool:
-        pass
+        print_line('Dont check yet')
+        return False
 
     # CREATE SET
 
@@ -402,6 +345,24 @@ class API(object):
         return True
 
     # ADDITION METHODS
+
+    def load_and_parse_os_components_from_file(self, os_type: str, filename: str):
+        components = []
+        if os_type == 'windows':
+            if os.path.exists(filename):
+                with open(filename, encoding='utf-16') as cf:
+                    os_packages = cf.read()
+                    if os_packages is None:
+                        components = []
+                    else:
+                        report = os_packages.replace('\r', '').split('\n')[9:]
+                        components = self.parse_windows_packages(report)
+                        if components is None:
+                            components = []
+                    return components
+            else:
+                print_line(f'File {filename} not exists. Return empty component set')
+                return False
 
     def parse_npm_packages(self, comp) -> list:
         components2 = []
@@ -412,8 +373,6 @@ class API(object):
                     p[1] = p[1].replace('~', '')
                     components2.append({"name": p[0], "version": p[1]})
                 else:
-                    import os
-                    import subprocess
                     name = c["version"]
                     cmd = "npm view {0} version".format(name)
                     if os.name == 'nt':
@@ -442,17 +401,86 @@ class API(object):
                 continue
         return 'undefined'
 
-    def load_pip_components_from_path(self, api_data: dict):
+    def load_and_parse_npm_components_from_file(self, filename: str):
         components = []
-        filename = api_data['file']
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename)
+            if enc == 'undefined':
+                print_line(f'Undefined file {filename} encoding.')
+                return False
+            try:
+                with open(filename, 'r', encoding=enc) as pf:
+                    data = json.load(pf)
+                    walkdict(data)
+                    components = self.parse_npm_packages(raw_npm_components)
+                    return components
+            except Exception as e:
+                print_line(f'File read exception: {e}')
+                return False
+        print_line('File does not exist.')
+        return False
 
+    def load_and_parse_package_json_components_from_path(self, filename: str):
+        components = []
         if os.path.exists(filename):
             enc = self.define_file_encoding(filename)
 
             if enc == 'undefined':
                 print_line(f'Undefined file {filename} encoding.')
-                return None
+                return False
 
+            try:
+                with open(filename, 'r', encoding=enc) as pf:
+                    packages = json.load(pf)
+                    dependencies = packages['dependencies']
+                    devDependencies = packages['devDependencies']
+                    if devDependencies != {}:
+                        for key in devDependencies.keys():
+                            components.append({'name': key, 'version': str(devDependencies[key]).replace('^', '')})
+                    if dependencies != {}:
+                        for key in dependencies.keys():
+                            components.append({'name': key, 'version': str(dependencies[key]).replace('^', '')})
+                    return components
+            except Exception as e:
+                print_line(f'File {filename} read exception: {e}')
+                return False
+        print_line('File does not exist.')
+        return False
+
+    def load_and_parse_gem_components_from_path(self, filename: str):
+        components = []
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename)
+
+            if enc == 'undefined':
+                print_line(f'Undefined file {filename} encoding.')
+                return False
+
+            try:
+                with open(filename, 'r', encoding=enc) as pf:
+                    with open(filename, 'r') as pf:
+                        cont = pf.read().replace('default: ', '').replace(' ', '').replace(')', '')
+                        cont = cont.split('\n')
+                        for c in cont:
+                            if len(c) > 0:
+                                cs = c.split('(')
+                                try:
+                                    components.append({'name': cs[0], 'version': cs[1]})
+                                except:
+                                    continue
+                    return components
+            except Exception as e:
+                print_line(f'File {filename} read exception: {e}')
+                return False
+        print_line('File does not exist.')
+
+    def load_and_parse_pip_components_from_path(self, filename: str):
+        components = []
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename)
+            if enc == 'undefined':
+                print_line(f'Undefined file {filename} encoding.')
+                return False
             with open(filename, encoding=enc) as cf:
                 rfp = cf.read()
                 rfps = rfp.replace(' ', '').split('\n')
@@ -474,16 +502,15 @@ class API(object):
                             refs = ref.split('<-')
                             components.append({'name': refs[0], 'version': refs[1]})
                         else:
-                            # if undefined version
                             try:
                                 mm = importlib.import_module(ref)
                                 components.append({'name': ref, 'version': mm.__version__})
                             except ImportError as import_exception:
                                 print_line(f'Get an exception {import_exception} when define component version.')
-                                return None
+                                return False
                 return components
         print_line('File does not exist.')
-        return None
+        return False
 
     @staticmethod
     def get_windows_packages(api_data: dict):
