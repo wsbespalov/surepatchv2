@@ -143,7 +143,7 @@ def main():
         description=arguments.description,
         project=arguments.project,
         set=arguments.set,
-        os=get_os_platform(),
+        os_type=get_os_platform(),
         os_version=get_os_version(get_os_platform()),
         os_sp=get_os_sp(get_os_platform()),
         os_release=get_os_release(),
