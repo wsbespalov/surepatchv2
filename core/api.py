@@ -181,15 +181,24 @@ class API(object):
                 api_data['file'] is not None:
             return self.create_project_gem_auto_system_path(api_data=api_data)
 
-        # Create new project with GEMLIST file {from path}
+        # Create new project with GEMFILE file {from path}
         if api_data['target'] == Targets.GEMLIST and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
-            return self.create_project_gemlist_auto_system_path(api_data=api_data)
+            return self.create_project_gemfile_auto_system_path(api_data=api_data)
+
+        # Create new project with GEMFILE.lock file {from path}
+        if api_data['target'] == Targets.GEMFILE_LOCK and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_gemfile_lock_auto_system_path(api_data=api_data)
 
         print_line('Something wrong with app parameters. Please, look through README.md')
         return False
+
+    # OS
 
     def create_project_os_auto_system_none(self, api_data: dict) -> bool:
         components = []
@@ -226,6 +235,8 @@ class API(object):
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
+    # Python
+
     def create_project_pip_auto_system_none(self, api_data: dict) -> bool:
         components = self.load_pip_packages_from_frozen_requirement()
         api_data['components'] = components if components[0] is not None else []
@@ -248,6 +259,8 @@ class API(object):
             return self.web_api.create_new_project(api_data=api_data)
         print_line('Something wrong with packages in file path')
         return False
+
+    # NPM
 
     def create_project_npm_auto_system_none(self, api_data: dict) -> bool:
         if api_data['os'] == 'windows':
@@ -277,6 +290,8 @@ class API(object):
         print_line('Something wrong with packages in file path')
         return False
 
+    # Ruby GEM
+
     def create_project_gem_auto_system_none(self, api_data: dict) -> bool:
         print_line('Dont check yet')
         return False
@@ -290,7 +305,11 @@ class API(object):
         print_line('Something wrong with packages in file path')
         return False
 
-    def create_project_gemlist_auto_system_path(self, api_data: dict) -> bool:
+    def create_project_gemfile_auto_system_path(self, api_data: dict) -> bool:
+        print_line('Dont check yet')
+        return False
+
+    def create_project_gemfile_lock_auto_system_path(self, api_data: dict) -> bool:
         print_line('Dont check yet')
         return False
 
@@ -682,6 +701,7 @@ class Targets(object):
     GEM = 'gem'
     GEMLIST = 'gemlist'
     GEMFILE = 'gemfile'
+    GEMFILE_LOCK = 'gemfile_lock'
 
 
 class Methods(object):
