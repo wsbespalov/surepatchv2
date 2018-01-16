@@ -18,6 +18,16 @@ except ImportError as import_exception:
     sys.exit(0)
 
 
+raw_npm_components = []
+
+def walkdict(data):
+    for k, v in data.items():
+        if isinstance(v, dict):
+            walkdict(v)
+        else:
+            raw_npm_components.append({"name": k, "version": v})
+
+
 class API(object):
 
     def __init__(self):
@@ -115,6 +125,72 @@ class API(object):
                 api_data['file'] is not None:
             return self.create_project_os_auto_system_path(api_data=api_data)
 
+        # Create new project with PIP packages {from shell request}
+        if api_data['target'] == Targets.PIP and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return self.create_project_pip_auto_system_none(api_data=api_data)
+
+        # Create new project with PIP from file {from path}
+        if api_data['target'] == Targets.PIP and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_pip_auto_system_path(api_data=api_data)
+
+        # Create new project with PIP requirements.txt {from path}
+        if api_data['target'] == Targets.REQ and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_requirements_auto_system_path(api_data=api_data)
+
+        # Create new project with NPM packages {from shell request}
+        if api_data['target'] == Targets.NPM and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return self.create_project_npm_auto_system_none(api_data=api_data)
+
+        # Create new project with NPM packages {from file}
+        if api_data['target'] == Targets.NPM and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_npm_auto_system_path(api_data=api_data)
+
+        # Create new project with NPM package.json file {from path}
+        if api_data['target'] == Targets.PACKAGE_JSON and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_package_json_auto_system_path(api_data=api_data)
+
+        # Create new project with GEM packages {from shell request}
+        if api_data['target'] == Targets.GEM and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return self.create_project_gem_auto_system_none(api_data=api_data)
+
+        # Create new project with GEM packages from shell request unloading file {from path}
+        if api_data['target'] == Targets.GEM and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_gem_auto_system_path(api_data=api_data)
+
+        # Create new project with GEMLIST file {from path}
+        if api_data['target'] == Targets.GEMLIST and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_gemlist_auto_system_path(api_data=api_data)
+
+        print_line('Something wrong with app parameters. Please, look through README.md')
+        return False
+
     def create_project_os_auto_system_none(self, api_data: dict) -> bool:
         components = []
         if api_data['os_type'] == OSs.WINDOWS:
@@ -141,8 +217,8 @@ class API(object):
                 report = self.load_windows_10_packages_from_powershell_unloaded_file(api_data['file'])[0]
                 if report is None:
                     return False
-                components = self.parse_windows_10_packages(report=report)[0]
-                if components is None:
+                components = self.parse_windows_10_packages(report=report)
+                if components[0] is None:
                     return False
             if api_data['os_version'] == '7':
                 print_line('Windows 7 does not support yet.')
@@ -150,6 +226,73 @@ class API(object):
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
+    def create_project_pip_auto_system_none(self, api_data: dict) -> bool:
+        components = self.load_pip_packages_from_frozen_requirement()
+        api_data['components'] = components if components[0] is not None else []
+        return self.web_api.create_new_project(api_data=api_data)
+
+    def create_project_pip_auto_system_path(self, api_data: dict) -> bool:
+        packages = self.load_pip_packages_from_path(api_data['file'])
+        if packages[0] is not None:
+            components = self.parse_pip_packages_from_path(packages=packages)
+            api_data['components'] = components if components[0] is not None else []
+            return self.web_api.create_new_project(api_data=api_data)
+        print_line('Something wrong with packages in file path')
+        return False
+
+    def create_project_requirements_auto_system_path(self, api_data: dict) -> bool:
+        packages = self.load_pip_packages_from_path(api_data['file'])
+        if packages[0] is not None:
+            components = self.parse_pip_packages_from_path(packages=packages)
+            api_data['components'] = components if components[0] is not None else []
+            return self.web_api.create_new_project(api_data=api_data)
+        print_line('Something wrong with packages in file path')
+        return False
+
+    def create_project_npm_auto_system_none(self, api_data: dict) -> bool:
+        if api_data['os'] == 'windows':
+            print_line('For Windows system this feature does not work now. '
+                       'Please use npm list --json > file_path command '
+                       'and use --file=path mode.')
+            return False
+        else:
+            print_line('Dont check yet')
+            return False
+
+    def create_project_npm_auto_system_path(self, api_data: dict) -> bool:
+        packages = self.load_npm_packages_from_path(api_data['file'])
+        if packages[0] is not None:
+            components = self.parse_npm_packages_from_path(raw_npm_components)
+            api_data['components'] = components if components[0] is not None else []
+            return self.web_api.create_new_project(api_data=api_data)
+        print_line('Something wrong with packages in file path')
+        return False
+
+    def create_project_package_json_auto_system_path(self, api_data: dict) -> bool:
+        packages = self.load_package_json_packages_from_path(api_data['file'])
+        if packages[0] is not None:
+            components = self.parse_package_json_packages_from_path(packages[0])
+            api_data['components'] = components if components[0] is not None else []
+            return self.web_api.create_new_project(api_data=api_data)
+        print_line('Something wrong with packages in file path')
+        return False
+
+    def create_project_gem_auto_system_none(self, api_data: dict) -> bool:
+        print_line('Dont check yet')
+        return False
+
+    def create_project_gem_auto_system_path(self, api_data: dict) -> bool:
+        packages = self.load_gem_packages_from_path(api_data['file'])
+        if packages[0] is not None:
+            components = self.parse_gem_packages_from_path(packages[0])
+            api_data['components'] = components if components[0] is not None else []
+            return self.web_api.create_new_project(api_data=api_data)
+        print_line('Something wrong with packages in file path')
+        return False
+
+    def create_project_gemlist_auto_system_path(self, api_data: dict) -> bool:
+        print_line('Dont check yet')
+        return False
 
     # -------------------------------------------------------------------------
     # SET
@@ -212,6 +355,88 @@ class API(object):
         print_line(f'File {filename} does not exists.')
         return [None]
 
+    @staticmethod
+    def load_pip_packages_from_frozen_requirement():
+        components = []
+        installations = {}
+        try:
+            for dist in get_installed_distributions(local_only=False, skip=[]):
+                req = pip.FrozenRequirement.from_dist(dist, [])
+                installations[req.name] = dist.version
+            for key in installations:
+                components.append({'name': key, 'version': installations[key]})
+            return components
+        except Exception as e:
+            print_line(f'Get an exception: {e}.')
+            return [None]
+
+    def load_pip_packages_from_path(self, filename: str) -> list:
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename)
+            if enc == 'undefined':
+                print_line(f'Undefined file {filename} encoding.')
+                return [None]
+            try:
+                with open(filename, encoding=enc) as cf:
+                    rfp = cf.read()
+                    rfps = rfp.replace(' ', '').split('\n')
+                    return rfps
+            except:
+                print_line(f'Get an exception, when read file {filename}')
+                return [None]
+        print_line(f'File {filename} does not exists.')
+        return [None]
+
+    def load_npm_packages_from_path(self, filename: str) -> list:
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename)
+            if enc == 'undefined':
+                print_line(f'Undefined file {filename} encoding.')
+                return [None]
+            try:
+                with open(filename, 'r', encoding=enc) as pf:
+                    data = json.load(pf)
+                    walkdict(data)
+                    return [True]
+            except Exception as e:
+                print_line(f'File read exception: {e}')
+                return [None]
+        print_line('File does not exist.')
+        return [None]
+
+    def load_package_json_packages_from_path(self, filename: str) -> list:
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename)
+            if enc == 'undefined':
+                print_line(f'Undefined file {filename} encoding.')
+                return [None]
+            try:
+                with open(filename, 'r', encoding=enc) as pf:
+                    packages = json.load(pf)
+                    return [packages]
+            except Exception as e:
+                print_line(f'File {filename} read exception: {e}')
+                return [None]
+        print_line('File does not exist.')
+        return [None]
+
+    def load_gem_packages_from_path(self, filename: str) -> list:
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename)
+            if enc == 'undefined':
+                print_line(f'Undefined file {filename} encoding.')
+                return [None]
+            try:
+                with open(filename, 'r', encoding=enc) as pf:
+                    cont = pf.read().replace('default: ', '').replace(' ', '').replace(')', '')
+                    cont = cont.split('\n')
+                    return [cont]
+            except Exception as e:
+                print_line(f'File {filename} read exception: {e}')
+                return [None]
+        print_line('File does not exist.')
+        return [None]
+
     # -------------------------------------------------------------------------
     # Parsers
     # -------------------------------------------------------------------------
@@ -243,6 +468,94 @@ class API(object):
             print_line('Exception occured. Try run app with Administrator rights.')
             return [None]
 
+    @staticmethod
+    def parse_pip_packages_from_path(packages: list) -> list:
+        components = []
+        for ref in packages:
+            if len(ref) > 0:
+                if '==' in ref:
+                    refs = ref.split('==')
+                    components.append({'name': refs[0], 'version': refs[1]})
+                elif '>' in ref:
+                    refs = ref.split('>')
+                    components.append({'name': refs[0], 'version': refs[1]})
+                elif '<' in ref:
+                    refs = ref.split('<')
+                    components.append({'name': refs[0], 'version': refs[1]})
+                elif '>=' in ref:
+                    refs = ref.split('>=')
+                    components.append({'name': refs[0], 'version': refs[1]})
+                elif '<=' in ref:
+                    refs = ref.split('<-')
+                    components.append({'name': refs[0], 'version': refs[1]})
+                else:
+                    try:
+                        mm = importlib.import_module(ref)
+                        components.append({'name': ref, 'version': mm.__version__})
+                    except ImportError as import_exception:
+                        print_line(f'Get an exception {import_exception} when define component version.')
+                        components.append({'name': ref, 'version': '*'})
+                        continue
+        return components
+
+    @staticmethod
+    def parse_npm_packages_from_path(comp: list) -> list:
+        components2 = []
+        for c in comp:
+            if c["name"] == "from":
+                if '@' in c['version']:
+                    p = c["version"].split('@')
+                    p[1] = p[1].replace('~', '')
+                    components2.append({"name": p[0], "version": p[1]})
+                else:
+                    name = c["version"]
+                    cmd = "npm view {0} version".format(name)
+                    if os.name == 'nt':
+                        try:
+                            proc = subprocess.Popen(
+                                ["powershell", cmd],
+                                stdout=subprocess.PIPE)
+                            version, error = proc.communicate()
+                            version = version.replace('\n', '')
+                            if error:
+                                print_line(f'Powershell command throw {proc.returncode} code '
+                                           f'and {error.strip()} error message.')
+                        except OSError as os_error:
+                            print_line(f'Powershell command throw errno: {os_error.errno}, strerror: {os_error.strerror} and '
+                                       f'filename: {os_error.filename}.')
+                            continue
+                        except:
+                            continue
+                    else:
+                        # TODO: COMPLETE FOR ANOTHER PLATFORMS
+                        version = '*'
+                    components2.append({"name": name, "version": version})
+        return components2
+
+    @staticmethod
+    def parse_package_json_packages_from_path(packages: dict) -> list:
+        components = []
+        dependencies = packages['dependencies']
+        dev_dependencies = packages['devDependencies']
+        if dev_dependencies != {}:
+            for key in dev_dependencies.keys():
+                components.append({'name': key, 'version': str(dev_dependencies[key]).replace('^', '')})
+        if dependencies != {}:
+            for key in dependencies.keys():
+                components.append({'name': key, 'version': str(dependencies[key]).replace('^', '')})
+        return components
+
+    @staticmethod
+    def parse_gem_packages_from_path(packages: list) -> list:
+        components = []
+        for c in packages:
+            if len(c) > 0:
+                cs = c.split('(')
+                try:
+                    components.append({'name': cs[0], 'version': cs[1]})
+                except:
+                    continue
+        return components
     # -------------------------------------------------------------------------
     # Addition methods
     # -------------------------------------------------------------------------
