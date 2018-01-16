@@ -201,123 +201,115 @@ class API(object):
     # OS
 
     def create_project_os_auto_system_none(self, api_data: dict) -> bool:
-        components = []
-        if api_data['os_type'] == OSs.WINDOWS:
-            if api_data['os_version'] == '10' or api_data['os_version'] == '8':
-                os_packages = self.load_windows_10_packages_from_powershell()[0]
-                if os_packages is None:
-                    print_line('Failed to load OS components.')
-                    return False
-                report = os_packages.decode('utf-8').replace('\r', '').split('\n')[9:]
-                components = self.parse_windows_10_packages(report)
-                if components[0] is None:
-                    print_line('Failed parse OS components.')
-                    return False
-            if api_data['os_version'] == '7':
-                print_line('Windows 7 does not support yet.')
-                return False
+        components = self.get_components_os_auto_system_none(api_data=api_data)[0]
+        if components is None:
+            return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_os_auto_system_path(self, api_data: dict) -> bool:
-        components = []
-        if api_data['os_type'] == OSs.WINDOWS:
-            if api_data['os_version'] == '10' or api_data['os_version'] == '8':
-                report = self.load_windows_10_packages_from_powershell_unloaded_file(api_data['file'])[0]
-                if report is None:
-                    return False
-                components = self.parse_windows_10_packages(report=report)
-                if components[0] is None:
-                    return False
-            if api_data['os_version'] == '7':
-                print_line('Windows 7 does not support yet.')
-                return False
+        components = self.get_components_os_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
     # Python
 
     def create_project_pip_auto_system_none(self, api_data: dict) -> bool:
-        components = self.load_pip_packages_from_frozen_requirement()
-        api_data['components'] = components if components[0] is not None else []
+        components = self.get_components_pip_auto_system_none(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_pip_auto_system_path(self, api_data: dict) -> bool:
-        packages = self.load_pip_packages_from_path(api_data['file'])
-        if packages[0] is not None:
-            components = self.parse_pip_packages_from_path(packages=packages)
-            api_data['components'] = components if components[0] is not None else []
-            return self.web_api.create_new_project(api_data=api_data)
-        print_line('Something wrong with packages in file path')
-        return False
+        components = self.get_components_pip_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_requirements_auto_system_path(self, api_data: dict) -> bool:
-        packages = self.load_pip_packages_from_path(api_data['file'])
-        if packages[0] is not None:
-            components = self.parse_pip_packages_from_path(packages=packages)
-            api_data['components'] = components if components[0] is not None else []
-            return self.web_api.create_new_project(api_data=api_data)
-        print_line('Something wrong with packages in file path')
-        return False
+        components = self.get_components_requirements_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     # NPM
 
     def create_project_npm_auto_system_none(self, api_data: dict) -> bool:
-        if api_data['os'] == 'windows':
-            print_line('For Windows system this feature does not work now. '
-                       'Please use npm list --json > file_path command '
-                       'and use --file=path mode.')
+        components = self.get_components_npm_auto_system_none(api_data=api_data)[0]
+        if components is None:
             return False
-        else:
-            print_line('Dont check yet')
-            return False
+        api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_npm_auto_system_path(self, api_data: dict) -> bool:
-        packages = self.load_npm_packages_from_path(api_data['file'])
-        if packages[0] is not None:
-            components = self.parse_npm_packages_from_path(raw_npm_components)
-            api_data['components'] = components if components[0] is not None else []
-            return self.web_api.create_new_project(api_data=api_data)
-        print_line('Something wrong with packages in file path')
-        return False
+        components = self.get_components_npm_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_package_json_auto_system_path(self, api_data: dict) -> bool:
-        packages = self.load_package_json_packages_from_path(api_data['file'])
-        if packages[0] is not None:
-            components = self.parse_package_json_packages_from_path(packages[0])
-            api_data['components'] = components if components[0] is not None else []
-            return self.web_api.create_new_project(api_data=api_data)
-        print_line('Something wrong with packages in file path')
-        return False
+        components = self.get_components_package_json_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     # Ruby GEM
 
     def create_project_gem_auto_system_none(self, api_data: dict) -> bool:
-        print_line('Dont check yet')
-        return False
+        components = self.get_components_gem_auto_system_none(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_gem_auto_system_path(self, api_data: dict) -> bool:
-        packages = self.load_gem_packages_from_path(api_data['file'])
-        if packages[0] is not None:
-            components = self.parse_gem_packages_from_path(packages[0])
-            api_data['components'] = components if components[0] is not None else []
-            return self.web_api.create_new_project(api_data=api_data)
-        print_line('Something wrong with packages in file path')
-        return False
+        components = self.get_components_gem_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_gemfile_auto_system_path(self, api_data: dict) -> bool:
-        print_line('Dont check yet')
-        return False
+        components = self.get_components_gemfile_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_gemfile_lock_auto_system_path(self, api_data: dict) -> bool:
-        print_line('Dont check yet')
-        return False
+        components = self.get_components_gemfile_lock_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # SET
     # -------------------------------------------------------------------------
 
     def action_create_set(self, api_data: dict) -> bool:
+        if api_data['platform'] is None:
+            print_line('Empty Platform name. Please use --platform=platform_name parameter.')
+            return False
+        platforms = self.get_platforms(api_data=api_data)
+        if api_data['platform'] not in platforms:
+            print_line(f"Platform {api_data['platform']} does not exists.")
+            return False
+        if api_data['project'] is None:
+            print_line('Empty Project name. Please use --project=project_name parameter.')
+            return False
+        projects = self.get_projects(api_data=api_data)
+        if api_data['project'] not in projects:
+            print_line(f"Project {api_data['project']} does not exists.")
+            return False
+
         pass
 
     # -------------------------------------------------------------------------
@@ -327,6 +319,102 @@ class API(object):
     # -------------------------------------------------------------------------
     # Menu
     # -------------------------------------------------------------------------
+
+    # -------------------------------------------------------------------------
+    # Components
+    # -------------------------------------------------------------------------
+
+    def get_components_os_auto_system_none(self, api_data: dict) -> list:
+        if api_data['os_type'] == OSs.WINDOWS:
+            if api_data['os_version'] == '10' or api_data['os_version'] == '8':
+                os_packages = self.load_windows_10_packages_from_powershell()[0]
+                if os_packages is None:
+                    print_line('Failed to load OS components.')
+                    return [None]
+                report = os_packages.decode('utf-8').replace('\r', '').split('\n')[9:]
+                components = self.parse_windows_10_packages(report)
+                if components[0] is None:
+                    print_line('Failed parse OS components.')
+                    return [None]
+                return components
+            if api_data['os_version'] == '7':
+                print_line('Windows 7 does not support yet.')
+                return [None]
+        return [None]
+
+    def get_components_os_auto_system_path(self, api_data: dict) -> list:
+        if api_data['os_type'] == OSs.WINDOWS:
+            if api_data['os_version'] == '10' or api_data['os_version'] == '8':
+                report = self.load_windows_10_packages_from_powershell_unloaded_file(api_data['file'])[0]
+                if report is None:
+                    return [None]
+                components = self.parse_windows_10_packages(report=report)
+                if components[0] is None:
+                    return [None]
+                return components
+            if api_data['os_version'] == '7':
+                print_line('Windows 7 does not support yet.')
+                return [None]
+
+    def get_components_pip_auto_system_none(self, api_data: dict) -> list:
+        return self.load_pip_packages_from_frozen_requirement()
+
+    def get_components_pip_auto_system_path(self, api_data: dict) -> list:
+        packages = self.load_pip_packages_from_path(api_data['file'])
+        if packages[0] is not None:
+            return self.parse_pip_packages_from_path(packages=packages)
+        print_line('Something wrong with packages in file path')
+        return [None]
+
+    def get_components_requirements_auto_system_path(self, api_data: dict) -> list:
+        packages = self.load_pip_packages_from_path(api_data['file'])
+        if packages[0] is not None:
+            return self.parse_pip_packages_from_path(packages=packages)
+        print_line('Something wrong with packages in file path')
+        return [None]
+
+    def get_components_npm_auto_system_path(self, api_data: dict) -> list:
+        packages = self.load_npm_packages_from_path(api_data['file'])
+        if packages[0] is not None:
+            return self.parse_npm_packages_from_path(raw_npm_components)
+        print_line('Something wrong with packages in file path')
+        return [None]
+
+    def get_components_package_json_auto_system_path(self, api_data: dict) -> list:
+        packages = self.load_package_json_packages_from_path(api_data['file'])
+        if packages[0] is not None:
+            return self.parse_package_json_packages_from_path(packages[0])
+        print_line('Something wrong with packages in file path')
+        return [None]
+
+    def get_components_gem_auto_system_path(self, api_data: dict) -> list:
+        packages = self.load_gem_packages_from_path(api_data['file'])
+        if packages[0] is not None:
+            return self.parse_gem_packages_from_path(packages[0])
+        print_line('Something wrong with packages in file path')
+        return [None]
+
+    def get_components_npm_auto_system_none(self, api_data: dict) -> list:
+        if api_data['os'] == 'windows':
+            print_line('For Windows system this feature does not work now. '
+                       'Please use npm list --json > file_path command '
+                       'and use --file=path mode.')
+            return [None]
+        else:
+            print_line('Dont check yet')
+            return [None]
+
+    def get_components_gem_auto_system_none(self, api_data: dict) -> list:
+        print_line('Dont check yet')
+        return [None]
+
+    def get_components_gemfile_auto_system_path(self, api_data: dict) -> list:
+        print_line('Dont check yet')
+        return [None]
+
+    def get_components_gemfile_lock_auto_system_path(self, api_data: dict) -> list:
+        print_line('Dont check yet')
+        return [None]
 
     # -------------------------------------------------------------------------
     # Loaders
