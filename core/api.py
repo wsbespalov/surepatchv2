@@ -182,7 +182,7 @@ class API(object):
             return self.create_project_gem_auto_system_path(api_data=api_data)
 
         # Create new project with GEMFILE file {from path}
-        if api_data['target'] == Targets.GEMLIST and \
+        if api_data['target'] == Targets.GEMFILE and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
@@ -310,7 +310,103 @@ class API(object):
             print_line(f"Project {api_data['project']} does not exists.")
             return False
 
-        pass
+        set_name = api_data['set']
+
+        if set_name is None:
+            current_set_name = self.get_current_set_name(api_data=api_data)[0]
+            if current_set_name[-1].isdigit():
+                d = int(current_set_name[-1])
+                d = d + 1
+                current_set_name = current_set_name[:-1]
+                set_name = current_set_name + str(d)
+            else:
+                set_name = current_set_name + '.1'
+            api_data['set'] = set_name
+
+        # Create new set with OS packages {from shell request}
+        if api_data['target'] == Targets.OS and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return self.create_set_os_auto_system_none(api_data=api_data)
+
+        # Create set with OS packages from shell request unloading file {from path}
+        if api_data['target'] == Targets.OS and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_set_os_auto_system_path(api_data=api_data)
+
+        # Create set with PIP packages {from shell request}
+        if api_data['target'] == Targets.PIP and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return self.create_set_pip_auto_system_none(api_data=api_data)
+
+        # Create set with PIP from file {from path}
+        if api_data['target'] == Targets.PIP and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_set_pip_auto_system_path(api_data=api_data)
+
+        # Create set with PIP requirements.txt {from path}
+        if api_data['target'] == Targets.REQ and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_set_requirements_auto_system_path(api_data=api_data)
+
+        if api_data['target'] == Targets.REQUIREMENTS and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_set_requirements_auto_system_path(api_data=api_data)
+
+        # Create set with NPM packages {from shell request}
+        if api_data['target'] == Targets.NPM and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return self.create_set_npm_auto_system_none(api_data=api_data)
+
+        # Create set with NPM packages {from file}
+        if api_data['target'] == Targets.NPM and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_set_npm_auto_system_path(api_data=api_data)
+
+        # Create set with NPM package.json file {from path}
+        if api_data['target'] == Targets.PACKAGE_JSON and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_set_package_json_auto_system_path(api_data=api_data)
+
+        # Create set with GEM packages {from shell request}
+        if api_data['target'] == Targets.GEM and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return self.create_set_gem_auto_system_none(api_data=api_data)
+
+        # Create set with GEM packages from shell request unloading file {from path}
+        if api_data['target'] == Targets.GEMFILE and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_set_gem_auto_system_path(api_data=api_data)
+
+        # Create set with GEMLIST file {from path}
+        if api_data['target'] == Targets.GEMFILE_LOCK and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_set_gemfile_auto_system_path(api_data=api_data)
+
+
 
     # -------------------------------------------------------------------------
     # Show
@@ -705,6 +801,20 @@ class API(object):
             projects.append(project['name'])
         return projects
 
+    def get_current_set_name(self, api_data: dict) -> list:
+        if api_data['organization'] is None:
+            return [None]
+        if api_data['organization']['platforms'] is None:
+            return [None]
+        platform_number = self.web_api.get_platform_number_from_name(api_data['platform'])
+        if platform_number == -1:
+            return [None]
+        project_number = self.web_api.get_project_number_from_name(api_data=api_data)
+        if project_number == -1:
+            return ['0.0.0']
+        return [api_data['organization']['platforms'][platform_number]['projects'][project_number]]
+
+
     # -------------------------------------------------------------------------
     # Checkers
     # -------------------------------------------------------------------------
@@ -787,7 +897,6 @@ class Targets(object):
     NPM = 'npm'
     PACKAGE_JSON = 'package_json'
     GEM = 'gem'
-    GEMLIST = 'gemlist'
     GEMFILE = 'gemfile'
     GEMFILE_LOCK = 'gemfile_lock'
 
