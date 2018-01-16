@@ -406,7 +406,82 @@ class API(object):
                 api_data['file'] is not None:
             return self.create_set_gemfile_auto_system_path(api_data=api_data)
 
+    def create_set_os_auto_system_none(self, api_data: dict) -> bool:
+        components = self.get_components_os_auto_system_none(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
 
+    def create_set_os_auto_system_path(self, api_data: dict) -> bool:
+        components = self.get_components_os_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
+
+    def create_set_pip_auto_system_none(self, api_data: dict) -> bool:
+        components = self.get_components_pip_auto_system_none(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
+
+    def create_set_pip_auto_system_path(self, api_data: dict) -> bool:
+        components = self.get_components_pip_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
+
+    def create_set_requirements_auto_system_path(self, api_data: dict) -> bool:
+        components = self.get_components_requirements_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
+
+    def create_set_npm_auto_system_none(self, api_data: dict) -> bool:
+        components = self.get_components_npm_auto_system_none(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
+
+    def create_set_npm_auto_system_path(self, api_data: dict) -> bool:
+        components = self.get_components_npm_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
+
+    def create_set_package_json_auto_system_path(self, api_data: dict) -> bool:
+        components = self.get_components_package_json_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
+
+    def create_set_gem_auto_system_none(self, api_data: dict) -> bool:
+        components = self.get_components_gem_auto_system_none(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
+
+    def create_set_gem_auto_system_path(self, api_data: dict) -> bool:
+        components = self.get_components_gem_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
+
+    def create_set_gemfile_auto_system_path(self, api_data: dict) -> bool:
+        components = self.get_components_gemfile_auto_system_path(api_data=api_data)[0]
+        if components is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # Show
