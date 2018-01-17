@@ -311,9 +311,14 @@ class API(object):
             return False
 
         set_name = api_data['set']
+        current_set_name = self.get_current_set_name(api_data=api_data)[0]
+
+        if current_set_name == set_name:
+            print_line(f'Current set with name {set_name} already exists.')
+            print_line('Please, use another name, or use no --set parameter to autoincrement set name.')
+            return False
 
         if set_name is None:
-            current_set_name = self.get_current_set_name(api_data=api_data)[0]
             if current_set_name[-1].isdigit():
                 d = int(current_set_name[-1])
                 d = d + 1
@@ -393,92 +398,106 @@ class API(object):
             return self.create_set_gem_auto_system_none(api_data=api_data)
 
         # Create set with GEM packages from shell request unloading file {from path}
-        if api_data['target'] == Targets.GEMFILE and \
+        if api_data['target'] == Targets.GEM and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
             return self.create_set_gem_auto_system_path(api_data=api_data)
 
         # Create set with GEMLIST file {from path}
-        if api_data['target'] == Targets.GEMFILE_LOCK and \
+        if api_data['target'] == Targets.GEMFILE and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
             return self.create_set_gemfile_auto_system_path(api_data=api_data)
 
+        # Create set with GEMLIST file {from path}
+        if api_data['target'] == Targets.GEMFILE_LOCK and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_set_gemfile_lock_auto_system_path(api_data=api_data)
+
     def create_set_os_auto_system_none(self, api_data: dict) -> bool:
-        components = self.get_components_os_auto_system_none(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_os_auto_system_none(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_component_set(api_data=api_data)
 
     def create_set_os_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_os_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_os_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_component_set(api_data=api_data)
 
     def create_set_pip_auto_system_none(self, api_data: dict) -> bool:
-        components = self.get_components_pip_auto_system_none(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_pip_auto_system_none(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_component_set(api_data=api_data)
 
     def create_set_pip_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_pip_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_pip_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_component_set(api_data=api_data)
 
     def create_set_requirements_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_requirements_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_requirements_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_component_set(api_data=api_data)
 
     def create_set_npm_auto_system_none(self, api_data: dict) -> bool:
-        components = self.get_components_npm_auto_system_none(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_npm_auto_system_none(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_component_set(api_data=api_data)
 
     def create_set_npm_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_npm_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_npm_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_component_set(api_data=api_data)
 
     def create_set_package_json_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_package_json_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_package_json_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_component_set(api_data=api_data)
 
     def create_set_gem_auto_system_none(self, api_data: dict) -> bool:
-        components = self.get_components_gem_auto_system_none(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_gem_auto_system_none(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_component_set(api_data=api_data)
 
     def create_set_gem_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_gem_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_gem_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_component_set(api_data=api_data)
 
     def create_set_gemfile_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_gemfile_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_gemfile_auto_system_path(api_data=api_data)
+        if components[0] is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
+
+    def create_set_gemfile_lock_auto_system_path(self, api_data: dict) -> bool:
+        components = self.get_components_gemfile_lock_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_component_set(api_data=api_data)
@@ -881,13 +900,13 @@ class API(object):
             return [None]
         if api_data['organization']['platforms'] is None:
             return [None]
-        platform_number = self.web_api.get_platform_number_from_name(api_data['platform'])
+        platform_number = self.web_api.get_platform_number_from_name(api_data=api_data)
         if platform_number == -1:
             return [None]
         project_number = self.web_api.get_project_number_from_name(api_data=api_data)
         if project_number == -1:
             return ['0.0.0']
-        return [api_data['organization']['platforms'][platform_number]['projects'][project_number]]
+        return [api_data['organization']['platforms'][platform_number]['projects'][project_number]['current_component_set']['name']]
 
 
     # -------------------------------------------------------------------------

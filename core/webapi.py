@@ -236,14 +236,16 @@ class WebAPI(object):
         if project_number == -1:
             print_line(f'No such project: {project}')
             return False
+        project_url = api_data['organization']['platforms'][platform_number]['projects'][project_number]['url']
         self.headers['token'] = api_data['token']
         self.components_payload['set_name'] = name
         self.components_payload['components'] = components
+        self.components_payload['project_url'] = project_url
         try:
             response = requests.post(
-                url=self.project_url,
+                url=self.components_url,
                 headers=self.headers,
-                json=self.project_payload)
+                json=self.components_payload)
             if response.status_code == 200:
                 return True
             print_line(f'Create component set failed. Status code: {response.status_code}')
@@ -280,7 +282,7 @@ class WebAPI(object):
     def get_project_number_from_name(self, api_data: dict) -> int:
         project_name = api_data['project']
         platform_number = self.get_platform_number_from_name(api_data=api_data)
-        for index, project in api_data['organization']['platforms'][platform_number].projects:
+        for index, project in enumerate(api_data['organization']['platforms'][platform_number]['projects']):
             if project['name'] == project_name:
                 return index
         return -1
