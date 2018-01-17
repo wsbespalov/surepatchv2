@@ -159,12 +159,19 @@ class API(object):
                 api_data['file'] is not None:
             return self.create_project_requirements_auto_system_path(api_data=api_data)
 
-        # Create new project with NPM packages {from shell request}
+        # Create new project with NPM packages {from shell request} - global
         if api_data['target'] == Targets.NPM and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is None:
             return self.create_project_npm_auto_system_none(api_data=api_data)
+
+        # Create new project with NPM packages {from shell request} - local
+        if api_data['target'] == Targets.NPM_LOCAL and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return self.create_project_npm_local_auto_system_none(api_data=api_data)
 
         # Create new project with NPM packages {from file}
         if api_data['target'] == Targets.NPM and \
@@ -214,15 +221,15 @@ class API(object):
     # OS
 
     def create_project_os_auto_system_none(self, api_data: dict) -> bool:
-        components = self.get_components_os_auto_system_none(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_os_auto_system_none(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_os_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_os_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_os_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
@@ -230,22 +237,22 @@ class API(object):
     # Python
 
     def create_project_pip_auto_system_none(self, api_data: dict) -> bool:
-        components = self.get_components_pip_auto_system_none(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_pip_auto_system_none(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_pip_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_pip_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_pip_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_requirements_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_requirements_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_requirements_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
@@ -253,22 +260,45 @@ class API(object):
     # NPM
 
     def create_project_npm_auto_system_none(self, api_data: dict) -> bool:
-        components = self.get_components_npm_auto_system_none(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_npm_auto_system_none(api_data=api_data)
+        if components[0] is None:
+            return False
+        api_data['components'] = components
+
+
+
+
+
+
+
+
+
+    def create_project_npm_local_auto_system_none(self, api_data: dict) -> bool:
+        components = self.get_components_npm_local_auto_system_none(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
+
+
+
+
+
+
+
+
+
     def create_project_npm_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_npm_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_npm_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_package_json_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_package_json_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_package_json_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
@@ -276,29 +306,29 @@ class API(object):
     # Ruby GEM
 
     def create_project_gem_auto_system_none(self, api_data: dict) -> bool:
-        components = self.get_components_gem_auto_system_none(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_gem_auto_system_none(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_gem_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_gem_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_gem_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_gemfile_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_gemfile_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_gemfile_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_gemfile_lock_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_gemfile_lock_auto_system_path(api_data=api_data)[0]
-        if components is None:
+        components = self.get_components_gemfile_lock_auto_system_path(api_data=api_data)
+        if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
@@ -636,7 +666,7 @@ class API(object):
     def get_components_npm_auto_system_path(self, api_data: dict) -> list:
         packages = self.load_npm_packages_from_path(api_data['file'])
         if packages[0] is not None:
-            return self.parse_npm_packages_from_path(raw_npm_components)
+            return self.parse_npm_packages(raw_npm_components)
         print_line('Something wrong with packages in file path')
         return [None]
 
@@ -655,10 +685,22 @@ class API(object):
         return [None]
 
     def get_components_npm_auto_system_none(self, api_data: dict) -> list:
-        if api_data['os'] == 'windows':
-            print_line('For Windows system this feature does not work now. '
-                       'Please use npm list --json > file_path command '
-                       'and use --file=path mode.')
+        if api_data['os_type'] == 'windows':
+            packages = self.load_npm_packages(local=False)
+            if packages[0] is not None:
+                return self.parse_npm_packages(raw_npm_components)
+            print_line('Something wrong with packages in file path')
+            return [None]
+        else:
+            print_line('Dont check yet')
+            return [None]
+
+    def get_components_npm_local_auto_system_none(self, api_data: dict) -> list:
+        if api_data['os_type'] == 'windows':
+            packages = self.load_npm_packages(local=True)
+            if packages[0] is not None:
+                return self.parse_npm_packages(raw_npm_components)
+            print_line('Something wrong with packages in file path')
             return [None]
         else:
             print_line('Dont check yet')
@@ -771,6 +813,59 @@ class API(object):
         print_line('File does not exist.')
         return [None]
 
+    def load_npm_packages(self, local: bool) -> list:
+        tmp_file_name = 'tmp_npm_list_json.txt'
+        file_path = os.path.expanduser('~')
+        full_path = os.path.join(file_path, tmp_file_name)
+        try:
+            with open(full_path, mode='w', encoding='utf-8') as temp:
+                temp.write('')
+                temp.seek(0)
+        except Exception as e:
+            print_line(f'Cant create temp file, get an exception: {e}.')
+            return [None]
+        cmd = "npm list --json > {0}".format(full_path)
+        if os.name == 'nt':
+            if not local:
+                os.chdir("c:\\")
+            try:
+                proc = subprocess.Popen(
+                    ["powershell", cmd],
+                    stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+                if error:
+                    print_line(f'Powershell command throw {proc.returncode} code:')
+                    print_line(f'and {error.strip()} error message.')
+                    return [None]
+                try:
+                    enc = self.define_file_encoding(full_path)
+                    if enc == 'undefined':
+                        print_line('An error with encoding occured in temp file.')
+                        return [None]
+                    with open(full_path, encoding=enc) as cf:
+                        data = json.load(cf)
+                        walkdict(data)
+                        return [True]
+                except Exception as e:
+                    print_line(f'File read exception: {e}')
+                    return [None]
+                finally:
+                    if os.path.isfile(full_path):
+                        os.remove(full_path)
+            except OSError as os_error:
+                print_line(f'Powershell command throw errno: {os_error.errno}, strerror: {os_error.strerror}')
+                print_line(f'and filename: {os_error.filename}.')
+                if os.path.isfile(full_path):
+                    os.remove(full_path)
+                return [None]
+            finally:
+                if os.path.isfile(full_path):
+                    os.remove(full_path)
+        if os.path.isfile(full_path):
+            os.remove(full_path)
+        return [None]
+
     def load_package_json_packages_from_path(self, filename: str) -> list:
         if os.path.exists(filename):
             enc = self.define_file_encoding(filename)
@@ -866,7 +961,7 @@ class API(object):
         return components
 
     @staticmethod
-    def parse_npm_packages_from_path(comp: list) -> list:
+    def parse_npm_packages(comp: list) -> list:
         components2 = []
         for c in comp:
             if c["name"] == "from":
@@ -883,7 +978,7 @@ class API(object):
                                 ["powershell", cmd],
                                 stdout=subprocess.PIPE)
                             version, error = proc.communicate()
-                            version = version.replace('\n', '')
+                            version = version.decode("utf-8").replace('\n', '')
                             if error:
                                 print_line(f'Powershell command throw {proc.returncode} code '
                                            f'and {error.strip()} error message.')
@@ -1078,6 +1173,7 @@ class Targets(object):
     REQ = 'req'
     REQUIREMENTS = 'requirements'
     NPM = 'npm'
+    NPM_LOCAL = 'npm_local'
     PACKAGE_JSON = 'package_json'
     GEM = 'gem'
     GEMFILE = 'gemfile'
