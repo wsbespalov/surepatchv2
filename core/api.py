@@ -8,6 +8,10 @@ import importlib
 import subprocess
 
 from core.interface import print_line
+from core.interface import print_platforms
+from core.interface import print_projects
+from core.interface import print_components
+
 from core.webapi import WebAPI
 
 try:
@@ -61,6 +65,15 @@ class API(object):
 
         elif api_data['action'] == Actions.CREATE_SET:
             return self.action_create_set(api_data=api_data)
+
+        elif api_data['action'] == Actions.SHOW_PLATFORMS or \
+                api_data['action'] == Actions.SHOW_PROJECTS or \
+                api_data['action'] == Actions.SHOW_SET:
+            return self.action_show(api_data=api_data)
+
+        print_line(f"Unknown action code: {api_data['action']}.")
+        return False
+
 
     # -------------------------------------------------------------------------
     # LOGIN
@@ -506,6 +519,63 @@ class API(object):
     # Show
     # -------------------------------------------------------------------------
 
+    def action_show(self, api_data: dict) -> bool:
+        if api_data['action'] == Actions.SHOW_PLATFORMS:
+            return self.action_show_platforms(api_data=api_data)
+
+        elif api_data['action'] == Actions.SHOW_PROJECTS:
+            if api_data['platform'] is None or \
+                    api_data['platform'] == '':
+                print_line('Empty platform name.')
+                return False
+            platform_number = self.web_api.get_platform_number_from_name(api_data=api_data)
+            if platform_number == -1:
+                print_line(f"No such platform: {api_data['platform']}.")
+                return False
+            return self.action_show_projects(api_data=api_data)
+
+        elif api_data['action'] == Actions.SHOW_SET:
+            if api_data['platform'] is None or \
+                    api_data['platform'] == '':
+                print_line('Empty platform name.')
+                return False
+            platform_number = self.web_api.get_platform_number_from_name(api_data=api_data)
+            if platform_number == -1:
+                print_line(f"No such platform: {api_data['platform']}.")
+                return False
+            if api_data['project'] is None or \
+                    api_data['project'] == '':
+                print_line('Empty platform name.')
+                return False
+            project_number = self.web_api.get_project_number_from_name(api_data=api_data)
+            if project_number == -1:
+                print_line(f"No such project {api_data['project']} in platform {api_data['platform']}.")
+                return False
+            return self.show_set(api_data=api_data)
+
+    @staticmethod
+    def action_show_platforms(api_data: dict) -> bool:
+        platforms = []
+        for platform in api_data['organization']['platforms']:
+            platforms.append({'name': platform['name'], 'description': platform['description']})
+        print_platforms(platforms=platforms)
+        return True
+
+    def action_show_projects(self, api_data: dict) -> bool:
+        projects = []
+        platform_number = self.web_api.get_platform_number_from_name(api_data=api_data)
+        for project in api_data['organization']['platforms'][platform_number]['projects']:
+            projects.append({'name': project['name'], 'description': 'default project'})
+        print_projects(projects=projects)
+        return True
+
+    def show_set(self, api_data: dict) -> bool:
+        set = self.get_current_set_name(api_data=api_data)
+        print_line(f'Current component set: {set}.')
+        components = self.get_components(api_data=api_data)['components']
+        print_components(components=components)
+        return True
+
     # -------------------------------------------------------------------------
     # Menu
     # -------------------------------------------------------------------------
@@ -818,8 +888,8 @@ class API(object):
                                 print_line(f'Powershell command throw {proc.returncode} code '
                                            f'and {error.strip()} error message.')
                         except OSError as os_error:
-                            print_line(f'Powershell command throw errno: {os_error.errno}, strerror: {os_error.strerror} and '
-                                       f'filename: {os_error.filename}.')
+                            print_line(f'Powershell command throw errno: {os_error.errno}, strerror: {os_error.strerror}')
+                            print_line(f'and filename: {os_error.filename}.')
                             continue
                         except:
                             continue
@@ -905,9 +975,21 @@ class API(object):
             return [None]
         project_number = self.web_api.get_project_number_from_name(api_data=api_data)
         if project_number == -1:
-            return ['0.0.0']
+            return ['0.0.1']
         return [api_data['organization']['platforms'][platform_number]['projects'][project_number]['current_component_set']['name']]
 
+    def get_components(self, api_data: dict) -> list:
+        if api_data['organization'] is None:
+            return [None]
+        if api_data['organization']['platforms'] is None:
+            return [None]
+        platform_number = self.web_api.get_platform_number_from_name(api_data=api_data)
+        if platform_number == -1:
+            return [None]
+        project_number = self.web_api.get_project_number_from_name(api_data=api_data)
+        if project_number == -1:
+            return [None]
+        return api_data['organization']['platforms'][platform_number]['projects'][project_number]['current_component_set']
 
     # -------------------------------------------------------------------------
     # Checkers
@@ -920,7 +1002,10 @@ class API(object):
         if api_data['action'] != Actions.SAVE_CONFIG and \
                 api_data['action'] != Actions.CREATE_PLATFORM and \
                 api_data['action'] != Actions.CREATE_PROJECT and \
-                api_data['action'] != Actions.CREATE_SET:
+                api_data['action'] != Actions.CREATE_SET and \
+                api_data['action'] != Actions.SHOW_PLATFORMS and \
+                api_data['action'] != Actions.SHOW_PROJECTS and \
+                api_data['action'] != Actions.SHOW_SET:
             return False
         return True
 
@@ -955,7 +1040,7 @@ class API(object):
         full_path = os.path.join(file_path, file_name)
         if not os.path.isfile(full_path):
             print_line(f'Config file does not exist: ~/{file_name}')
-            print_line('Create config file first with parameter --action=save_config.')
+            print_line(f'Create config file first with parameter --action=save_config.')
             return False
         with open(full_path, 'r') as yaml_config_file:
             try:
@@ -971,16 +1056,20 @@ class API(object):
                 api_data['password'] = config['password']
                 return True
             except yaml.YAMLError as yaml_exception:
-                print_line(f'Config file save in yaml format exception: {yaml_exception}')
+                print_line(f'Config file save in yaml format exception: {yaml_exception}.')
                 return False
             finally:
                 yaml_config_file.close()
+
 
 class Actions(object):
     SAVE_CONFIG = 'save_config'
     CREATE_PLATFORM = 'create_platform'
     CREATE_PROJECT = 'create_project'
     CREATE_SET = 'create_set'
+    SHOW_PLATFORMS = 'show_platforms'
+    SHOW_PROJECTS = 'show_projects'
+    SHOW_SET = 'show_set'
 
 
 class Targets(object):
