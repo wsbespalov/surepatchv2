@@ -410,12 +410,19 @@ class API(object):
                 api_data['file'] is not None:
             return self.create_set_requirements_auto_system_path(api_data=api_data)
 
-        # Create set with NPM packages {from shell request}
+        # Create set with NPM packages {from shell request} - global
         if api_data['target'] == Targets.NPM and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is None:
             return self.create_set_npm_auto_system_none(api_data=api_data)
+
+        # Create set with NPM packages {from shell request} - local
+        if api_data['target'] == Targets.NPM_LOCAL and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_set_npm_local_auto_system_none(api_data=api_data)
 
         # Create set with NPM packages {from file}
         if api_data['target'] == Targets.NPM and \
@@ -507,6 +514,16 @@ class API(object):
             return False
         api_data['components'] = components
         return self.web_api.create_new_component_set(api_data=api_data)
+
+    def create_set_npm_local_auto_system_none(self, api_data: dict) -> bool:
+        components = self.get_components_npm_local_auto_system_none(api_data=api_data)
+        if components[0] is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
+
+
+
 
     def create_set_npm_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_npm_auto_system_path(api_data=api_data)
@@ -849,7 +866,7 @@ class API(object):
             return [None]
         cmd = "npm list --json > {0}".format(full_path)
         if os.name == 'nt':
-            if not local:
+            if local:
                 os.chdir(path)
             else:
                 os.chdir("c:\\")
