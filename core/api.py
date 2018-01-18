@@ -170,7 +170,7 @@ class API(object):
         if api_data['target'] == Targets.NPM_LOCAL and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
-                api_data['file'] is None:
+                api_data['file'] is not None:
             return self.create_project_npm_local_auto_system_none(api_data=api_data)
 
         # Create new project with NPM packages {from file}
@@ -186,6 +186,13 @@ class API(object):
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
             return self.create_project_package_json_auto_system_path(api_data=api_data)
+
+        # Create new project with NPM package_lock.json file {from path}
+        if api_data['target'] == Targets.PACKAGE_LOCK_JSON and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_project_package_lock_json_auto_system_path(api_data=api_data)
 
         # Create new project with GEM packages {from shell request}
         if api_data['target'] == Targets.GEM and \
@@ -264,14 +271,14 @@ class API(object):
         if components[0] is None:
             return False
         api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
-
-
-
-
-
-
-
+    def create_project_npm_auto_system_path(self, api_data: dict) -> bool:
+        components = self.get_components_npm_auto_system_path(api_data=api_data)
+        if components[0] is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_project(api_data=api_data)
 
     def create_project_npm_local_auto_system_none(self, api_data: dict) -> bool:
         components = self.get_components_npm_local_auto_system_none(api_data=api_data)
@@ -280,21 +287,22 @@ class API(object):
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
 
-
-
-
-
-
-
-
-
-
-    def create_project_npm_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_npm_auto_system_path(api_data=api_data)
+    def create_project_package_lock_json_auto_system_path(self, api_data: dict) -> bool:
+        components = self.get_components_npm_lock_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
+        pass
+
+
+
+
+
+
+
+
+
 
     def create_project_package_json_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_package_json_auto_system_path(api_data=api_data)
@@ -686,7 +694,7 @@ class API(object):
 
     def get_components_npm_auto_system_none(self, api_data: dict) -> list:
         if api_data['os_type'] == 'windows':
-            packages = self.load_npm_packages(local=False)
+            packages = self.load_npm_packages(path='', local=False)
             if packages[0] is not None:
                 return self.parse_npm_packages(raw_npm_components)
             print_line('Something wrong with packages in file path')
@@ -697,9 +705,20 @@ class API(object):
 
     def get_components_npm_local_auto_system_none(self, api_data: dict) -> list:
         if api_data['os_type'] == 'windows':
-            packages = self.load_npm_packages(local=True)
+            packages = self.load_npm_packages(path=api_data['file'], local=True)
             if packages[0] is not None:
                 return self.parse_npm_packages(raw_npm_components)
+            print_line('Something wrong with packages in file path')
+            return [None]
+        else:
+            print_line('Dont check yet')
+            return [None]
+
+    def get_components_npm_lock_auto_system_path(self, api_data: dict) -> list:
+        if api_data['os_type'] == 'windows':
+            packages = self.load_npm_lock_packages_from_path(filename=api_data['file'])
+            if packages[0] is not None:
+                return self.parse_npm_lock_packages(packages[0])
             print_line('Something wrong with packages in file path')
             return [None]
         else:
@@ -813,7 +832,7 @@ class API(object):
         print_line('File does not exist.')
         return [None]
 
-    def load_npm_packages(self, local: bool) -> list:
+    def load_npm_packages(self, path: str, local: bool) -> list:
         tmp_file_name = 'tmp_npm_list_json.txt'
         file_path = os.path.expanduser('~')
         full_path = os.path.join(file_path, tmp_file_name)
@@ -827,6 +846,8 @@ class API(object):
         cmd = "npm list --json > {0}".format(full_path)
         if os.name == 'nt':
             if not local:
+                os.chdir(path)
+            else:
                 os.chdir("c:\\")
             try:
                 proc = subprocess.Popen(
@@ -876,6 +897,26 @@ class API(object):
                 with open(filename, 'r', encoding=enc) as pf:
                     packages = json.load(pf)
                     return [packages]
+            except Exception as e:
+                print_line(f'File {filename} read exception: {e}')
+                return [None]
+        print_line('File does not exist.')
+        return [None]
+
+    def load_npm_lock_packages_from_path(self, filename: str) -> list:
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename)
+            if enc == 'undefined':
+                print_line(f'Undefined file {filename} encoding.')
+                return [None]
+            try:
+                with open(filename, 'r', encoding=enc) as pf:
+                    try:
+                        packages = json.load(pf)
+                        return [packages]
+                    except json.JSONDecodeError as json_decode_error:
+                        print_line(f'An exception occured with json decoder: {json_decode_error}.')
+                        return [None]
             except Exception as e:
                 print_line(f'File {filename} read exception: {e}')
                 return [None]
@@ -993,6 +1034,32 @@ class API(object):
                         version = '*'
                     components2.append({"name": name, "version": version})
         return components2
+
+    @staticmethod
+    def parse_npm_lock_packages(packages: dict) -> list:
+        def already_in_components(components: list, key: str) -> bool:
+            for component in components:
+                if component['name'] == key:
+                    return True
+            return False
+
+        dependencies = packages['dependencies']
+        keys = dependencies.keys()
+        components = []
+        for key in keys:
+            if not already_in_components(components=components, key=key):
+                components.append({'name': key, "version": dependencies[key]['version']})
+            if 'requires' in dependencies[key].keys():
+                requires = dependencies[key]['requires']
+                for rkey in requires.keys():
+                    if not already_in_components(components=components, key=rkey):
+                        components.append({'name': rkey, 'version': requires[rkey]})
+            if 'dependencies' in dependencies[key].keys():
+                deps = dependencies[key]['dependencies']
+                for dkey in deps.keys():
+                    if not already_in_components(components=components, key=dkey):
+                        components.append({'name': dkey, 'version': deps[dkey]})
+        return components
 
     @staticmethod
     def parse_package_json_packages_from_path(packages: dict) -> list:
@@ -1175,6 +1242,7 @@ class Targets(object):
     NPM = 'npm'
     NPM_LOCAL = 'npm_local'
     PACKAGE_JSON = 'package_json'
+    PACKAGE_LOCK_JSON = 'package_lock_json'
     GEM = 'gem'
     GEMFILE = 'gemfile'
     GEMFILE_LOCK = 'gemfile_lock'
