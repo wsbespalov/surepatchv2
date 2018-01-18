@@ -293,16 +293,6 @@ class API(object):
             return False
         api_data['components'] = components
         return self.web_api.create_new_project(api_data=api_data)
-        pass
-
-
-
-
-
-
-
-
-
 
     def create_project_package_json_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_package_json_auto_system_path(api_data=api_data)
@@ -441,6 +431,13 @@ class API(object):
                 api_data['file'] is not None:
             return self.create_set_package_json_auto_system_path(api_data=api_data)
 
+        # Create set with NPM package_lock.json file {from path}
+        if api_data['target'] == Targets.PACKAGE_LOCK_JSON and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return self.create_set_package_lock_json_auto_system_path(api_data=api_data)
+
         # Create set with GEM packages {from shell request}
         if api_data['target'] == Targets.GEM and \
                 api_data['method'] == Methods.AUTO and \
@@ -520,6 +517,13 @@ class API(object):
 
     def create_set_package_json_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_package_json_auto_system_path(api_data=api_data)
+        if components[0] is None:
+            return False
+        api_data['components'] = components
+        return self.web_api.create_new_component_set(api_data=api_data)
+
+    def create_set_package_lock_json_auto_system_path(self, api_data: dict) -> bool:
+        components = self.get_components_npm_local_auto_system_none(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
