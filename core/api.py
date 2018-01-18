@@ -747,6 +747,23 @@ class API(object):
             return [None]
 
     def get_components_gem_auto_system_none(self, api_data: dict) -> list:
+        if api_data['os_type'] == 'windows':
+            packages = self.load_gem_packages_system(local=False, api_data=api_data)
+            if packages[0] is not None:
+                return self.parse_gem_packages_system(packages=packages[0])
+            print_line('Something wrong with packages in file path')
+            return [None]
+        else:
+            print_line('Dont check yet')
+            return [None]
+
+
+
+
+
+
+
+
         print_line('Dont check yet')
         return [None]
 
@@ -961,6 +978,40 @@ class API(object):
         print_line('File does not exist.')
         return [None]
 
+    def load_gem_packages_system(self, local: bool, api_data: dict) -> list:
+        if api_data['os_type'] == OSs.WINDOWS:
+            if local:
+                os.chdir(api_data['file'])
+            else:
+                os.chdir('c:\\')
+            cmd = "gem list"
+            try:
+                proc = subprocess.Popen(
+                    ["powershell", cmd],
+                    stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                output = output.decode('utf-8').replace('\r', '').split('\n')
+                if error:
+                    print_line(f'Powershell command throw {proc.returncode} code and {error.strip()} error message.')
+                    return [None]
+                if output:
+                    return [output]
+            except OSError as os_error:
+                print_line(f'Powershell command throw errno: {os_error.errno}, '
+                           f'strerror: {os_error.strerror} and '
+                           f'filename: {os_error.filename}.')
+                return [None]
+            except Exception as common_exception:
+                print_line(f'Powershell command throw an exception: {common_exception}.')
+                return [None]
+
+
+
+        pass
+
+    def parse_gem_packages_system(self, packages: list) -> list:
+        return self.parse_gem_packages_from_path(packages=packages)
+
     # -------------------------------------------------------------------------
     # Parsers
     # -------------------------------------------------------------------------
@@ -1100,9 +1151,11 @@ class API(object):
         components = []
         for c in packages:
             if len(c) > 0:
+                c = c.replace(' ', '').replace(')', '').replace('default:', '')
                 cs = c.split('(')
                 try:
-                    components.append({'name': cs[0], 'version': cs[1]})
+                    if len(cs) == 2:
+                        components.append({'name': cs[0], 'version': cs[1]})
                 except:
                     continue
         return components
