@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import sys
 import re
 import math
 import sys
 import textwrap
+import colorama
 from functools import reduce
 
 
@@ -77,9 +77,9 @@ class ASCIITable:
         if len(array) != 4:
             raise ArraySizeError("Array should contain 4 characters.")
         array = [x[:1] for x in [str(s) for s in array]]
-        (self._horizontalCharacter,
-         self._verticalCharacter,
-         self._cornerCharacter,
+        (self._horizontal_character,
+         self._vertical_character,
+         self._corner_character,
          self._headerCharacter) = array
 
     def set_table_decoration(self, deco):
@@ -113,7 +113,7 @@ class ASCIITable:
         * "b": column aligned on the bottom of the cell
         """
         self._check_row_size(array)
-        self._verticalAlignment = array
+        self._vertical_alignment = array
 
     def set_columns_data_type(self, array):
         """
@@ -155,7 +155,7 @@ class ASCIITable:
         self._check_row_size(array)
         self._header = list(map(str, array))
 
-    def addRow(self, array):
+    def add_row(self, array):
         self._check_row_size(array)
         if not hasattr(self, "_dtype"):
             self._dataType = ["a"] * self._row_size
@@ -164,10 +164,10 @@ class ASCIITable:
             cells.append(self._str(i,x))
         self._rows.append(cells)
 
-    def addRows(self, rows, header=True):
+    def add_rows(self, rows, header=True):
         """
-            -rows: iterator returning arrays or a by-dimensional array
-            -header: specifies if the first row should be used as the header of the table
+        -rows: iterator returning arrays or a by-dimensional array
+        -header: specifies if the first row should be used as the header of the table
         """
         if header:
             if hasattr(rows, '__iter__') and hasattr(rows, 'next'):
@@ -176,39 +176,39 @@ class ASCIITable:
                 self.header(rows[0])
                 rows = rows[1:]
         for row in rows:
-            self.addRow(row)
+            self.add_row(row)
 
     def draw(self):
         if not self._header and not self._rows:
             return
-        self._computeColumnsWidth()
-        self._checkAlignment()
+        self._compute_columns_width()
+        self._check_alignment()
         out = ""
-        if self._hasBorder():
-            out += self._horizontalLine()
+        if self._has_border():
+            out += self._horizontal_line()
         if self._header:
-            out += self._drawLine(self._header, isheader=True)
-            if self._hasHeader():
-                out += self._horizontalLineHeader()
+            out += self._draw_line(self._header, isheader=True)
+            if self._has_header():
+                out += self._horizontal_line_header()
         length = 0
         for row in self._rows:
             length += 1
-            out += self._drawLine(row)
-            if self._hasHorizontalLines() and length < len(self._rows):
-                out += self._horizontalLine()
-        if self._hasBorder():
-            out += self._horizontalLine()
+            out += self._draw_line(row)
+            if self._has_horizontal_lines() and length < len(self._rows):
+                out += self._horizontal_line()
+        if self._has_border():
+            out += self._horizontal_line()
         return out[:-1]
 
     def _str(self, i, x):
         """
-            -i: index of the cell datatype in self._dtype
-            -x: cell data to format
+        -i: index of the cell datatype in self._dtype
+        -x: cell data to format
         """
         try:
             f = float(x)
             n = str(f)
-            if n == "nan" or n=="inf" or n=="-inf" :
+            if n == "nan" or n == "inf" or n == "-inf" :
                 raise ValueError('Infinity or NaN considered as string')
         except:
             if type(x) is str:
@@ -255,45 +255,45 @@ class ASCIITable:
             raise ArraySizeError(
                 "array should contain %d elements" % self._row_size)
 
-    def _hasVerticalLines(self):
+    def _has_vertical_lines(self):
         return self._decoration & ASCIITable.VLINES > 0
 
-    def _hasHorizontalLines(self):
+    def _has_horizontal_lines(self):
         return self._decoration & ASCIITable.HLINES > 0
 
-    def _hasBorder(self):
+    def _has_border(self):
         return self._decoration & ASCIITable.BORDER > 0
 
-    def _hasHeader(self):
+    def _has_header(self):
         return self._decoration & ASCIITable.HEADER > 0
 
-    def _horizontalLineHeader(self):
-        return self._buildHorizontalLine(True)
+    def _horizontal_line_header(self):
+        return self._build_horizontal_line(True)
 
-    def _horizontalLine(self):
+    def _horizontal_line(self):
         if not self._horizontal_line_string:
-            self._horizontal_line_string = self._buildHorizontalLine()
+            self._horizontal_line_string = self._build_horizontal_line()
         return self._horizontal_line_string
 
-    def _buildHorizontalLine(self, is_header=False):
-        horiz = self._horizontalCharacter
+    def _build_horizontal_line(self, is_header=False):
+        horiz = self._horizontal_character
         if (is_header):
             horiz = self._headerCharacter
-        s = "%s%s%s" % (horiz, [horiz, self._cornerCharacter][self._hasVerticalLines()],
+        s = "%s%s%s" % (horiz, [horiz, self._corner_character][self._has_vertical_lines()],
                         horiz)
         l = s.join([horiz * n for n in self._width])
-        if self._hasBorder():
-            l = "%s%s%s%s%s\n" % (self._cornerCharacter, horiz, l, horiz,
-                                  self._cornerCharacter)
+        if self._has_border():
+            l = "%s%s%s%s%s\n" % (self._corner_character, horiz, l, horiz,
+                                  self._corner_character)
         else:
             l += "\n"
         return l
 
-    def _widthOfCell(self, cell):
+    def _width_of_cell(self, cell):
         cell = re.compile(r'\x1b[^m]*m').sub('', cell)
-        cellLines = cell.split('\n')
+        cell_lines = cell.split('\n')
         maxi = 0
-        for line in cellLines:
+        for line in cell_lines:
             length = 0
             parts = line.split('\t')
             for part, i in zip(parts, list(range(1, len(parts) + 1))):
@@ -303,18 +303,18 @@ class ASCIITable:
             maxi = max(maxi, length)
         return maxi
 
-    def _computeColumnsWidth(self):
+    def _compute_columns_width(self):
         if hasattr(self, "_width"):
             return
         maxi = []
         if self._header:
-            maxi = [self._widthOfCell(x) for x in self._header]
+            maxi = [self._width_of_cell(x) for x in self._header]
         for row in self._rows:
             for cell, i in zip(row, list(range(len(row)))):
                 try:
-                    maxi[i] = max(maxi[i], self._widthOfCell(cell))
+                    maxi[i] = max(maxi[i], self._width_of_cell(cell))
                 except (TypeError, IndexError):
-                    maxi.append(self._widthOfCell(cell))
+                    maxi.append(self._width_of_cell(cell))
         items = len(maxi)
         length = reduce(lambda x,y: x+y, maxi)
         if self._maxWidth and length + items * 3 + 1 > self._maxWidth:
@@ -347,19 +347,19 @@ class ASCIITable:
                             free -= freePart
         self._width = maxi
 
-    def _checkAlignment(self):
+    def _check_alignment(self):
         if not hasattr(self, "_align"):
             self._align = ["l"] * self._row_size
         if not hasattr(self, "_valign"):
-            self._verticalAlignment = ["t"] * self._row_size
+            self._vertical_alignment = ["t"] * self._row_size
 
-    def _drawLine(self, line, isheader=False):
-        line = self._splitEachElementOfLine(line, isheader)
+    def _draw_line(self, line, isheader=False):
+        line = self._split_each_element_of_line(line, isheader)
         space = " "
         out  = ""
         for i in range(len(line[0])):
-            if self._hasBorder():
-                out += "%s " % self._verticalCharacter
+            if self._has_border():
+                out += "%s " % self._vertical_character
             length = 0
             for cell, width, align in zip(line, self._width, self._align):
                 length += 1
@@ -375,11 +375,11 @@ class ASCIITable:
                 else:
                     out += "%s " % (cell_line + fill * space)
                 if length < len(line):
-                    out += "%s " % [space, self._verticalCharacter][self._hasVerticalLines()]
-            out += "%s\n" % ['', self._verticalCharacter][self._hasBorder()]
+                    out += "%s " % [space, self._vertical_character][self._has_vertical_lines()]
+            out += "%s\n" % ['', self._vertical_character][self._has_border()]
         return out
 
-    def _splitEachElementOfLine(self, line, isheader):
+    def _split_each_element_of_line(self, line, isheader):
         line_wrapped = []
         for cell, width in zip(line, self._width):
             array = []
@@ -387,26 +387,26 @@ class ASCIITable:
             for c in cell.split('\n'):
                 c = "".join(ANSIKeep) + c
                 ANSIKeep = []
-                extraWidth = 0
+                extra_width = 0
                 for a in re.findall(r'\x1b[^m]*m', c):
-                    extraWidth += len(a)
+                    extra_width += len(a)
                     if a == '\x1b[0m':
                         if len(ANSIKeep) > 0:
                             ANSIKeep.pop()
                     else:
                         ANSIKeep.append(a)
                 c = c + '\x1b[0m' * len(ANSIKeep)
-                extraWidth += len('\x1b[0m' * len(ANSIKeep))
+                extra_width += len('\x1b[0m' * len(ANSIKeep))
                 if type(c) is not str:
                     try:
                         c = str(c, 'utf')
                     except UnicodeDecodeError as strerror:
                         sys.stderr.write("UnicodeDecodeError exception for string '%s': %s\n" % (c, strerror))
                         c = str(c, 'utf', 'replace')
-                array.extend(textwrap.wrap(c, width + extraWidth))
+                array.extend(textwrap.wrap(c, width + extra_width))
             line_wrapped.append(array)
         max_cell_lines = reduce(max, list(map(len, line_wrapped)))
-        for cell, valign in zip(line_wrapped, self._verticalAlignment):
+        for cell, valign in zip(line_wrapped, self._vertical_alignment):
             if isheader:
                 valign = "t"
             if valign == "m":
@@ -419,8 +419,8 @@ class ASCIITable:
                 cell.extend([""] * (max_cell_lines - len(cell)))
         return line_wrapped
 
-def printLogo():
-    import colorama
+
+def print_logo():
     print('\n')
     print('+----------------------------------------------------------------------------------------+')
     text = """
@@ -437,52 +437,73 @@ def printLogo():
     print(colorama.Fore.WHITE + '+----------------------------------------------------------------------------------------+')
 
 
-def print_line(message: str) -> None:
-    print(message)
+def print_line(message: str, effect: str = None) -> None:
+    if effect == 'r':
+        print(colorama.Fore.RED + message + colorama.Fore.WHITE)
+    elif effect == 'g':
+        print(colorama.Fore.GREEN + message + colorama.Fore.WHITE)
+    elif effect == 'y':
+        print(colorama.Fore.YELLOW + message + colorama.Fore.WHITE)
+    else:
+        print(colorama.Fore.WHITE + message)
 
 
-def print_components(components: list) -> None:
-    print('Components: \n')
+def print_table(elements: list) -> None:
     table = ASCIITable()
-    table.set_columns_width([5, 60, 15])
+    table.set_columns_width([5, 25, 70])
     table.set_column_alignment(['c', 'l', 'l'])
     table.set_column_vertical_alignment(['c', 'c', 'c'])
-    table.addRows([
+    table.add_rows([
         [get_string_color(ColorTemplates.GREEN, "#"),
-         get_string_color(ColorTemplates.RED, "Component Name"),
-         get_string_color(ColorTemplates.BLUE, "Component Version")]])
-    if isinstance(components, list):
+         get_string_color(ColorTemplates.RED, "Name"),
+         get_string_color(ColorTemplates.BLUE, "Data")]])
+    if isinstance(elements, list):
         cnt = 1
-        for component in components:
-            table.addRow(
-                [get_string_color(ColorTemplates.GREEN, cnt),
-                 get_string_color(ColorTemplates.RED, component['name']),
-                 get_string_color(ColorTemplates.BLUE, component['version'])]
-            )
-            cnt += 1
+        for element in elements:
+            if isinstance(element, dict):
+                if 'version' in element.keys():
+                    table.add_row(
+                        [get_string_color(ColorTemplates.GREEN, cnt),
+                         get_string_color(ColorTemplates.RED, element['name']),
+                         get_string_color(ColorTemplates.BLUE, element['version'])]
+                    )
+                elif 'description' in element.keys():
+                    table.add_row(
+                        [get_string_color(ColorTemplates.GREEN, cnt),
+                         get_string_color(ColorTemplates.RED, element['name']),
+                         get_string_color(ColorTemplates.BLUE, element['description'])]
+                    )
+                cnt += 1
     print(table.draw() + '\n')
 
 
+def print_components(components: list) -> None:
+    print_line('Components:', 'g')
+    print_table(elements=components)
+
+
 def print_platforms(platforms: list) -> None:
-    print('Platforms:')
-    for index, platform in enumerate(platforms):
-        print('# {0}: name: {1} description: {2}'.format(index, platform['name'], platform['description']))
+    print_line('Platforms:', 'g')
+    print_table(elements=platforms)
 
 
 def print_projects(projects: list) -> None:
-    print('Projects:')
-    for index, project in enumerate(projects):
-        print('# {0}: name: {1} description: {2}'.format(index, project['name'], project['description']))
+    print_line('Projects:', 'g')
+    print_table(elements=projects)
 
 
 def print_issues(issues: list) -> None:
-    print('Issues:')
-    for index, issue in enumerate(issues):
-        print('# {0}: name: {1} description: {2}'.format(index, issue['name'], issue['description']))
+    print_line('Issues:')
+    print_table(elements=issues)
+
 
 def main():
-
-    print_line('123')
+    platforms = [
+        {'name': '1wei eriv irufnir fjw erfw   ner ed3dd3 fowef fr4e', 'description': 'description1description1des cription1description1descrip tion1des cription1descr iption1 description1'},
+        {'name': '2', 'description': 'description2'},
+        {'name': '3', 'description': 'description3'}
+    ]
+    print_platforms(platforms)
 
 
 if __name__ == '__main__':
