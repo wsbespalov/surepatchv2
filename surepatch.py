@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 import sys
 import platform
@@ -12,7 +12,12 @@ api = API()
 
 
 def create_parser():
-    # Create argument parser
+    """Create argument parser
+
+    Returns:
+        None -- None
+    """
+
     parser = argparse.ArgumentParser(
         description="SurePatch Argument Parser")
 
@@ -103,6 +108,12 @@ def create_parser():
 
 
 def get_os_platform() -> str:
+    """Get OS platform type.
+
+    Returns:
+        str -- OS platform type
+    """
+
     if sys.platform == 'darwin' or platform.system() == 'Darwin':
         return 'macos'
     if sys.platform == 'linux2' or sys.platform == 'linux':
@@ -116,26 +127,62 @@ def get_os_platform() -> str:
 
 
 def get_os_version(os_platform: str) -> str:
+    """Get OS version.
+
+    Arguments:
+        os_platform: str {str} -- name of OS platform
+
+    Returns:
+        str -- version in string
+    """
+
     if os_platform == 'windows':
         return platform.uname()[2]
     return ''
 
 
 def get_os_sp(os_platform: str) -> str:
+    """Get OS service pack (for Windows)
+    
+    Arguments:
+        os_platform: str {str} -- name of OS platform
+    
+    Returns:
+        str -- service pack in string
+    """
+
     if os_platform == 'windows':
         return platform.win32_ver()[2][2:]
     return ''
 
 
 def get_os_release() -> str:
+    """Get OS release.
+    
+    Returns:
+        str -- OS release in string
+    """
+
     return platform.release()
 
 
 def get_os_machine() -> str:
+    """Get OS machine code.
+    
+    Returns:
+        str -- machine code
+    """
+
     return platform.machine()
 
 
 def main():
+    """Application main function.
+    
+    Returns:
+        None -- None
+    """
+
     arguments = create_parser()
     api_data = dict(
         action=arguments.action,
@@ -167,4 +214,7 @@ def main():
 
 
 if __name__ == '__main__':
+    """Entry point
+    """
+
     sys.exit(main())
