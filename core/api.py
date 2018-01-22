@@ -18,13 +18,20 @@ try:
     import pip
     from pip.utils import get_installed_distributions
 except ImportError as import_exception:
-    print_line(f"Can't import pip get_installed_distributions. Get an exception: {import_exception}.")
+    print_line(f"Can't import pip get_installed_distributions.")
+    print_line(f"Get an exception: {import_exception}.")
     sys.exit(0)
 
 
 raw_npm_components = []
 
 def walkdict(data):
+    """Recursive dict processing for npm list parsing.
+
+    Arguments:
+        data {list} -- items list
+    """
+
     for k, v in data.items():
         if isinstance(v, dict):
             walkdict(v)
@@ -33,6 +40,9 @@ def walkdict(data):
 
 
 class API(object):
+    """Main CLI App API.
+    """
+
 
     def __init__(self):
         self.web_api = WebAPI()
@@ -42,34 +52,43 @@ class API(object):
     # -------------------------------------------------------------------------
 
     def run_action(self, api_data: dict) -> bool:
-        if not self.check_action_type(api_data=api_data):
+        """Main routing method for app actions.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            bool -- Success or not success
+        """
+
+        if not self.check_action_type_match(api_data=api_data):
             return False
 
         if api_data['action'] == Actions.SAVE_CONFIG:
-            return self.save_config(api_data=api_data)
+            return self.save_config_to_file(api_data=api_data)
 
-        if not self.load_config(api_data=api_data):
+        if not self.load_config_from_file(api_data=api_data):
             return False
 
-        if not self.action_login(api_data=api_data):
+        if not self.action_login_server_success(api_data=api_data):
             return False
 
-        if not self.get_organization_parameters(api_data=api_data):
+        if not self.get_organization_parameters_from_server(api_data=api_data):
             return False
 
         if api_data['action'] == Actions.CREATE_PLATFORM:
-            return self.action_create_platform(api_data=api_data)
+            return self.action_create_new_platform(api_data=api_data)
 
         elif api_data['action'] == Actions.CREATE_PROJECT:
-            return self.action_create_project(api_data=api_data)
+            return self.action_create_new_project(api_data=api_data)
 
         elif api_data['action'] == Actions.CREATE_SET:
-            return self.action_create_set(api_data=api_data)
+            return self.action_create_new_set(api_data=api_data)
 
         elif api_data['action'] == Actions.SHOW_PLATFORMS or \
                 api_data['action'] == Actions.SHOW_PROJECTS or \
                 api_data['action'] == Actions.SHOW_SET:
-            return self.action_show(api_data=api_data)
+            return self.action_show_platforms_projects_or_sets(api_data=api_data)
 
         print_line(f"Unknown action code: {api_data['action']}.")
         return False
@@ -79,50 +98,94 @@ class API(object):
     # LOGIN
     # -------------------------------------------------------------------------
 
-    def action_login(self, api_data: dict) -> bool:
+    def action_login_server_success(self, api_data: dict) -> bool:
+        """Log in into server.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            bool -- login result
+        """
+
         return self.web_api.send_login_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # GET ORGANIZATION PARAMETERS
     # -------------------------------------------------------------------------
 
-    def get_organization_parameters(self, api_data: dict) -> bool:
+    def get_organization_parameters_from_server(self, api_data: dict) -> bool:
+        """Get organization parameters from Surepatch server and fill the
+        appropriate structure.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            bool -- Success or not success
+        """
+
         return self.web_api.send_get_organization_parameters_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # PLATFORM
     # -------------------------------------------------------------------------
 
-    def action_create_platform(self, api_data: dict) -> bool:
+    def action_create_new_platform(self, api_data: dict) -> bool:
+        """Run action: CREATE New Platform.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            bool -- Success or not success
+        """
+
         if api_data['platform'] is None or api_data['platform'] == '':
             print_line('Empty platform name, please use --platform flag.')
             return False
+
         if api_data['description'] is None or api_data['description'] == '':
             print_line('Empty platform description. Change description to "default platform".')
             api_data['description'] = "default platform"
+
         return self.web_api.send_create_new_platform_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # PROJECT
     # -------------------------------------------------------------------------
 
-    def action_create_project(self, api_data: dict) -> bool:
+    def action_create_new_project(self, api_data: dict) -> bool:
+        """Run action: CREATE New Project in different cases.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            bool -- Success or not success
+        """
+
         if api_data['platform'] is None or api_data['platform'] == '':
             print_line('Empty platform name.')
             return False
+
         if api_data['project'] is None or api_data['project'] == '':
             print_line('Empty project name.')
             return False
-        platforms = self.get_platforms(api_data=api_data)
+
+        platforms = self.get_my_platforms(api_data=api_data)
+
         if api_data['platform'] not in platforms:
             print_line(f"Platform {api_data['platform']} does not exists.")
             return False
-        projects = self.get_projects(api_data=api_data)
+
+        projects = self.get_my_projects(api_data=api_data)
+
         if api_data['project'] in projects:
             print_line(f"Project {api_data['project']} already exists.")
             return False
 
-        # Select variant
+        # Select variant of CREATE Project action
 
         # Create new project with OS packages {from shell request}
         if api_data['target'] == Targets.OS and \
@@ -225,13 +288,25 @@ class API(object):
         print_line('Something wrong with app parameters. Please, look through README.md')
         return False
 
-    # OS
+    # Process OS packages
 
     def create_project_os_auto_system_none(self, api_data: dict) -> bool:
+        """Create project with OS packages, collected by shell command.
+        
+        Arguments:
+            api_data: dict {dict} -- api data set
+        
+        Returns:
+            bool -- Success or not success
+        """
+
         components = self.get_components_os_auto_system_none(api_data=api_data)
+
         if components[0] is None:
             return False
+        
         api_data['components'] = components
+        
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_os_auto_system_path(self, api_data: dict) -> bool:
@@ -335,18 +410,18 @@ class API(object):
     # SET
     # -------------------------------------------------------------------------
 
-    def action_create_set(self, api_data: dict) -> bool:
+    def action_create_new_set(self, api_data: dict) -> bool:
         if api_data['platform'] is None:
             print_line('Empty Platform name. Please use --platform=platform_name parameter.')
             return False
-        platforms = self.get_platforms(api_data=api_data)
+        platforms = self.get_my_platforms(api_data=api_data)
         if api_data['platform'] not in platforms:
             print_line(f"Platform {api_data['platform']} does not exists.")
             return False
         if api_data['project'] is None:
             print_line('Empty Project name. Please use --project=project_name parameter.')
             return False
-        projects = self.get_projects(api_data=api_data)
+        projects = self.get_my_projects(api_data=api_data)
         if api_data['project'] not in projects:
             print_line(f"Project {api_data['project']} does not exists.")
             return False
@@ -578,7 +653,7 @@ class API(object):
     # Show
     # -------------------------------------------------------------------------
 
-    def action_show(self, api_data: dict) -> bool:
+    def action_show_platforms_projects_or_sets(self, api_data: dict) -> bool:
         if api_data['action'] == Actions.SHOW_PLATFORMS:
             return self.action_show_platforms(api_data=api_data)
 
@@ -606,7 +681,7 @@ class API(object):
                     api_data['project'] == '':
                 print_line('Empty platform name.')
                 return False
-            project_number = self.web_api.get_project_number_from_name(api_data=api_data)
+            project_number = self.web_api.get_project_number_by_name(api_data=api_data)
             if project_number == -1:
                 print_line(f"No such project {api_data['project']} in platform {api_data['platform']}.")
                 return False
@@ -1178,7 +1253,7 @@ class API(object):
         return 'undefined'
 
     @staticmethod
-    def get_platforms(api_data: dict) -> list:
+    def get_my_platforms(api_data: dict) -> list:
         platforms = []
         if api_data['organization'] is None:
             return platforms
@@ -1188,7 +1263,7 @@ class API(object):
             platforms.append(platform['name'])
         return platforms
 
-    def get_projects(self, api_data: dict) -> list:
+    def get_my_projects(self, api_data: dict) -> list:
         projects = []
         if api_data['organization'] is None:
             return projects
@@ -1209,7 +1284,7 @@ class API(object):
         platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
         if platform_number == -1:
             return [None]
-        project_number = self.web_api.get_project_number_from_name(api_data=api_data)
+        project_number = self.web_api.get_project_number_by_name(api_data=api_data)
         if project_number == -1:
             return ['0.0.1']
         return [api_data['organization']['platforms'][platform_number]['projects'][project_number]['current_component_set']['name']]
@@ -1222,7 +1297,7 @@ class API(object):
         platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
         if platform_number == -1:
             return [None]
-        project_number = self.web_api.get_project_number_from_name(api_data=api_data)
+        project_number = self.web_api.get_project_number_by_name(api_data=api_data)
         if project_number == -1:
             return [None]
         return api_data['organization']['platforms'][platform_number]['projects'][project_number]['current_component_set']
@@ -1232,7 +1307,7 @@ class API(object):
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def check_action_type(api_data: dict) -> bool:
+    def check_action_type_match(api_data: dict) -> bool:
         if 'action' not in api_data:
             return False
         if api_data['action'] != Actions.SAVE_CONFIG and \
@@ -1250,7 +1325,7 @@ class API(object):
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def save_config(api_data: dict) -> bool:
+    def save_config_to_file(api_data: dict) -> bool:
         file_name = '.surepatch.yaml'
         file_path = os.path.expanduser('~')
         full_path = os.path.join(file_path, file_name)
@@ -1271,7 +1346,7 @@ class API(object):
                 yaml_config_file.close()
 
     @staticmethod
-    def load_config(api_data: dict) -> bool:
+    def load_config_from_file(api_data: dict) -> bool:
         file_name = '.surepatch.yaml'
         file_path = os.path.expanduser('~')
         full_path = os.path.join(file_path, file_name)
