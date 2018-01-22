@@ -718,19 +718,35 @@ class API(object):
     # Components
     # -------------------------------------------------------------------------
 
-    def get_components_os_auto_system_none(self, api_data: dict) -> list:
+    def get_components_os_auto_system_none(self, api_data: dict) -> bool:
+        """Get components of OS by calling of shell script and than parse its.
+        
+        Arguments:
+            api_data: dict {dict} -- api data set
+        
+        Returns:
+            bool -- Success or not success
+        """
+
         if api_data['os_type'] == OSs.WINDOWS:
             if api_data['os_version'] == '10' or api_data['os_version'] == '8':
                 os_packages = self.load_windows_10_packages_from_powershell()[0]
+                
                 if os_packages is None:
                     print_line('Failed to load OS components.')
-                    return [None]
+                    return False
+                
                 report = os_packages.decode('utf-8').replace('\r', '').split('\n')[9:]
+                
                 components = self.parse_windows_10_packages(report)
+                
                 if components[0] is None:
                     print_line('Failed parse OS components.')
-                    return [None]
-                return components
+                    return False
+                
+                api_data['components'] = components
+                return True
+            
             if api_data['os_version'] == '7':
                 print_line('Windows 7 does not support yet.')
                 return [None]
