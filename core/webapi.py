@@ -7,9 +7,9 @@ from core.interface import print_line
 
 
 class WebAPI(object):
+    """Web API for surepatch CLI Application.
     """
-    Web API for surepatch CLI Application.
-    """
+
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:45.0) \
@@ -45,6 +45,15 @@ class WebAPI(object):
         project_url=None)
 
     def send_login_request(self, api_data: dict) -> bool:
+        """Send login request to Surepatch server.
+        
+        Arguments:
+            api_data: dict {dict} -- api data set
+        
+        Returns:
+            bool -- Success or not success
+        """
+
         self.login_payload['username'] = api_data['user']
         self.login_payload['password'] = api_data['password']
         self.login_payload['referalToken'] = None
@@ -82,6 +91,15 @@ class WebAPI(object):
             return False
 
     def send_get_organization_parameters_request(self, api_data: dict) -> bool:
+        """Send special request to Surepatch server to get Organization information.
+        
+        Arguments:
+            api_data: dict {dict} -- api data set
+        
+        Returns:
+            bool -- Success or not success
+        """
+
         self.headers['token'] = api_data['token']
         try:
             response = requests.get(
@@ -163,6 +181,15 @@ class WebAPI(object):
             return False
 
     def send_create_new_platform_request(self, api_data: dict) -> bool:
+        """Send request to Surepatch server to create new Platform.
+        
+        Arguments:
+            api_data: dict {dict} -- api data set
+        
+        Returns:
+            bool -- Success or not success
+        """
+
         platform = api_data['platform']
         description = api_data['description']
         self.headers['token'] = api_data['token']
@@ -191,9 +218,18 @@ class WebAPI(object):
             return False
 
     def send_create_new_project_request(self, api_data: dict) -> bool:
+        """Send request to Surepatch server to create new Project.
+        
+        Arguments:
+            api_data: dict {dict} -- api data set
+        
+        Returns:
+            bool -- Success or not success
+        """
+
         project = api_data['project']
         components = api_data['components']
-        platform_id = self.get_platform_id_from_name(api_data=api_data)
+        platform_id = self.get_platform_id_by_name(api_data=api_data)
         self.headers['token'] = api_data['token']
         self.project_payload['name'] = project
         self.project_payload['platform_id'] = platform_id
@@ -221,15 +257,24 @@ class WebAPI(object):
             return False
 
     def send_create_new_component_set_request(self, api_data: dict) -> bool:
+        """Send request to Surepatch server to create new Component Set.
+        
+        Arguments:
+            api_data: dict {dict} -- api data set
+        
+        Returns:
+            bool -- Success or not success
+        """
+
         platform = api_data['platform']
         project = api_data['project']
         components = api_data['components']
         name = api_data['set']
-        platform_number = self.get_platform_number_from_name(api_data=api_data)
+        platform_number = self.get_platform_number_by_name(api_data=api_data)
         if platform_number == -1:
             print_line(f'No such platform: {platform}')
             return False
-        project_number = self.get_project_number_from_name(api_data=api_data)
+        project_number = self.get_project_number_by_name(api_data=api_data)
         if project_number == -1:
             print_line(f'No such project: {project}')
             return False
@@ -261,7 +306,15 @@ class WebAPI(object):
             return False
 
     @staticmethod
-    def get_platform_id_from_name(api_data: dict) -> int:
+    def get_platform_id_by_name(api_data: dict) -> int:
+        """Get platform ID by its name.
+        
+        Arguments:
+            api_data: dict {dict} -- api data set
+        
+        Returns:
+            int -- ID of platform
+        """
         platform_name = api_data['platform']
         for platform in api_data['organization']['platforms']:
             if platform['name'] == platform_name:
@@ -269,16 +322,34 @@ class WebAPI(object):
         return -1
 
     @staticmethod
-    def get_platform_number_from_name(api_data: dict)-> int:
+    def get_platform_number_by_name(api_data: dict)-> int:
+        """Get Platform number in list by its name
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            int -- number of platform from list
+        """
+
         platform_name = api_data['platform']
         for index, platform in enumerate(api_data['organization']['platforms']):
             if platform['name'] == platform_name:
                 return index
         return -1
 
-    def get_project_number_from_name(self, api_data: dict) -> int:
+    def get_project_number_by_name(self, api_data: dict) -> int:
+        """Get project numer (index) by its name.
+        
+        Arguments:
+            api_data: dict {dict} -- api data set
+        
+        Returns:
+            int -- number of project from list
+        """
+
         project_name = api_data['project']
-        platform_number = self.get_platform_number_from_name(api_data=api_data)
+        platform_number = self.get_platform_number_by_name(api_data=api_data)
         for index, project in enumerate(api_data['organization']['platforms'][platform_number]['projects']):
             if project['name'] == project_name:
                 return index

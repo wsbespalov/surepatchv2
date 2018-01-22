@@ -478,49 +478,49 @@ class API(object):
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_os_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_os_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_pip_auto_system_none(self, api_data: dict) -> bool:
         components = self.get_components_pip_auto_system_none(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_pip_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_pip_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_requirements_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_requirements_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_npm_auto_system_none(self, api_data: dict) -> bool:
         components = self.get_components_npm_auto_system_none(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_npm_local_auto_system_none(self, api_data: dict) -> bool:
         components = self.get_components_npm_local_auto_system_none(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
 
 
@@ -530,49 +530,49 @@ class API(object):
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_package_json_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_package_json_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_package_lock_json_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_npm_local_auto_system_none(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_gem_auto_system_none(self, api_data: dict) -> bool:
         components = self.get_components_gem_auto_system_none(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_gem_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_gem_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_gemfile_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_gemfile_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_gemfile_lock_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_gemfile_lock_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_component_set(api_data=api_data)
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # Show
@@ -587,7 +587,7 @@ class API(object):
                     api_data['platform'] == '':
                 print_line('Empty platform name.')
                 return False
-            platform_number = self.web_api.get_platform_number_from_name(api_data=api_data)
+            platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
             if platform_number == -1:
                 print_line(f"No such platform: {api_data['platform']}.")
                 return False
@@ -598,7 +598,7 @@ class API(object):
                     api_data['platform'] == '':
                 print_line('Empty platform name.')
                 return False
-            platform_number = self.web_api.get_platform_number_from_name(api_data=api_data)
+            platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
             if platform_number == -1:
                 print_line(f"No such platform: {api_data['platform']}.")
                 return False
@@ -622,7 +622,7 @@ class API(object):
 
     def action_show_projects(self, api_data: dict) -> bool:
         projects = []
-        platform_number = self.web_api.get_platform_number_from_name(api_data=api_data)
+        platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
         for project in api_data['organization']['platforms'][platform_number]['projects']:
             projects.append({'name': project['name'], 'description': 'default project'})
         print_projects(projects=projects)
@@ -1194,7 +1194,7 @@ class API(object):
             return projects
         if api_data['organization']['platforms'] is None:
             return projects
-        platform_number = self.web_api.get_platform_number_from_name(api_data=api_data)
+        platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
         if platform_number == -1:
             return projects
         for project in api_data['organization']['platforms'][platform_number]['projects']:
@@ -1206,7 +1206,7 @@ class API(object):
             return [None]
         if api_data['organization']['platforms'] is None:
             return [None]
-        platform_number = self.web_api.get_platform_number_from_name(api_data=api_data)
+        platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
         if platform_number == -1:
             return [None]
         project_number = self.web_api.get_project_number_from_name(api_data=api_data)
@@ -1219,7 +1219,7 @@ class API(object):
             return [None]
         if api_data['organization']['platforms'] is None:
             return [None]
-        platform_number = self.web_api.get_platform_number_from_name(api_data=api_data)
+        platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
         if platform_number == -1:
             return [None]
         project_number = self.web_api.get_project_number_from_name(api_data=api_data)

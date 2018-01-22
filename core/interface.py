@@ -498,8 +498,9 @@ def print_issues(issues: list) -> None:
 
 
 def main():
+    print_logo()
     platforms = [
-        {'name': '1wei eriv irufnir fjw erfw   ner ed3dd3 fowef fr4e', 'description': 'description1description1des cription1description1descrip tion1des cription1descr iption1 description1'},
+        {'name': '1wei eriv irufnir fj ner ed3dd3 fowef fr4e', 'description': 'description1 description1des cripti on1description 1descrip tion1des cription1d escr iption1 description1'},
         {'name': '2', 'description': 'description2'},
         {'name': '3', 'description': 'description3'}
     ]
