@@ -7,17 +7,14 @@ from core.interface import print_line
 
 
 class WebAPI(object):
+    """
+    Web API for surepatch CLI Application.
+    """
 
     headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:45.0) Gecko/20100101 Firefox/45.0',
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:45.0) \
+        Gecko/20100101 Firefox/45.0',
         'token': ''}
-    # a = "http://192.168.1.134:3000/"
-    # b = "http://192.168.1.134:5555/api"
-    # login_url = b + "/auth/login"
-    # organization_url = b + "/organization"
-    # platform_url = b + "/platforms"
-    # project_url = b + "/projects"
-    # components_url = b + "/components"
     base_url = "https://beta.surepatch.net"
     login_url = base_url + "/api/auth/login"
     organization_url = base_url + "/api/organization"
@@ -47,7 +44,7 @@ class WebAPI(object):
         components=[],
         project_url=None)
 
-    def login(self, api_data: dict) -> bool:
+    def send_login_request(self, api_data: dict) -> bool:
         self.login_payload['username'] = api_data['user']
         self.login_payload['password'] = api_data['password']
         self.login_payload['referalToken'] = None
@@ -59,10 +56,10 @@ class WebAPI(object):
                 json=self.login_payload)
             if response.status_code == 200:
                 try:
-                    login_response = json.loads(response.text)
-                    api_data['token'] = login_response['token']
-                    api_data['user_id'] = login_response['userID']
-                    api_data['org_id'] = login_response['orgID']
+                    login_response_text = json.loads(response.text)
+                    api_data['token'] = login_response_text['token']
+                    api_data['user_id'] = login_response_text['userID']
+                    api_data['org_id'] = login_response_text['orgID']
                     api_data['organization'] = None
                     print_line('Login success.')
                     return True
@@ -84,7 +81,7 @@ class WebAPI(object):
             print_line(f'Request exception: {request_exception}')
             return False
 
-    def get_organization_parameters(self, api_data: dict) -> bool:
+    def send_get_organization_parameters_request(self, api_data: dict) -> bool:
         self.headers['token'] = api_data['token']
         try:
             response = requests.get(
@@ -165,7 +162,7 @@ class WebAPI(object):
             print_line(f'Request exception: {request_exception}')
             return False
 
-    def create_new_platform(self, api_data: dict) -> bool:
+    def send_create_new_platform_request(self, api_data: dict) -> bool:
         platform = api_data['platform']
         description = api_data['description']
         self.headers['token'] = api_data['token']
@@ -193,7 +190,7 @@ class WebAPI(object):
             print_line(f'Request exception: {request_exception}')
             return False
 
-    def create_new_project(self, api_data: dict) -> bool:
+    def send_create_new_project_request(self, api_data: dict) -> bool:
         project = api_data['project']
         components = api_data['components']
         platform_id = self.get_platform_id_from_name(api_data=api_data)
@@ -223,7 +220,7 @@ class WebAPI(object):
             print_line(f'Request exception: {request_exception}')
             return False
 
-    def create_new_component_set(self, api_data: dict) -> bool:
+    def send_create_new_component_set_request(self, api_data: dict) -> bool:
         platform = api_data['platform']
         project = api_data['project']
         components = api_data['components']

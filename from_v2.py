@@ -120,12 +120,12 @@ class API(object):
     # LOGIN
 
     def action_login(self, api_data: dict) -> bool:
-        return self.web_api.login(api_data=api_data)
+        return self.web_api.send_login_request(api_data=api_data)
 
     # GET ORGANIZATION PARAMETERS
 
     def get_organization_parameters(self, api_data: dict) -> bool:
-        return self.web_api.get_organization_parameters(api_data=api_data)
+        return self.web_api.send_get_organization_parameters_request(api_data=api_data)
 
     # CREATE PLATFORM
 
@@ -136,7 +136,7 @@ class API(object):
         if api_data['description'] is None or api_data['description'] == '':
             print_line('Empty platform description. Change description to "default platform".')
             api_data['description'] = "default platform"
-        return self.web_api.create_new_platform(api_data=api_data)
+        return self.web_api.send_create_new_platform_request(api_data=api_data)
 
     # CREATE PROJECT
 
@@ -256,7 +256,7 @@ class API(object):
                 if components is None:
                     components = []
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_os_auto_system_path(self, api_data: dict) -> bool:
         components = self.load_and_parse_os_components_from_file(os_type=api_data['os'], filename=api_data['file'])
@@ -264,7 +264,7 @@ class API(object):
             api_data['components'] = []
         else:
             api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_pip_auto_system_none(self, api_data: dict) -> bool:
         components = list()
@@ -276,7 +276,7 @@ class API(object):
             for key in installations:
                 components.append({'name': key, 'version': installations[key]})
             api_data['components'] = components
-            return self.web_api.create_new_project(api_data=api_data)
+            return self.web_api.send_create_new_project_request(api_data=api_data)
         except Exception as e:
             print_line(f'Get an exception: {e}.')
             return False
@@ -287,7 +287,7 @@ class API(object):
             api_data['components'] = []
         else:
             api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_requirements_auto_system_path(self, api_data: dict) -> bool:
         components = self.load_and_parse_pip_components_from_path(filename=api_data['file'])
@@ -295,7 +295,7 @@ class API(object):
             api_data['components'] = []
         else:
             api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_npm_auto_system_none(self, api_data: dict) -> bool:
         if api_data['os'] == 'windows':
@@ -313,7 +313,7 @@ class API(object):
             api_data['components'] = []
         else:
             api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_package_json_auto_system_path(self, api_data: dict) -> bool:
         components = self.load_and_parse_package_json_components_from_path(filename=api_data['file'])
@@ -321,7 +321,7 @@ class API(object):
             api_data['components'] = []
         else:
             api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_gem_auto_system_none(self, api_data: dict) -> bool:
         print_line('Dont check yet')
@@ -333,7 +333,7 @@ class API(object):
             api_data['components'] = []
         else:
             api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_gemlist_auto_system_path(self, api_data: dict) -> bool:
         print_line('Dont check yet')

@@ -80,14 +80,14 @@ class API(object):
     # -------------------------------------------------------------------------
 
     def action_login(self, api_data: dict) -> bool:
-        return self.web_api.login(api_data=api_data)
+        return self.web_api.send_login_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # GET ORGANIZATION PARAMETERS
     # -------------------------------------------------------------------------
 
     def get_organization_parameters(self, api_data: dict) -> bool:
-        return self.web_api.get_organization_parameters(api_data=api_data)
+        return self.web_api.send_get_organization_parameters_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # PLATFORM
@@ -100,7 +100,7 @@ class API(object):
         if api_data['description'] is None or api_data['description'] == '':
             print_line('Empty platform description. Change description to "default platform".')
             api_data['description'] = "default platform"
-        return self.web_api.create_new_platform(api_data=api_data)
+        return self.web_api.send_create_new_platform_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # PROJECT
@@ -232,14 +232,14 @@ class API(object):
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_os_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_os_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     # Python
 
@@ -248,21 +248,21 @@ class API(object):
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_pip_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_pip_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_requirements_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_requirements_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     # NPM
 
@@ -271,35 +271,35 @@ class API(object):
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_npm_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_npm_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_npm_local_auto_system_none(self, api_data: dict) -> bool:
         components = self.get_components_npm_local_auto_system_none(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_package_lock_json_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_npm_lock_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_package_json_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_package_json_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     # Ruby GEM
 
@@ -308,28 +308,28 @@ class API(object):
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_gem_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_gem_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_gemfile_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_gemfile_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_gemfile_lock_auto_system_path(self, api_data: dict) -> bool:
         components = self.get_components_gemfile_lock_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
-        return self.web_api.create_new_project(api_data=api_data)
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # SET
@@ -1257,7 +1257,8 @@ class API(object):
         config = dict(
             team=api_data['team'],
             user=api_data['user'],
-            password=api_data['password']
+            password=api_data['password'],
+            auth_token=api_data['auth_token']
         )
         with open(full_path, 'w') as yaml_config_file:
             try:
@@ -1290,6 +1291,9 @@ class API(object):
                 if 'password' not in config or config['password'] is None or config['password'] == '':
                     return False
                 api_data['password'] = config['password']
+                if 'auth_token' not in config or config['auth_token'] is None:
+                    config['auth-token'] = ''
+                api_data['auth_token'] = config['auth_token']
                 return True
             except yaml.YAMLError as yaml_exception:
                 print_line(f'Config file save in yaml format exception: {yaml_exception}.')

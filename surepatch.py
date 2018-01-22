@@ -92,6 +92,13 @@ def create_parser():
         required=False,
         help='Define Set name. If is set "auto" - \
             set name will be incremented automatically')
+    parser.add_argument(
+        '--token',
+        type=str,
+        required=False,
+        help='Define token from your web dashboard \
+        to login without password'
+    )
     return parser.parse_args()
 
 
@@ -148,7 +155,8 @@ def main():
         os_sp=get_os_sp(get_os_platform()),
         os_release=get_os_release(),
         os_machine=get_os_machine(),
-        components=[]
+        components=[],
+        auth_token=arguments.token
     )
 
     if api.run_action(api_data=api_data):
