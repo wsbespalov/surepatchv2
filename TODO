@@ -1,0 +1,9 @@
+1. In branch remaster_get_components
+    - change get_components logic: make dataflow with api_data['components'];
+    - return status (success) code by boolean type.
+    Effect:
+        - reduce code length
+        - simplify code review and testing
+    Finally:
+        - commit, tag
+        - merge remaster_get_components into origin/master

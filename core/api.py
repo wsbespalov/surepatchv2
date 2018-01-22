@@ -292,28 +292,32 @@ class API(object):
 
     def create_project_os_auto_system_none(self, api_data: dict) -> bool:
         """Create project with OS packages, collected by shell command.
-        
+
         Arguments:
             api_data: dict {dict} -- api data set
-        
+
         Returns:
             bool -- Success or not success
         """
 
-        components = self.get_components_os_auto_system_none(api_data=api_data)
-
-        if components[0] is None:
+        if not self.get_components_os_auto_system_none(api_data=api_data):
             return False
-        
-        api_data['components'] = components
-        
+
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_os_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_os_auto_system_path(api_data=api_data)
-        if components[0] is None:
+        """Create project with OS packages, collected in file, created by shell command.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            bool -- Success or not success
+        """
+
+        if not self.get_components_os_auto_system_path(api_data=api_data):
             return False
-        api_data['components'] = components
+
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     # Python
@@ -549,17 +553,15 @@ class API(object):
             return self.create_set_gemfile_lock_auto_system_path(api_data=api_data)
 
     def create_set_os_auto_system_none(self, api_data: dict) -> bool:
-        components = self.get_components_os_auto_system_none(api_data=api_data)
-        if components[0] is None:
+        if not self.get_components_os_auto_system_none(api_data=api_data):
             return False
-        api_data['components'] = components
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_os_auto_system_path(self, api_data: dict) -> bool:
-        components = self.get_components_os_auto_system_path(api_data=api_data)
-        if components[0] is None:
+        if not self.get_components_os_auto_system_path(api_data=api_data):
             return False
-        api_data['components'] = components
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_pip_auto_system_none(self, api_data: dict) -> bool:
@@ -706,7 +708,7 @@ class API(object):
     def show_set(self, api_data: dict) -> bool:
         set = self.get_current_set_name(api_data=api_data)
         print_line(f'Current component set: {set}.')
-        components = self.get_components(api_data=api_data)['components']
+        components = self.get_current_component_set(api_data=api_data)['components']
         print_components(components=components)
         return True
 
@@ -718,37 +720,99 @@ class API(object):
     # Components
     # -------------------------------------------------------------------------
 
-    def get_components_os_auto_system_none(self, api_data: dict) -> list:
+    def get_components_os_auto_system_none(self, api_data: dict) -> bool:
+        """Get components of OS by calling of shell script and than parse its.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            bool -- Success or not success
+        """
+
         if api_data['os_type'] == OSs.WINDOWS:
             if api_data['os_version'] == '10' or api_data['os_version'] == '8':
                 os_packages = self.load_windows_10_packages_from_powershell()[0]
+
                 if os_packages is None:
                     print_line('Failed to load OS components.')
-                    return [None]
+                    return False
+
                 report = os_packages.decode('utf-8').replace('\r', '').split('\n')[9:]
+
                 components = self.parse_windows_10_packages(report)
+
                 if components[0] is None:
                     print_line('Failed parse OS components.')
-                    return [None]
-                return components
-            if api_data['os_version'] == '7':
-                print_line('Windows 7 does not support yet.')
-                return [None]
-        return [None]
+                    return False
 
-    def get_components_os_auto_system_path(self, api_data: dict) -> list:
+                api_data['components'] = components
+                return True
+
+            elif api_data['os_version'] == '7':
+                print_line('Windows 7 does not support yet.')
+                return False
+
+            else:
+                print_line('Windows type not defined.')
+                return False
+
+        elif api_data['os_type'] == OSs.CENTOS:
+            print_line('Centos not support yet.')
+            return False
+
+        elif api_data['os_type'] == OSs.DEBIAN:
+            print_line('Debian not support yet')
+            return False
+
+        elif api_data['os_type'] == OSs.FEDORA:
+            print_line('Fedora not suppirt yet.')
+            return False
+
+        elif api_data['os_type'] == OSs.MACOS:
+            print_line('MacOS dont support yet.')
+            return False
+
+        return False
+
+    def get_components_os_auto_system_path(self, api_data: dict) -> bool:
         if api_data['os_type'] == OSs.WINDOWS:
             if api_data['os_version'] == '10' or api_data['os_version'] == '8':
+
                 report = self.load_windows_10_packages_from_powershell_unloaded_file(api_data['file'])[0]
+
                 if report is None:
-                    return [None]
+                    return False
+
                 components = self.parse_windows_10_packages(report=report)
+
                 if components[0] is None:
-                    return [None]
-                return components
+                    return False
+
+                api_data['components'] = components
+                return True
+
             if api_data['os_version'] == '7':
                 print_line('Windows 7 does not support yet.')
                 return [None]
+
+        elif api_data['os_type'] == OSs.CENTOS:
+            print_line('Centos does not support yet.')
+            return False
+
+        elif api_data['os_type'] == OSs.DEBIAN:
+            print_line('Debian does not support yet')
+            return False
+
+        elif api_data['os_type'] == OSs.FEDORA:
+            print_line('Fedora does not suppirt yet.')
+            return False
+
+        elif api_data['os_type'] == OSs.MACOS:
+            print_line('MacOS does not support yet.')
+            return False
+
+        return False
 
     def get_components_pip_auto_system_none(self, api_data: dict) -> list:
         return self.load_pip_packages_from_frozen_requirement()
@@ -1234,12 +1298,22 @@ class API(object):
                 except:
                     continue
         return components
+    
     # -------------------------------------------------------------------------
     # Addition methods
     # -------------------------------------------------------------------------
 
     @staticmethod
     def define_file_encoding(filename: str) -> str:
+        """Define encoding of file.
+        
+        Arguments:
+            filename: str {str} -- full path fo file
+        
+        Returns:
+            str -- encoing
+        """
+
         encodings = ['utf-16', 'utf-8', 'windows-1250', 'windows-1252', 'iso-8859-7', 'macgreek']
         for e in encodings:
             try:
@@ -1254,6 +1328,15 @@ class API(object):
 
     @staticmethod
     def get_my_platforms(api_data: dict) -> list:
+        """Get platforms names as list.
+        
+        Arguments:
+            api_data: dict {dict} -- api data set
+        
+        Returns:
+            list -- list of platforms names
+        """
+
         platforms = []
         if api_data['organization'] is None:
             return platforms
@@ -1264,42 +1347,86 @@ class API(object):
         return platforms
 
     def get_my_projects(self, api_data: dict) -> list:
-        projects = []
+        """Get projects names as list.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            list -- list of projects names
+        """
+
         if api_data['organization'] is None:
-            return projects
+            return []
+
         if api_data['organization']['platforms'] is None:
-            return projects
+            return []
+
         platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
+
         if platform_number == -1:
-            return projects
+            return []
+
+        projects = []
         for project in api_data['organization']['platforms'][platform_number]['projects']:
             projects.append(project['name'])
+
         return projects
 
     def get_current_set_name(self, api_data: dict) -> list:
+        """Get current coomponent set name.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            list -- component set name as first list element
+        """
+
         if api_data['organization'] is None:
             return [None]
+
         if api_data['organization']['platforms'] is None:
             return [None]
+
         platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
+
         if platform_number == -1:
             return [None]
+
         project_number = self.web_api.get_project_number_by_name(api_data=api_data)
+
         if project_number == -1:
             return ['0.0.1']
+
         return [api_data['organization']['platforms'][platform_number]['projects'][project_number]['current_component_set']['name']]
 
-    def get_components(self, api_data: dict) -> list:
+    def get_current_component_set(self, api_data: dict) -> list:
+        """Get current component set for platform/project.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            list -- component set as list
+        """
+
         if api_data['organization'] is None:
             return [None]
+
         if api_data['organization']['platforms'] is None:
             return [None]
+
         platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
+
         if platform_number == -1:
             return [None]
+
         project_number = self.web_api.get_project_number_by_name(api_data=api_data)
+
         if project_number == -1:
             return [None]
+
         return api_data['organization']['platforms'][platform_number]['projects'][project_number]['current_component_set']
 
     # -------------------------------------------------------------------------
@@ -1308,6 +1435,15 @@ class API(object):
 
     @staticmethod
     def check_action_type_match(api_data: dict) -> bool:
+        """Check if action type, pointed in arguments match with template.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            bool -- Success or not success
+        """
+
         if 'action' not in api_data:
             return False
         if api_data['action'] != Actions.SAVE_CONFIG and \
@@ -1326,58 +1462,102 @@ class API(object):
 
     @staticmethod
     def save_config_to_file(api_data: dict) -> bool:
+        """Save data into config fle in yaml format.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            bool -- Success or not success
+        """
+
         file_name = '.surepatch.yaml'
         file_path = os.path.expanduser('~')
         full_path = os.path.join(file_path, file_name)
+
         config = dict(
             team=api_data['team'],
             user=api_data['user'],
             password=api_data['password'],
             auth_token=api_data['auth_token']
         )
+
         with open(full_path, 'w') as yaml_config_file:
             try:
                 yaml.dump(config, yaml_config_file)
                 return True
+
             except yaml.YAMLError as yaml_exception:
                 print_line(f'Config file save in yaml format exception: {yaml_exception}')
                 return False
+
             finally:
                 yaml_config_file.close()
 
     @staticmethod
     def load_config_from_file(api_data: dict) -> bool:
+        """Load data from config file in yaml format.
+
+        Arguments:
+            api_data: dict {dict} -- api data set
+
+        Returns:
+            bool -- Success or not success
+        """
+
         file_name = '.surepatch.yaml'
         file_path = os.path.expanduser('~')
         full_path = os.path.join(file_path, file_name)
+
         if not os.path.isfile(full_path):
             print_line(f'Config file does not exist: ~/{file_name}')
             print_line(f'Create config file first with parameter --action=save_config.')
             return False
-        with open(full_path, 'r') as yaml_config_file:
+
+        enc = self.define_file_encoding(full_path)
+
+        if enc == 'undefined':
+            print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+            return [None]
+
+        with open(full_path, 'r', encoding=enc) as yaml_config_file:
             try:
                 config = yaml.load(yaml_config_file)
+
                 if 'team' not in config or config['team'] is None or config['team'] == '':
                     return False
+
                 api_data['team'] = config['team']
+
                 if 'user' not in config or config['user'] is None or config['user'] == '':
                     return False
+
                 api_data['user'] = config['user']
+
                 if 'password' not in config or config['password'] is None or config['password'] == '':
                     return False
+
                 api_data['password'] = config['password']
+
                 if 'auth_token' not in config or config['auth_token'] is None:
                     config['auth-token'] = ''
+
                 api_data['auth_token'] = config['auth_token']
+
                 return True
+
             except yaml.YAMLError as yaml_exception:
-                print_line(f'Config file save in yaml format exception: {yaml_exception}.')
+                print_line(f'Get an exception while read config file: {yaml_exception}.')
                 return False
+
             finally:
                 yaml_config_file.close()
 
 
 class Actions(object):
+    """Class for constant actions names.
+    """
+
     SAVE_CONFIG = 'save_config'
     CREATE_PLATFORM = 'create_platform'
     CREATE_PROJECT = 'create_project'
@@ -1388,6 +1568,9 @@ class Actions(object):
 
 
 class Targets(object):
+    """Class for constant targets names.
+    """
+
     OS = 'os'
     PIP = 'pip'
     REQ = 'req'
@@ -1402,16 +1585,25 @@ class Targets(object):
 
 
 class Methods(object):
+    """Class for constant methods names.
+    """
+
     AUTO = 'auto'
     MANUAL = 'manual'
 
 
 class Formats(object):
+    """Class for constant format names.
+    """
+
     SYSTEM = 'system'
     MANUAL = 'manual'
 
 
 class OSs(object):
+    """Class for OS constant names.
+    """
+
     WINDOWS = 'windows'
     UBUNTU = 'ubuntu'
     DEBIAN = 'debian'
