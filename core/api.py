@@ -375,8 +375,10 @@ class API(object):
         :return: result, modify api_data
         """
         components = self.get_components_npm_auto_system_path(api_data=api_data)
+
         if components[0] is None:
             return False
+
         api_data['components'] = components
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
@@ -388,28 +390,47 @@ class API(object):
         :return: result, modify api_data
         """
         components = self.get_components_npm_local_auto_system_none(api_data=api_data)
+
         if components[0] is None:
             return False
+
         api_data['components'] = components
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_package_lock_json_auto_system_path(self, api_data: dict) -> bool:
+        """
+        Create project with NPM packages from package-lock.json, defined by --file parameter.
+        :param api_data: api data set
+        :return: result
+        """
         components = self.get_components_npm_lock_auto_system_path(api_data=api_data)
+
         if components[0] is None:
             return False
+
         api_data['components'] = components
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_package_json_auto_system_path(self, api_data: dict) -> bool:
+        """
+        Create project with NPM packages from package.json, defined by --file parameter.
+        :param api_data: api data set
+        :return: result
+        """
         components = self.get_components_package_json_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
         api_data['components'] = components
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
-    # Ruby GEM
+    # Target = Ruby packages
 
     def create_project_gem_auto_system_none(self, api_data: dict) -> bool:
+        """
+        Create project with Ruby packages, collected from shell command.
+        :param api_data: api data set
+        :return: result
+        """
         components = self.get_components_gem_auto_system_none(api_data=api_data)
         if components[0] is None:
             return False
@@ -417,6 +438,12 @@ class API(object):
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_gem_auto_system_path(self, api_data: dict) -> bool:
+        """
+        Create project with Ruby packages, collected from shell command and
+        stored in gem list file, defined in --file parameter.
+        :param api_data:
+        :return:
+        """
         components = self.get_components_gem_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
@@ -424,6 +451,12 @@ class API(object):
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_gemfile_auto_system_path(self, api_data: dict) -> bool:
+        """
+        Create project with Ruby packages, collected from Gemfile, defined
+        by --file parameter.
+        :param api_data:
+        :return:
+        """
         components = self.get_components_gemfile_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
@@ -431,6 +464,12 @@ class API(object):
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_gemfile_lock_auto_system_path(self, api_data: dict) -> bool:
+        """
+        Create project with Ruby packages, collected from Gemfile.lock file,
+        defined by --file parameter.
+        :param api_data: api data set
+        :return: result
+        """
         components = self.get_components_gemfile_lock_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False

@@ -7,9 +7,9 @@ from core.interface import print_line
 
 
 class WebAPI(object):
-    """Web API for surepatch CLI Application.
     """
-
+    Web API for Surepatch CLI Application.
+    """
 
     headers = {
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.9; rv:45.0) \
@@ -45,13 +45,10 @@ class WebAPI(object):
         project_url=None)
 
     def send_login_request(self, api_data: dict) -> bool:
-        """Send login request to Surepatch server.
-        
-        Arguments:
-            api_data: dict {dict} -- api data set
-        
-        Returns:
-            bool -- Success or not success
+        """
+        Send login request to Surepatch server.
+        :param api_data: api data set
+        :return: result
         """
 
         self.login_payload['username'] = api_data['user']
@@ -91,13 +88,10 @@ class WebAPI(object):
             return False
 
     def send_get_organization_parameters_request(self, api_data: dict) -> bool:
-        """Send special request to Surepatch server to get Organization information.
-        
-        Arguments:
-            api_data: dict {dict} -- api data set
-        
-        Returns:
-            bool -- Success or not success
+        """
+        Send special request to Surepatch server to get Organization information.
+        :param api_data: api data set
+        :return: result
         """
 
         self.headers['token'] = api_data['token']
@@ -181,20 +175,15 @@ class WebAPI(object):
             return False
 
     def send_create_new_platform_request(self, api_data: dict) -> bool:
-        """Send request to Surepatch server to create new Platform.
-        
-        Arguments:
-            api_data: dict {dict} -- api data set
-        
-        Returns:
-            bool -- Success or not success
+        """
+        Send request to Surepatch server to create new Platform.
+        :param api_data: api data set
+        :return: result
         """
 
-        platform = api_data['platform']
-        description = api_data['description']
         self.headers['token'] = api_data['token']
-        self.platform_payload['name'] = platform
-        self.platform_payload['description'] = description
+        self.platform_payload['name'] = api_data['platform']
+        self.platform_payload['description'] = api_data['description']
         try:
             response = requests.post(
                 url=self.platform_url,
@@ -218,22 +207,16 @@ class WebAPI(object):
             return False
 
     def send_create_new_project_request(self, api_data: dict) -> bool:
-        """Send request to Surepatch server to create new Project.
-        
-        Arguments:
-            api_data: dict {dict} -- api data set
-        
-        Returns:
-            bool -- Success or not success
+        """
+        Send request to Surepatch server to create new Project.
+        :param api_data: api data set
+        :return: result
         """
 
-        project = api_data['project']
-        components = api_data['components']
-        platform_id = self.get_platform_id_by_name(api_data=api_data)
         self.headers['token'] = api_data['token']
-        self.project_payload['name'] = project
-        self.project_payload['platform_id'] = platform_id
-        self.project_payload['components'] = components
+        self.project_payload['name'] = api_data['project']
+        self.project_payload['platform_id'] = self.get_platform_id_by_name(api_data=api_data)
+        self.project_payload['components'] = api_data['components']
         try:
             response = requests.post(
                 url=self.project_url,
@@ -257,13 +240,10 @@ class WebAPI(object):
             return False
 
     def send_create_new_component_set_request(self, api_data: dict) -> bool:
-        """Send request to Surepatch server to create new Component Set.
-        
-        Arguments:
-            api_data: dict {dict} -- api data set
-        
-        Returns:
-            bool -- Success or not success
+        """
+        Send request to Surepatch server to create new Component Set.
+        :param api_data: api data set
+        :return:
         """
 
         platform = api_data['platform']
@@ -307,13 +287,10 @@ class WebAPI(object):
 
     @staticmethod
     def get_platform_id_by_name(api_data: dict) -> int:
-        """Get platform ID by its name.
-        
-        Arguments:
-            api_data: dict {dict} -- api data set
-        
-        Returns:
-            int -- ID of platform
+        """
+        Get platform ID by its name.
+        :param api_data: api data set
+        :return: result
         """
         platform_name = api_data['platform']
         for platform in api_data['organization']['platforms']:
@@ -323,13 +300,10 @@ class WebAPI(object):
 
     @staticmethod
     def get_platform_number_by_name(api_data: dict)-> int:
-        """Get Platform number in list by its name
-
-        Arguments:
-            api_data: dict {dict} -- api data set
-
-        Returns:
-            int -- number of platform from list
+        """
+        Get Platform number in list by its name.
+        :param api_data: api data set
+        :return:result
         """
 
         platform_name = api_data['platform']
@@ -339,13 +313,10 @@ class WebAPI(object):
         return -1
 
     def get_project_number_by_name(self, api_data: dict) -> int:
-        """Get project numer (index) by its name.
-        
-        Arguments:
-            api_data: dict {dict} -- api data set
-        
-        Returns:
-            int -- number of project from list
+        """
+        Get project number (index) by its name.
+        :param api_data: api data set
+        :return: result
         """
 
         project_name = api_data['project']
