@@ -481,17 +481,27 @@ class API(object):
     # -------------------------------------------------------------------------
 
     def action_create_new_set(self, api_data: dict) -> bool:
+        """
+        Run action: CREATE New Set in different cases.
+        :param api_data: api data set
+        :return: result, modify api_data
+        """
         if api_data['platform'] is None:
             print_line('Empty Platform name. Please use --platform=platform_name parameter.')
             return False
+
         platforms = self.get_my_platforms(api_data=api_data)
+
         if api_data['platform'] not in platforms:
             print_line(f"Platform {api_data['platform']} does not exists.")
             return False
+
         if api_data['project'] is None:
             print_line('Empty Project name. Please use --project=project_name parameter.')
             return False
+
         projects = self.get_my_projects(api_data=api_data)
+
         if api_data['project'] not in projects:
             print_line(f"Project {api_data['project']} does not exists.")
             return False
@@ -510,8 +520,10 @@ class API(object):
                 d = d + 1
                 current_set_name = current_set_name[:-1]
                 set_name = current_set_name + str(d)
+
             else:
                 set_name = current_set_name + '.1'
+
             api_data['set'] = set_name
 
         # Create new set with OS packages {from shell request}
@@ -619,6 +631,11 @@ class API(object):
             return self.create_set_gemfile_lock_auto_system_path(api_data=api_data)
 
     def create_set_os_auto_system_none(self, api_data: dict) -> bool:
+        """
+
+        :param api_data:
+        :return:
+        """
         if not self.get_components_os_auto_system_none(api_data=api_data):
             return False
 
