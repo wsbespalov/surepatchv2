@@ -310,10 +310,23 @@ class API(object):
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_os_auto_system_path(self, api_data: dict) -> bool:
+        """Create project with OS packages, collected fron shell command
+           and stored in file, defined by path.
+        
+        Arguments:
+            api_data: dict {dict} -- api data set
+        
+        Returns:
+            bool -- Success or not success
+        """
+
         components = self.get_components_os_auto_system_path(api_data=api_data)
+        
         if components[0] is None:
             return False
+
         api_data['components'] = components
+        
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     # Python
