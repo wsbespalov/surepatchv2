@@ -25,13 +25,13 @@ except ImportError as import_exception:
 
 raw_npm_components = []
 
+
 def walkdict(data):
-    """Recursive dict processing for npm list parsing.
-
-    Arguments:
-        data {list} -- items list
     """
-
+    Recursive dict processing for npm list parsing.
+    :param data:
+    :return:
+    """
     for k, v in data.items():
         if isinstance(v, dict):
             walkdict(v)
@@ -43,7 +43,6 @@ class API(object):
     """Main CLI App API.
     """
 
-
     def __init__(self):
         self.web_api = WebAPI()
 
@@ -52,13 +51,10 @@ class API(object):
     # -------------------------------------------------------------------------
 
     def run_action(self, api_data: dict) -> bool:
-        """Main routing method for app actions.
-
-        Arguments:
-            api_data: dict {dict} -- api data set
-
-        Returns:
-            bool -- Success or not success
+        """
+        Main routing method for app actions.
+        :param api_data: api data set
+        :return: result, modify api_data
         """
 
         if not self.check_action_type_match(api_data=api_data):
@@ -99,13 +95,10 @@ class API(object):
     # -------------------------------------------------------------------------
 
     def action_login_server_success(self, api_data: dict) -> bool:
-        """Log in into server.
-
-        Arguments:
-            api_data: dict {dict} -- api data set
-
-        Returns:
-            bool -- login result
+        """
+        Log in into server.
+        :param api_data: api data set
+        :return: result, modify api_data
         """
 
         return self.web_api.send_login_request(api_data=api_data)
@@ -115,14 +108,11 @@ class API(object):
     # -------------------------------------------------------------------------
 
     def get_organization_parameters_from_server(self, api_data: dict) -> bool:
-        """Get organization parameters from Surepatch server and fill the
+        """
+        Get organization parameters from Surepatch server and fill the
         appropriate structure.
-
-        Arguments:
-            api_data: dict {dict} -- api data set
-
-        Returns:
-            bool -- Success or not success
+        :param api_data: api data set
+        :return: result, modify api_data
         """
 
         return self.web_api.send_get_organization_parameters_request(api_data=api_data)
@@ -132,13 +122,10 @@ class API(object):
     # -------------------------------------------------------------------------
 
     def action_create_new_platform(self, api_data: dict) -> bool:
-        """Run action: CREATE New Platform.
-
-        Arguments:
-            api_data: dict {dict} -- api data set
-
-        Returns:
-            bool -- Success or not success
+        """
+        Run action: CREATE New Platform.
+        :param api_data: api data set
+        :return: result, modify api_data
         """
 
         if api_data['platform'] is None or api_data['platform'] == '':
@@ -156,13 +143,10 @@ class API(object):
     # -------------------------------------------------------------------------
 
     def action_create_new_project(self, api_data: dict) -> bool:
-        """Run action: CREATE New Project in different cases.
-
-        Arguments:
-            api_data: dict {dict} -- api data set
-
-        Returns:
-            bool -- Success or not success
+        """
+        Run action: CREATE New Project in different cases.
+        :param api_data: api data set
+        :return: result, modify api_data
         """
 
         if api_data['platform'] is None or api_data['platform'] == '':
@@ -288,90 +272,108 @@ class API(object):
         print_line('Something wrong with app parameters. Please, look through README.md')
         return False
 
-    # Process OS packages
+    # Target = OS packages
 
     def create_project_os_auto_system_none(self, api_data: dict) -> bool:
-        """Create project with OS packages, collected by shell command.
-
-        Arguments:
-            api_data: dict {dict} -- api data set
-
-        Returns:
-            bool -- Success or not success
+        """
+        Create project with OS packages, collected by shell command.
+        :param api_data: api data set
+        :return: result, modify api_data
         """
 
-        if not self.get_components_os_auto_system_none(api_data=api_data):
+        components = self.get_components_os_auto_system_none(api_data=api_data)
+
+        if components[0] is None:
             return False
 
+        api_data['components'] = components
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_os_auto_system_path(self, api_data: dict) -> bool:
-<<<<<<< HEAD
-        """Create project with OS packages, collected fron shell command
-           and stored in file, defined by path.
-        
-        Arguments:
-            api_data: dict {dict} -- api data set
-        
-=======
-        """Create project with OS packages, collected in file, created by shell command.
-
-        Arguments:
-            api_data: dict {dict} -- api data set
-
->>>>>>> dd7a607075565cf13bd50e11ca062c547a638910
-        Returns:
-            bool -- Success or not success
+        """
+        Create project with OS packages, collected from shell command
+        and stored in file, defined in path.
+        :param api_data: api data set
+        :return: result, modify api_data
         """
 
-<<<<<<< HEAD
         components = self.get_components_os_auto_system_path(api_data=api_data)
         
         if components[0] is None:
             return False
 
         api_data['components'] = components
-        
-=======
-        if not self.get_components_os_auto_system_path(api_data=api_data):
-            return False
-
->>>>>>> dd7a607075565cf13bd50e11ca062c547a638910
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
-    # Python
+    # Target = Python packages
 
     def create_project_pip_auto_system_none(self, api_data: dict) -> bool:
+        """
+        Create project with Python PIP packages, collected from shell command.
+        :param api_data: api data set
+        :return: result, modify api_data
+        """
         components = self.get_components_pip_auto_system_none(api_data=api_data)
+
         if components[0] is None:
             return False
+
         api_data['components'] = components
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_pip_auto_system_path(self, api_data: dict) -> bool:
+        """
+        Create project with Python PIP packages, collected from shell command
+        and stored in file, defined in path.
+        :param api_data: api data set
+        :return: result, modify api_data
+        """
         components = self.get_components_pip_auto_system_path(api_data=api_data)
+
         if components[0] is None:
             return False
+
         api_data['components'] = components
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_requirements_auto_system_path(self, api_data: dict) -> bool:
+        """
+        Create project with Python requirements.txt file, defined in path.
+        :param api_data: api data set
+        :return: result, modify api_data
+        """
         components = self.get_components_requirements_auto_system_path(api_data=api_data)
+
         if components[0] is None:
             return False
+
         api_data['components'] = components
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
-    # NPM
+    # Target = NodeJS NPM packages
 
     def create_project_npm_auto_system_none(self, api_data: dict) -> bool:
+        """
+        Create project with NPM packages, collected from shell command (nmp list --json).
+        Shell command runs global from root path.
+        :param api_data: api data set
+        :return: result, modify api_data
+        """
         components = self.get_components_npm_auto_system_none(api_data=api_data)
+
         if components[0] is None:
             return False
+
         api_data['components'] = components
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_npm_auto_system_path(self, api_data: dict) -> bool:
+        """
+        Create project with NPM packages, collected from shell command (npm list --json)
+        and stored in file, defined in path.
+        :param api_data: api data set
+        :return: result, modify api_data
+        """
         components = self.get_components_npm_auto_system_path(api_data=api_data)
         if components[0] is None:
             return False
@@ -379,6 +381,12 @@ class API(object):
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_npm_local_auto_system_none(self, api_data: dict) -> bool:
+        """
+        Create project with NPM packages, collected from shell command (npm list --json).
+        Shell command runs local from path, defined by --file parameter.
+        :param api_data: api data set
+        :return: result, modify api_data
+        """
         components = self.get_components_npm_local_auto_system_none(api_data=api_data)
         if components[0] is None:
             return False
@@ -739,7 +747,7 @@ class API(object):
     # Components
     # -------------------------------------------------------------------------
 
-    def get_components_os_auto_system_none(self, api_data: dict) -> bool:
+    def get_components_os_auto_system_none(self, api_data: dict) -> list:
         """Get components of OS by calling of shell script and than parse its.
 
         Arguments:
@@ -755,7 +763,7 @@ class API(object):
 
                 if os_packages is None:
                     print_line('Failed to load OS components.')
-                    return False
+                    return [None]
 
                 report = os_packages.decode('utf-8').replace('\r', '').split('\n')[9:]
 
@@ -763,36 +771,35 @@ class API(object):
 
                 if components[0] is None:
                     print_line('Failed parse OS components.')
-                    return False
+                    return [None]
 
-                api_data['components'] = components
-                return True
+                return components
 
             elif api_data['os_version'] == '7':
                 print_line('Windows 7 does not support yet.')
-                return False
+                return [None]
 
             else:
                 print_line('Windows type not defined.')
-                return False
+                return [None]
 
         elif api_data['os_type'] == OSs.CENTOS:
             print_line('Centos not support yet.')
-            return False
+            return [None]
 
         elif api_data['os_type'] == OSs.DEBIAN:
             print_line('Debian not support yet')
-            return False
+            return [None]
 
         elif api_data['os_type'] == OSs.FEDORA:
-            print_line('Fedora not suppirt yet.')
-            return False
+            print_line('Fedora not support yet.')
+            return [None]
 
         elif api_data['os_type'] == OSs.MACOS:
             print_line('MacOS dont support yet.')
-            return False
+            return [None]
 
-        return False
+        return [None]
 
     def get_components_os_auto_system_path(self, api_data: dict) -> bool:
         if api_data['os_type'] == OSs.WINDOWS:
@@ -801,15 +808,14 @@ class API(object):
                 report = self.load_windows_10_packages_from_powershell_unloaded_file(api_data['file'])[0]
 
                 if report is None:
-                    return False
+                    return [None]
 
                 components = self.parse_windows_10_packages(report=report)
 
                 if components[0] is None:
-                    return False
+                    return [None]
 
-                api_data['components'] = components
-                return True
+                return components
 
             if api_data['os_version'] == '7':
                 print_line('Windows 7 does not support yet.')
@@ -817,21 +823,21 @@ class API(object):
 
         elif api_data['os_type'] == OSs.CENTOS:
             print_line('Centos does not support yet.')
-            return False
+            return [None]
 
         elif api_data['os_type'] == OSs.DEBIAN:
             print_line('Debian does not support yet')
-            return False
+            return [None]
 
         elif api_data['os_type'] == OSs.FEDORA:
-            print_line('Fedora does not suppirt yet.')
-            return False
+            print_line('Fedora does not support yet.')
+            return [None]
 
         elif api_data['os_type'] == OSs.MACOS:
             print_line('MacOS does not support yet.')
-            return False
+            return [None]
 
-        return False
+        return [None]
 
     def get_components_pip_auto_system_none(self, api_data: dict) -> list:
         return self.load_pip_packages_from_frozen_requirement()
