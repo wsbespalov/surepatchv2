@@ -7,6 +7,7 @@ import json
 import importlib
 import subprocess
 
+from core.interface import ask
 from core.interface import print_line
 from core.interface import print_platforms
 from core.interface import print_projects
@@ -88,7 +89,6 @@ class API(object):
 
         print_line(f"Unknown action code: {api_data['action']}.")
         return False
-
 
     # -------------------------------------------------------------------------
     # LOGIN
@@ -268,6 +268,16 @@ class API(object):
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
             return self.create_project_gemfile_lock_auto_system_path(api_data=api_data)
+
+        if api_data['method'] == Methods.AUTO and \
+                    api_data['format'] == Formats.USER and \
+                    api_data['file'] is not None:
+                return self.create_project_any_auto_user_path(api_data=api_data)
+
+        if api_data['method'] == Methods.MANUAL and \
+                api_data['format'] == Formats.USER and \
+                api_data['file'] is None:
+            return self.create_project_any_manual_user_none(api_data=api_data)
 
         print_line('Something wrong with app parameters. Please, look through README.md')
         return False
@@ -476,6 +486,35 @@ class API(object):
         api_data['components'] = components
         return self.web_api.send_create_new_project_request(api_data=api_data)
 
+    def create_project_any_auto_user_path(self, api_data: dict) -> bool:
+        """
+        Create project with different packages, collected in file,
+        defined by path with simple multiline format: name=version…
+        :param api_data: api data set
+        :return: result
+        """
+        components = self.get_components_any_auto_user_path(api_data=api_data)
+
+        if components[0] is None:
+            return False
+
+        api_data['components'] = components
+        return self.web_api.send_create_new_project_request(api_data=api_data)
+
+    def create_project_any_manual_user_none(self, api_data: dict) -> bool:
+        """
+        Create project with different packages, asked in interactive mode.
+        :param api_data: api data set
+        :return: result
+        """
+        components = self.get_components_any_manual_user_none()
+
+        if components[0] is None:
+            return False
+
+        api_data['components'] = components
+        return self.web_api.send_create_new_project_request(api_data=api_data)
+
     # -------------------------------------------------------------------------
     # SET
     # -------------------------------------------------------------------------
@@ -579,7 +618,7 @@ class API(object):
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
-            return self.create_set_npm_local_auto_system_none(api_data=api_data)
+            return self.create_set_npm_local_auto_system_path(api_data=api_data)
 
         # Create set with NPM packages {from file}
         if api_data['target'] == Targets.NPM and \
@@ -629,6 +668,16 @@ class API(object):
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
             return self.create_set_gemfile_lock_auto_system_path(api_data=api_data)
+
+        if api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.USER and \
+                api_data['file'] is not None:
+            return self.create_set_any_auto_user_path(api_data=api_data)
+
+        if api_data['method'] == Methods.MANUAL and \
+                api_data['format'] == Formats.USER and \
+                api_data['file'] is None:
+            return self.create_set_any_manual_user_none(api_data=api_data)
 
     # Target = OS packages
 
@@ -721,7 +770,7 @@ class API(object):
         api_data['components'] = components
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
-    def create_set_npm_local_auto_system_none(self, api_data: dict) -> bool:
+    def create_set_npm_local_auto_system_path(self, api_data: dict) -> bool:
         """
         Create Component Set with NPM packages, collected from shell command (npm list --json).
         Shell command runs local from path, defined by --file parameter.
@@ -831,6 +880,35 @@ class API(object):
         :return:
         """
         components = self.get_components_gemfile_lock_auto_system_path(api_data=api_data)
+
+        if components[0] is None:
+            return False
+
+        api_data['components'] = components
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
+
+    def create_set_any_auto_user_path(self, api_data: dict) -> bool:
+        """
+        Create Component Set with different packages, collected in file,
+        defined by path with simple multiline format: name=version…
+        :param api_data:
+        :return:
+        """
+        components = self.get_components_any_auto_user_path(api_data=api_data)
+
+        if components[0] is None:
+            return False
+
+        api_data['components'] = components
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
+
+    def create_set_any_manual_user_none(self, api_data: dict) -> bool:
+        """
+        Create Component Set with different packages, asked in interactive mode.
+        :param api_data: api data set
+        :return: result
+        """
+        components = self.get_components_any_manual_user_none()
 
         if components[0] is None:
             return False
@@ -1294,6 +1372,55 @@ class API(object):
         """
         print_line('Dont check yet')
         return [None]
+
+    def get_components_any_auto_user_path(self, api_data: dict) -> list:
+        """
+        Get any components from file, defined by path.
+        :param api_data: api data set
+        :return: result
+        """
+        filename = api_data['file']
+        if os.path.isfile(filename):
+            enc = self.define_file_encoding(filename=filename)
+
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return [None]
+
+            components = []
+
+            with open(filename, 'r', encoding=enc) as pf:
+                packages = pf.read().split('\n')
+                for package in packages:
+                    if len(package) != 0:
+                        if '=' in package:
+                            splitted_package = package.split('=')
+                            if len(splitted_package) == 2:
+                                components.append({'name': splitted_package[0], 'version': splitted_package[1]})
+                return components
+
+        print_line(f'File {filename} not found.')
+        return [None]
+
+    @staticmethod
+    def get_components_any_manual_user_none() -> list:
+        """
+        Get packages from console.
+        :return:
+        """
+        components = []
+
+        if ask('Continue (y/n)? ') == 'n':
+            return [None]
+
+        while True:
+            name = ask('Enter component name: ')
+            version = ask('Enter component version: ')
+            components.append({'name': name, 'version': version})
+            if ask('Continue (y/n)? ') == 'n':
+                break
+
+        return components
 
     # -------------------------------------------------------------------------
     # Loaders
@@ -2140,7 +2267,7 @@ class Formats(object):
     """
 
     SYSTEM = 'system'
-    MANUAL = 'manual'
+    USER = 'user'
 
 
 class OSs(object):

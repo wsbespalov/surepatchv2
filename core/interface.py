@@ -496,6 +496,11 @@ def print_issues(issues: list) -> None:
     print_line('Issues:')
     print_table(elements=issues)
 
+def ask(message: str) -> str:
+    if sys.version_info > (3, 0):
+        return input(message)
+    else:
+        return raw_input(message)
 
 def main():
     print_logo()
