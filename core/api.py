@@ -88,6 +88,18 @@ class API(object):
                 api_data['action'] == Actions.SHOW_SET:
             return self.action_show_platforms_projects_or_sets(api_data=api_data)
 
+        elif api_data['action'] == Actions.DELETE_PLATFORM:
+            return self.action_delete_platform(api_data=api_data)
+
+        elif api_data['action'] == Actions.DELETE_PROJECT:
+            return self.action_delete_project(api_data=api_data)
+
+        elif api_data['action'] == Actions.ARCHIVE_PLATFORM:
+            return self.action_archive_platform(api_data=api_data)
+
+        elif api_data['action'] == Actions.ARCHIVE_PROJECT:
+            return self.action_archive_project(api_data=api_data)
+
         print_line(f"Unknown action code: {api_data['action']}.")
         return False
 
@@ -1057,6 +1069,26 @@ class API(object):
         print_components(components=components[0])
 
         return True
+
+    # -------------------------------------------------------------------------
+    # Delete
+    # -------------------------------------------------------------------------
+
+    def action_delete_platform(self, api_data: dict) -> bool:
+        return self.web_api.send_delete_platform_request(api_data=api_data)
+
+    def action_delete_project(self, api_data: dict) -> bool:
+        return self.web_api.send_delete_project_request(api_data=api_data)
+
+    # -------------------------------------------------------------------------
+    # Archive
+    # -------------------------------------------------------------------------
+
+    def action_archive_platform(self, api_data: dict) -> bool:
+        return self.web_api.send_archive_platform_request(api_data=api_data)
+
+    def action_archive_project(self, api_data: dict) -> bool:
+        return self.web_api.send_archive_project_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # Components
@@ -2438,6 +2470,10 @@ class Actions(object):
     SHOW_PLATFORMS = 'show_platforms'
     SHOW_PROJECTS = 'show_projects'
     SHOW_SET = 'show_set'
+    DELETE_PLATFORM = 'delete_platform'
+    DELETE_PROJECT = 'delete_project'
+    ARCHIVE_PLATFORM = 'archive_platform'
+    ARCHIVE_PROJECT = 'archive_project'
 
 
 class Targets(object):
