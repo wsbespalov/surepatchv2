@@ -1075,9 +1075,19 @@ class API(object):
     # -------------------------------------------------------------------------
 
     def action_delete_platform(self, api_data: dict) -> bool:
+        """
+        Run action: Delete defined Platform.
+        :param api_data: api data set
+        :return: result
+        """
         return self.web_api.send_delete_platform_request(api_data=api_data)
 
     def action_delete_project(self, api_data: dict) -> bool:
+        """
+        Run action: Delete defined Project.
+        :param api_data: api data set
+        :return: result
+        """
         return self.web_api.send_delete_project_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
@@ -1085,9 +1095,19 @@ class API(object):
     # -------------------------------------------------------------------------
 
     def action_archive_platform(self, api_data: dict) -> bool:
+        """
+        Run action: Archive defined Platform.
+        :param api_data: api data set
+        :return: result
+        """
         return self.web_api.send_archive_platform_request(api_data=api_data)
 
     def action_archive_project(self, api_data: dict) -> bool:
+        """
+        Run action: Archive defined Project.
+        :param api_data: api data set
+        :return: result
+        """
         return self.web_api.send_archive_project_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
