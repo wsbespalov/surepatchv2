@@ -6,16 +6,16 @@ import platform
 import argparse
 
 from core.api import API
+from core.api import OSs
 from core.interface import print_line
 
 api = API()
 
 
 def create_parser():
-    """Create argument parser
-
-    Returns:
-        None -- None
+    """
+    Create argument parser.
+    :return: parser
     """
 
     parser = argparse.ArgumentParser(
@@ -98,7 +98,7 @@ def create_parser():
         help='Define Set name. If is set "auto" - \
             set name will be incremented automatically')
     parser.add_argument(
-        '--token',
+        '--auth_token',
         type=str,
         required=False,
         help='Define token from your web dashboard \
@@ -108,47 +108,39 @@ def create_parser():
 
 
 def get_os_platform() -> str:
-    """Get OS platform type.
-
-    Returns:
-        str -- OS platform type
+    """
+    Get OS platform type.
+    :return: platform
     """
 
     if sys.platform == 'darwin' or platform.system() == 'Darwin':
-        return 'macos'
+        return OSs.MACOS
     if sys.platform == 'linux2' or sys.platform == 'linux':
         dist = platform.dist()[0]
         if 'debian' in dist:
-            return 'debian'
+            return OSs.DEBIAN
         if 'fedora' in dist:
-            return 'fedora'
+            return OSs.FEDORA
     if sys.platform == 'win32' or sys.platform == 'win64':
-        return 'windows'
+        return OSs.WINDOWS
 
 
 def get_os_version(os_platform: str) -> str:
-    """Get OS version.
-
-    Arguments:
-        os_platform: str {str} -- name of OS platform
-
-    Returns:
-        str -- version in string
     """
-
+    Get OS version.
+    :param os_platform: os
+    :return: result
+    """
     if os_platform == 'windows':
         return platform.uname()[2]
     return ''
 
 
 def get_os_sp(os_platform: str) -> str:
-    """Get OS service pack (for Windows)
-    
-    Arguments:
-        os_platform: str {str} -- name of OS platform
-    
-    Returns:
-        str -- service pack in string
+    """
+    Get OS service pack (for Windows)
+    :param os_platform: os
+    :return: SP
     """
 
     if os_platform == 'windows':
@@ -157,30 +149,27 @@ def get_os_sp(os_platform: str) -> str:
 
 
 def get_os_release() -> str:
-    """Get OS release.
-    
-    Returns:
-        str -- OS release in string
+    """
+    Get OS release.
+    :return: release
     """
 
     return platform.release()
 
 
 def get_os_machine() -> str:
-    """Get OS machine code.
-    
-    Returns:
-        str -- machine code
+    """
+    Get OS machine code.
+    :return: machine code
     """
 
     return platform.machine()
 
 
 def main():
-    """Application main function.
-    
-    Returns:
-        None -- None
+    """
+    Application main function.
+    :return:
     """
 
     arguments = create_parser()
@@ -203,7 +192,7 @@ def main():
         os_release=get_os_release(),
         os_machine=get_os_machine(),
         components=[],
-        auth_token=arguments.token
+        auth_token=arguments.auth_token
     )
 
     if api.run_action(api_data=api_data):
@@ -214,7 +203,8 @@ def main():
 
 
 if __name__ == '__main__':
-    """Entry point
+    """
+    Entry point
     """
 
     sys.exit(main())

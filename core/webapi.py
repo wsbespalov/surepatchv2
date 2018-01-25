@@ -285,6 +285,149 @@ class WebAPI(object):
             print_line(f'Request exception: {request_exception}')
             return False
 
+    def send_delete_platform_request(self, api_data: dict) -> bool:
+        platform_id = self.get_platform_id_by_name(api_data=api_data)
+        if platform_id == -1:
+            print_line(f"Platform {api_data['platform']} does not exist.")
+            return False
+
+        self.headers['token'] = api_data['token']
+
+        try:
+            response = requests.delete(
+                url=self.platform_url + '/:' + str(platform_id),
+                headers=self.headers,
+                json=self.platform_payload)
+            if response.status_code == 200:
+                return True
+            print_line(f'Delete Platform failed. Status code: {response.status_code}')
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line(f'HTTP Error: {http_exception}')
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line(f'Connection error: {connection_exception}')
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line(f'Connection timeout: {timeout_exception}')
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line(f'Request exception: {request_exception}')
+            return False
+
+    def send_delete_project_request(self, api_data: dict) -> bool:
+        platform_number = self.get_platform_number_by_name(api_data=api_data)
+        if platform_number == -1:
+            print_line(f"Platform {api_data['platform']} does not exist.")
+            return False
+
+        project_number = self.get_project_number_by_name(api_data=api_data)
+        if project_number == -1:
+            print_line(f"Project {api_data['project']} does not exist.")
+            return False
+
+        project_id = api_data['platforms'][platform_number]['projects'][project_number]['id']
+
+        self.headers['token'] = api_data['token']
+
+        try:
+            response = requests.delete(
+                url=self.project_url + '/:' + str(project_id),
+                headers=self.headers,
+                json=self.project_payload)
+            if response.status_code == 200:
+                return True
+            print_line(f'Delete Project failed. Status code: {response.status_code}')
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line(f'HTTP Error: {http_exception}')
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line(f'Connection error: {connection_exception}')
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line(f'Connection timeout: {timeout_exception}')
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line(f'Request exception: {request_exception}')
+            return False
+
+    def send_archive_platform_request(self, api_data: dict) -> bool:
+        platform_id = self.get_platform_id_by_name(api_data=api_data)
+        if platform_id == -1:
+            print_line(f"Platform {api_data['platform']} does not exist.")
+            return False
+
+        self.headers['token'] = api_data['token']
+        self.platform_payload['id'] = platform_id
+        self.platform_payload['options'] = dict(
+            state='archive',
+            archivedBy=api_data['user']
+        )
+        try:
+            response = requests.put(
+                url=self.platform_url,
+                headers=self.headers,
+                json=self.platform_payload)
+            if response.status_code == 200:
+                return True
+            print_line(f'Archive Platform failed. Status code: {response.status_code}')
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line(f'HTTP Error: {http_exception}')
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line(f'Connection error: {connection_exception}')
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line(f'Connection timeout: {timeout_exception}')
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line(f'Request exception: {request_exception}')
+            return False
+
+    def send_archive_project_request(self, api_data: dict) -> bool:
+        platform_number = self.get_platform_number_by_name(api_data=api_data)
+        if platform_number == -1:
+            print_line(f"Platform {api_data['platform']} does not exist.")
+            return False
+
+        project_number = self.get_project_number_by_name(api_data=api_data)
+        if project_number == -1:
+            print_line(f"Project {api_data['project']} does not exist.")
+            return False
+
+        project_id = api_data['platforms'][platform_number]['projects'][project_number]['id']
+
+        self.headers['token'] = api_data['token']
+        self.project_payload['id'] = project_id
+        self.project_payload['options'] = dict(
+            state='archive',
+            archivedBy=api_data['user']
+        )
+
+        try:
+            response = requests.out(
+                url=self.project_url,
+                headers=self.headers,
+                json=self.project_payload)
+            if response.status_code == 200:
+                return True
+            print_line(f'Archive Project failed. Status code: {response.status_code}')
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line(f'HTTP Error: {http_exception}')
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line(f'Connection error: {connection_exception}')
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line(f'Connection timeout: {timeout_exception}')
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line(f'Request exception: {request_exception}')
+            return False
+
     @staticmethod
     def get_platform_id_by_name(api_data: dict) -> int:
         """

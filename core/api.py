@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import os
+import re
 import sys
 import yaml
 import json
@@ -1361,8 +1362,19 @@ class API(object):
         :param api_data:
         :return:
         """
-        print_line('Dont check yet')
-        return [None]
+        packages = self.load_gemfile_packages_from_path(filename=api_data['file'])
+
+        if packages[0] is None:
+            print(f'Gemfile packages loading error.')
+            return [None]
+
+        components = self.parse_gemfile_packages(packages=packages)
+
+        if components[0] is None:
+            print_line(f'Failed parse Gemfile packages.')
+            return [None]
+
+        return components
 
     def get_components_gemfile_lock_auto_system_path(self, api_data: dict) -> list:
         """
@@ -1370,8 +1382,19 @@ class API(object):
         :param api_data:
         :return:
         """
-        print_line('Dont check yet')
-        return [None]
+        packages = self.load_gemfile_lock_packages_from_path(filename=api_data['file'])
+
+        if packages[0] is None:
+            print(f'Gemfile packages loading error.')
+            return [None]
+
+        components = self.parse_gemfile_lock_packages(packages=packages)
+
+        if components[0] is None:
+            print_line(f'Failed parse Gemfile packages.')
+            return [None]
+
+        return components
 
     def get_components_any_auto_user_path(self, api_data: dict) -> list:
         """
@@ -1430,7 +1453,7 @@ class API(object):
     def load_windows_10_packages_from_powershell() -> list:
         """
         Load OS packages for Windows platform by powershell command.
-        :return:
+        :return: result
         """
         cmd = "Get-AppxPackage -AllUsers | Select Name, PackageFullName"
         try:
@@ -1780,6 +1803,53 @@ class API(object):
             print_line('MacOS does not support yet.')
             return [None]
 
+    def load_gemfile_packages_from_path(self, filename: str) -> list:
+        """
+        Load packages from Gemfile. defined by path.
+        :param filename: filename
+        :return: result
+        """
+        if os.path.isfile(filename):
+            enc = self.define_file_encoding(filename=filename)
+
+            if enc == 'undefined':
+                print_line(f'Undefined file {filename} encoding.')
+                return [None]
+
+            try:
+                with open(filename, 'r', encoding=enc) as pf:
+                    cont = pf.read()
+                    packages = cont.split('\n')
+                    return packages
+
+            except Exception as e:
+                print_line(f'File {filename} read exception: {e}')
+                return [None]
+
+        print_line('File does not exist.')
+        return [None]
+
+    def load_gemfile_lock_packages_from_path(self, filename: str) -> list:
+        if os.path.isfile(filename):
+            enc = self.define_file_encoding(filename=filename)
+
+            if enc == 'undefined':
+                print_line(f'Undefined file {filename} encoding.')
+                return [None]
+
+            try:
+                with open(filename, 'r', encoding=enc) as pf:
+                    cont = pf.read()
+                    packages = cont.split('\n')
+                    return packages
+
+            except Exception as e:
+                print_line(f'File {filename} read exception: {e}')
+                return [None]
+
+        print_line('File does not exist.')
+        return [None]
+
     # -------------------------------------------------------------------------
     # Parsers
     # -------------------------------------------------------------------------
@@ -1985,7 +2055,140 @@ class API(object):
                 except:
                     continue
         return components
-    
+
+    def parse_gemfile_packages(self, packages: list) -> list:
+        """
+        Parse packages from Gemfile.
+        :param packages: list of packages
+        :return: result
+        """
+        content_splitted_by_strings = packages
+
+        content_without_empty_strings = []
+        for string in content_splitted_by_strings:
+            if len(string) > 0:
+                content_without_empty_strings.append(string)
+
+        content_without_comments = []
+        for string in content_without_empty_strings:
+            if not string.lstrip().startswith('#'):
+                if '#' in string:
+                    content_without_comments.append(string.lstrip().split('#')[0])
+                else:
+                    content_without_comments.append(string.lstrip())
+
+        cleared_content = []
+        for string in content_without_comments:
+            if string.startswith('gem '):
+                cleared_content.append(string.split('gem ')[1])
+            else:
+                if string.startswith('gem('):
+                    cleared_content.append(string.split('gem(')[1])
+
+
+        prepared_data_for_getting_packages_names_and_versions = []
+        for string in cleared_content:
+            intermediate_result = re.findall(
+                r'''('.*',\s*'.*\d.*?'|".*",\s*".*\d.*?"|".*",\s*'.*\d.*?'|'.*',\s*".*\d.*?")''', string)
+
+            if intermediate_result:
+                prepared_data_for_getting_packages_names_and_versions.append(intermediate_result[0])
+
+        packages = []
+
+        for prepared_string in prepared_data_for_getting_packages_names_and_versions:
+            package = {
+                'name': '*',
+                'version': '*'
+            }
+
+            splitted_string_by_comma = prepared_string.split(',')
+
+            package_name = splitted_string_by_comma[0][1:-1]
+            package['name'] = package_name
+
+            if len(splitted_string_by_comma) == 2:
+                package['version'] = re.findall(r'(\d.*)', splitted_string_by_comma[1])[0][0:-1]
+                packages.append(package)
+
+            elif len(splitted_string_by_comma) == 3:
+                min_package_version = re.findall(r'(\d.*)', splitted_string_by_comma[1])[0][0:-1]
+                package['version'] = min_package_version
+                packages.append(package)
+
+                max_package_version = re.findall(r'(\d.*)', splitted_string_by_comma[2])[0][0:-1]
+                package['version'] = max_package_version
+                packages.append(package)
+
+        # TODO: DELETE DUBLICATES
+
+        # TODO: WHAT ABOUT PACKAGES WITHOUT VERSIONS?
+
+        unique_packages = []
+        for i in range(len(packages)):
+            package = packages.pop()
+
+            if package not in unique_packages:
+                unique_packages.append(package)
+
+        return unique_packages
+
+    def parse_gemfile_lock_packages(self, packages: list) -> list:
+        splitted_content_by_strings = packages
+
+        ignore_strings_startswith = (
+            'GIT', 'remote', 'revision',
+            'specs', 'PATH', 'GEM',
+            'PLATFORMS', 'DEPENDENCIES', 'BUNDLED')
+
+        cleared_content = []
+        for string in splitted_content_by_strings:
+            if not string.lstrip().startswith(ignore_strings_startswith):
+                cleared_content.append(string.lstrip())
+
+        prepared_data_for_getting_packages_names_and_versions = []
+        for string in cleared_content:
+            intermediate_result = re.findall(r'(.*\s*\(.*\))', string)
+
+            if intermediate_result:
+                prepared_data_for_getting_packages_names_and_versions.append(intermediate_result)
+
+        packages = []
+        for data in prepared_data_for_getting_packages_names_and_versions:
+            package = {
+                'name': '*',
+                'version': '*'
+            }
+
+            splitted_data = data[0].split(' ')
+
+            package_name = splitted_data[0]
+            package['name'] = package_name
+
+            if len(splitted_data) == 2:
+                package['version'] = splitted_data[1][1:-1]
+                packages.append(package)
+            elif len(splitted_data) == 3:
+                package['version'] = splitted_data[2][0:-1]
+                packages.append(package)
+            elif len(splitted_data) == 5:
+                min_version = splitted_data[2][0:-1]
+                package['version'] = min_version
+                packages.append(package)
+
+                max_version = splitted_data[4][0:-1]
+                package['version'] = max_version
+                packages.append(package)
+
+        unique_packages = []
+        for i in range(len(packages)):
+            package = packages.pop()
+
+            if package not in unique_packages:
+                unique_packages.append(package)
+
+        return unique_packages
+
     # -------------------------------------------------------------------------
     # Addition methods
     # -------------------------------------------------------------------------
@@ -2209,7 +2412,7 @@ class API(object):
 
                 api_data['password'] = config['password']
 
-                if 'auth_token' not in config or config['auth_token'] is None:
+                if 'auth_token' not in config:
                     config['auth-token'] = ''
 
                 api_data['auth_token'] = config['auth_token']
