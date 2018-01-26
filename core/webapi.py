@@ -2,6 +2,7 @@
 
 import json
 import requests
+import datetime
 
 from core.interface import print_line
 
@@ -112,7 +113,6 @@ class WebAPI(object):
                         last_name=organization_data['owner_id']['lastname'],
                         token_expires=organization_data['owner_id']['tokenExpires'],
                         password_expires=organization_data['owner_id']['passwordExpires'],
-                        first_sign_in=organization_data['owner_id']['firstSignin'],
                         private_key=organization_data['owner_id']['privateKey'],
                         connection_id=organization_data['owner_id']['connectionID'],
                         version=organization_data['owner_id']['__v'],
@@ -295,7 +295,7 @@ class WebAPI(object):
 
         try:
             response = requests.delete(
-                url=self.platform_url + '/:' + str(platform_id),
+                url=self.platform_url + '/' + str(platform_id),
                 headers=self.headers,
                 json=self.platform_payload)
             if response.status_code == 200:
@@ -326,13 +326,13 @@ class WebAPI(object):
             print_line(f"Project {api_data['project']} does not exist.")
             return False
 
-        project_id = api_data['platforms'][platform_number]['projects'][project_number]['id']
+        project_id = api_data['organization']['platforms'][platform_number]['projects'][project_number]['id']
 
         self.headers['token'] = api_data['token']
 
         try:
             response = requests.delete(
-                url=self.project_url + '/:' + str(project_id),
+                url=self.project_url + '/' + str(project_id),
                 headers=self.headers,
                 json=self.project_payload)
             if response.status_code == 200:
@@ -407,13 +407,209 @@ class WebAPI(object):
         )
 
         try:
-            response = requests.out(
+            response = requests.put(
                 url=self.project_url,
                 headers=self.headers,
                 json=self.project_payload)
             if response.status_code == 200:
                 return True
             print_line(f'Archive Project failed. Status code: {response.status_code}')
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line(f'HTTP Error: {http_exception}')
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line(f'Connection error: {connection_exception}')
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line(f'Connection timeout: {timeout_exception}')
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line(f'Request exception: {request_exception}')
+            return False
+
+    def send_restore_platform_request(self, api_data: dict) -> bool:
+        """
+        Send request to restore defined Platform from archive.
+        :param api_data:
+        :return:
+        """
+        if api_data['platform'] is None or api_data['platform'] == '':
+            print_line('Empty platform name.')
+            return False
+
+        if not self.send_get_archived_platforms_request(api_data=api_data):
+            print_line('There were errors in obtaining archived platforms.')
+            return False
+
+        platform_id = None
+        platform_url = None
+
+        for archive_platform in api_data['archive_platforms']:
+            if api_data['platform'] == archive_platform['name']:
+                platform_id = archive_platform['_id']
+                platform_url = archive_platform['url']
+                break
+
+        if platform_id is None:
+            print_line(f"Not such platform {api_data['platform']} in archive.")
+            return False
+
+        self.headers['token'] = api_data['token']
+        self.platform_payload = dict(
+            newPlatform=dict(
+                id=platform_id,
+                url=platform_url,
+                options=dict(
+                    updated=datetime.datetime.now().isoformat() + 'Z',
+                    state='open',
+                    archived=None
+                )
+            )
+        )
+        try:
+            response = requests.put(
+                url=self.platform_url,
+                headers=self.headers,
+                json=self.platform_payload)
+            if response.status_code == 200:
+                return True
+            print_line(f'Archive Platform failed. Status code: {response.status_code}')
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line(f'HTTP Error: {http_exception}')
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line(f'Connection error: {connection_exception}')
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line(f'Connection timeout: {timeout_exception}')
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line(f'Request exception: {request_exception}')
+            return False
+
+    def send_restore_project_request(self, api_data: dict) -> bool:
+        """
+        Send request to restore defined Project from archive.
+        :param api_data: api data set
+        :return: result
+        """
+        if api_data['platform'] is None or api_data['platform'] == '':
+            print_line('Empty platform name.')
+            return False
+
+        if api_data['project'] is None or api_data['project'] == '':
+            print_line('Empty project name.')
+            return False
+
+        if not self.send_get_archiver_projects_request(api_data=api_data):
+            print_line('There were errors in obtaining archived projects.')
+            return False
+
+        project_id = None
+        project_url = None
+
+        for archive_project in api_data['archive_projects']:
+            if api_data['project'] == archive_project['name']:
+                project_id = archive_project['_id']
+                project_url = archive_project['url']
+                break
+
+        if project_id is None:
+            print_line(f"Not such platform {api_data['platform']} in archive.")
+            return False
+
+        self.headers['token'] = api_data['token']
+        self.project_payload = dict(
+            newProject=dict(
+                id=project_id,
+                url=project_url,
+                options=dict(
+                    updated=datetime.datetime.now().isoformat() + 'Z',
+                    state='open',
+                    archived=None
+                )
+            )
+        )
+        try:
+            response = requests.put(
+                url=self.project_url,
+                headers=self.headers,
+                json=self.project_payload)
+            if response.status_code == 200:
+                return True
+            print_line(f'Archive Platform failed. Status code: {response.status_code}')
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line(f'HTTP Error: {http_exception}')
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line(f'Connection error: {connection_exception}')
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line(f'Connection timeout: {timeout_exception}')
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line(f'Request exception: {request_exception}')
+            return False
+
+    def send_get_archived_platforms_request(self, api_data: dict) -> bool:
+        """
+        Send request to get all archived platforms.
+        :param api_data: api data set
+        :return: result
+        """
+        self.headers['token'] = api_data['token']
+        try:
+            response = requests.get(
+                url=self.platform_url + '/archive/' + api_data['organization']['id'],
+                headers=self.headers,
+                json=self.platform_payload)
+            api_data['archive_platforms'] = None
+            if response.status_code == 200:
+                try:
+                    api_data['archive_platforms'] = json.loads(response.text)
+                except json.JSONDecodeError as json_decode_error:
+                    print_line(f'An exception occured with json decoder: {json_decode_error}.')
+                    return False
+                return True
+            print_line(f'Archive Platform get information failed. Status code: {response.status_code}')
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line(f'HTTP Error: {http_exception}')
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line(f'Connection error: {connection_exception}')
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line(f'Connection timeout: {timeout_exception}')
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line(f'Request exception: {request_exception}')
+            return False
+
+    def send_get_archiver_projects_request(self, api_data: dict) -> bool:
+        """
+        Send request to get all archived projects.
+        :param api_data: api data set
+        :return: result, modify api_data
+        """
+        self.headers['token'] = api_data['token']
+        try:
+            response = requests.get(
+                url=self.project_url + '/archive/' + api_data['organization']['id'],
+                headers=self.headers,
+                json=self.project_payload)
+            api_data['archive_projects'] = None
+            if response.status_code == 200:
+                try:
+                    api_data['archive_projects'] = json.loads(response.text)
+                except json.JSONDecodeError as json_decode_error:
+                    print_line(f'An exception occured with json decoder: {json_decode_error}.')
+                    return False
+                return True
+            print_line(f'Archive Project get information failed. Status code: {response.status_code}')
             return False
         except requests.exceptions.HTTPError as http_exception:
             print_line(f'HTTP Error: {http_exception}')

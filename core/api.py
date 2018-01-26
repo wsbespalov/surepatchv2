@@ -100,6 +100,12 @@ class API(object):
         elif api_data['action'] == Actions.ARCHIVE_PROJECT:
             return self.action_archive_project(api_data=api_data)
 
+        elif api_data['action'] == Actions.RESTORE_PLATFORM:
+            return self.action_restore_platform(api_data=api_data)
+
+        elif api_data['action'] == Actions.RESTORE_PROJECT:
+            return self.action_restore_project(api_data=api_data)
+
         print_line(f"Unknown action code: {api_data['action']}.")
         return False
 
@@ -1111,6 +1117,26 @@ class API(object):
         return self.web_api.send_archive_project_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
+    # Restore
+    # -------------------------------------------------------------------------
+
+    def action_restore_platform(self, api_data: dict) -> bool:
+        """
+        Run action: restore Platform from Archive.
+        :param api_data: api data set
+        :return: result
+        """
+        return self.web_api.send_restore_platform_request(api_data=api_data)
+
+    def action_restore_project(self, api_data: dict) -> bool:
+        """
+        Run action: Restore Project from Archive.
+        :param api_data:
+        :return:
+        """
+        return self.web_api.send_restore_project_request(api_data=api_data)
+
+    # -------------------------------------------------------------------------
     # Components
     # -------------------------------------------------------------------------
 
@@ -1411,8 +1437,8 @@ class API(object):
     def get_components_gemfile_auto_system_path(self, api_data: dict) -> list:
         """
         Get Ruby gem packages, collected from Gemfile, defined by path.
-        :param api_data:
-        :return:
+        :param api_data: api data set
+        :return: result
         """
         packages = self.load_gemfile_packages_from_path(filename=api_data['file'])
 
@@ -1431,8 +1457,8 @@ class API(object):
     def get_components_gemfile_lock_auto_system_path(self, api_data: dict) -> list:
         """
         Get Ruby gem packages, collected from Gemfile.lock, defined by path.
-        :param api_data:
-        :return:
+        :param api_data: api data set
+        :return: result
         """
         packages = self.load_gemfile_lock_packages_from_path(filename=api_data['file'])
 
@@ -2383,7 +2409,13 @@ class API(object):
                 api_data['action'] != Actions.CREATE_SET and \
                 api_data['action'] != Actions.SHOW_PLATFORMS and \
                 api_data['action'] != Actions.SHOW_PROJECTS and \
-                api_data['action'] != Actions.SHOW_SET:
+                api_data['action'] != Actions.SHOW_SET and \
+                api_data['action'] != Actions.DELETE_PLATFORM and \
+                api_data['action'] != Actions.DELETE_PROJECT and \
+                api_data['action'] != Actions.ARCHIVE_PLATFORM and \
+                api_data['action'] != Actions.ARCHIVE_PROJECT and \
+                api_data['action'] != Actions.RESTORE_PLATFORM and \
+                api_data['action'] != Actions.RESTORE_PROJECT:
             return False
 
         return True
@@ -2494,6 +2526,8 @@ class Actions(object):
     DELETE_PROJECT = 'delete_project'
     ARCHIVE_PLATFORM = 'archive_platform'
     ARCHIVE_PROJECT = 'archive_project'
+    RESTORE_PLATFORM = 'restore_platform'
+    RESTORE_PROJECT = 'restore_project'
 
 
 class Targets(object):
