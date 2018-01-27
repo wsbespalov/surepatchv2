@@ -21,6 +21,7 @@ class WebAPI(object):
     organization_url = base_url + "/api/organization"
     platform_url = base_url + "/api/platforms"
     project_url = base_url + "/api/projects"
+    issues_url = base_url + "/api/projects/partial"
     components_url = base_url + "/api/components"
     login_payload = dict(
         username=None,
@@ -44,6 +45,9 @@ class WebAPI(object):
         set_name='0.0.0',
         components=[],
         project_url=None)
+    issues_payload = dict(
+
+    )
 
     def send_login_request(self, api_data: dict) -> bool:
         """
@@ -51,7 +55,6 @@ class WebAPI(object):
         :param api_data: api data set
         :return: result
         """
-
         self.login_payload['username'] = api_data['user']
         self.login_payload['password'] = api_data['password']
         self.login_payload['referalToken'] = None
@@ -94,7 +97,6 @@ class WebAPI(object):
         :param api_data: api data set
         :return: result
         """
-
         self.headers['token'] = api_data['token']
         try:
             response = requests.get(
@@ -180,7 +182,6 @@ class WebAPI(object):
         :param api_data: api data set
         :return: result
         """
-
         self.headers['token'] = api_data['token']
         self.platform_payload['name'] = api_data['platform']
         self.platform_payload['description'] = api_data['description']
@@ -212,7 +213,6 @@ class WebAPI(object):
         :param api_data: api data set
         :return: result
         """
-
         self.headers['token'] = api_data['token']
         self.project_payload['name'] = api_data['project']
         self.project_payload['platform_id'] = self.get_platform_id_by_name(api_data=api_data)
@@ -245,7 +245,6 @@ class WebAPI(object):
         :param api_data: api data set
         :return:
         """
-
         platform = api_data['platform']
         project = api_data['project']
         components = api_data['components']
@@ -286,6 +285,11 @@ class WebAPI(object):
             return False
 
     def send_delete_platform_request(self, api_data: dict) -> bool:
+        """
+        Send request to delete Platform.
+        :param api_data: api data set
+        :return: result
+        """
         platform_id = self.get_platform_id_by_name(api_data=api_data)
         if platform_id == -1:
             print_line(f"Platform {api_data['platform']} does not exist.")
@@ -316,6 +320,11 @@ class WebAPI(object):
             return False
 
     def send_delete_project_request(self, api_data: dict) -> bool:
+        """
+        Send request to delete Project.
+        :param api_data: api data set
+        :return: result
+        """
         platform_number = self.get_platform_number_by_name(api_data=api_data)
         if platform_number == -1:
             print_line(f"Platform {api_data['platform']} does not exist.")
@@ -353,6 +362,11 @@ class WebAPI(object):
             return False
 
     def send_archive_platform_request(self, api_data: dict) -> bool:
+        """
+        Send request to archive Platform.
+        :param api_data: api data set
+        :return: result
+        """
         platform_id = self.get_platform_id_by_name(api_data=api_data)
         if platform_id == -1:
             print_line(f"Platform {api_data['platform']} does not exist.")
@@ -387,6 +401,11 @@ class WebAPI(object):
             return False
 
     def send_archive_project_request(self, api_data: dict) -> bool:
+        """
+        Send request to archive Project.
+        :param api_data: api data set
+        :return: result
+        """
         platform_number = self.get_platform_number_by_name(api_data=api_data)
         if platform_number == -1:
             print_line(f"Platform {api_data['platform']} does not exist.")
@@ -405,7 +424,6 @@ class WebAPI(object):
             state='archive',
             archivedBy=api_data['user']
         )
-
         try:
             response = requests.put(
                 url=self.project_url,
@@ -503,21 +521,27 @@ class WebAPI(object):
             print_line('Empty project name.')
             return False
 
-        if not self.send_get_archiver_projects_request(api_data=api_data):
+        if not self.send_get_archived_projects_request(api_data=api_data):
             print_line('There were errors in obtaining archived projects.')
             return False
 
         project_id = None
         project_url = None
+        my_archived_project = dict()
 
         for archive_project in api_data['archive_projects']:
             if api_data['project'] == archive_project['name']:
                 project_id = archive_project['_id']
                 project_url = archive_project['url']
+                my_archived_project = archive_project
                 break
 
         if project_id is None:
-            print_line(f"Not such platform {api_data['platform']} in archive.")
+            print_line(f"Not such project {api_data['project']} in archive.")
+            return False
+
+        if my_archived_project['platform_id']['name'] != api_data['platform']:
+            print_line(f"Defined project {api_data['project']} not in defined platform {api_data['platform']}.")
             return False
 
         self.headers['token'] = api_data['token']
@@ -589,7 +613,7 @@ class WebAPI(object):
             print_line(f'Request exception: {request_exception}')
             return False
 
-    def send_get_archiver_projects_request(self, api_data: dict) -> bool:
+    def send_get_archived_projects_request(self, api_data: dict) -> bool:
         """
         Send request to get all archived projects.
         :param api_data: api data set
@@ -609,6 +633,39 @@ class WebAPI(object):
                     print_line(f'An exception occured with json decoder: {json_decode_error}.')
                     return False
                 return True
+            print_line(f'Archive Project get information failed. Status code: {response.status_code}')
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line(f'HTTP Error: {http_exception}')
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line(f'Connection error: {connection_exception}')
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line(f'Connection timeout: {timeout_exception}')
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line(f'Request exception: {request_exception}')
+            return False
+
+    def send_get_issues_request(self, api_data: dict) -> bool:
+        self.headers['token'] = api_data['token']
+        platform_number = self.get_platform_number_by_name(api_data=api_data)
+        project_number = self.get_project_number_by_name(api_data=api_data)
+        project_url = api_data['organization']['platforms'][platform_number]['projects'][project_number]['url']
+        try:
+            response = requests.post(
+                url=self.issues_url + '/' + project_url,
+                headers=self.headers,
+                json=self.issues_payload)
+            api_data['archive_projects'] = None
+            if response.status_code == 200:
+                try:
+                    api_data['issues'] = json.loads(response.content)['project']['issues']
+                    return True
+                except json.JSONDecodeError as json_decode_error:
+                    print_line(f'An exception occured with json decoder: {json_decode_error}.')
+                    return False
             print_line(f'Archive Project get information failed. Status code: {response.status_code}')
             return False
         except requests.exceptions.HTTPError as http_exception:

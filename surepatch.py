@@ -8,6 +8,7 @@ import argparse
 from core.api import API
 from core.api import OSs
 from core.interface import print_line
+from core.interface import print_logo
 
 api = API()
 
@@ -206,5 +207,5 @@ if __name__ == '__main__':
     """
     Entry point
     """
-
+    print_logo()
     sys.exit(main())

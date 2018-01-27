@@ -10,6 +10,7 @@ import subprocess
 
 from core.interface import ask
 from core.interface import print_line
+from core.interface import print_issues
 from core.interface import print_platforms
 from core.interface import print_projects
 from core.interface import print_components
@@ -85,7 +86,8 @@ class API(object):
 
         elif api_data['action'] == Actions.SHOW_PLATFORMS or \
                 api_data['action'] == Actions.SHOW_PROJECTS or \
-                api_data['action'] == Actions.SHOW_SET:
+                api_data['action'] == Actions.SHOW_SET or \
+                api_data['action'] == Actions.SHOW_ISSUES:
             return self.action_show_platforms_projects_or_sets(api_data=api_data)
 
         elif api_data['action'] == Actions.DELETE_PLATFORM:
@@ -987,6 +989,33 @@ class API(object):
 
             return self.action_show_set(api_data=api_data)
 
+        elif api_data['action'] == Actions.SHOW_ISSUES:
+            if api_data['platform'] is None or \
+                    api_data['platform'] == '':
+                print_line('Empty platform name.')
+                return False
+
+            platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
+
+            if platform_number == -1:
+                print_line(f"No such platform: {api_data['platform']}.")
+                return False
+
+            if api_data['project'] is None or \
+                    api_data['project'] == '':
+                print_line('Empty platform name.')
+                return False
+
+            project_number = self.web_api.get_project_number_by_name(api_data=api_data)
+
+            if project_number == -1:
+                print_line(f"No such project {api_data['project']} in platform {api_data['platform']}.")
+                return False
+
+            return self.action_show_issues(api_data=api_data)
+
+        return False
+
     @staticmethod
     def action_show_platforms(api_data: dict) -> bool:
         """
@@ -1073,6 +1102,31 @@ class API(object):
             return False
 
         print_components(components=components[0])
+
+        return True
+
+    def action_show_issues(self, api_data: dict) -> bool:
+        """
+        Print current issues.
+        :param api_data: api data set
+        :return: result
+        """
+
+        if not self.web_api.send_get_issues_request(api_data=api_data):
+            print_line(f"Cant load issues for platform {api_data['platform']} and project {api_data['project']}.")
+            return False
+
+        issues = api_data['issues']
+
+        printed_issues = []
+
+        for issue in issues:
+            printed_issues.append({'name': 'title', 'description': issue['title']})
+            printed_issues.append({'name': 'description', 'description': issue['description']})
+            printed_issues.append({'name': 'author', 'description': issue['author']})
+            printed_issues.append({'name': 'status', 'description': issue['status']})
+
+        print_issues(issues=printed_issues)
 
         return True
 
@@ -2410,6 +2464,7 @@ class API(object):
                 api_data['action'] != Actions.SHOW_PLATFORMS and \
                 api_data['action'] != Actions.SHOW_PROJECTS and \
                 api_data['action'] != Actions.SHOW_SET and \
+                api_data['action'] != Actions.SHOW_ISSUES and \
                 api_data['action'] != Actions.DELETE_PLATFORM and \
                 api_data['action'] != Actions.DELETE_PROJECT and \
                 api_data['action'] != Actions.ARCHIVE_PLATFORM and \
@@ -2522,6 +2577,7 @@ class Actions(object):
     SHOW_PLATFORMS = 'show_platforms'
     SHOW_PROJECTS = 'show_projects'
     SHOW_SET = 'show_set'
+    SHOW_ISSUES = 'show_issues'
     DELETE_PLATFORM = 'delete_platform'
     DELETE_PROJECT = 'delete_project'
     ARCHIVE_PLATFORM = 'archive_platform'
