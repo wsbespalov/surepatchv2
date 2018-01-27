@@ -245,23 +245,10 @@ class WebAPI(object):
         :param api_data: api data set
         :return:
         """
-        platform = api_data['platform']
-        project = api_data['project']
-        components = api_data['components']
-        name = api_data['set']
-        platform_number = self.get_platform_number_by_name(api_data=api_data)
-        if platform_number == -1:
-            print_line(f'No such platform: {platform}')
-            return False
-        project_number = self.get_project_number_by_name(api_data=api_data)
-        if project_number == -1:
-            print_line(f'No such project: {project}')
-            return False
-        project_url = api_data['organization']['platforms'][platform_number]['projects'][project_number]['url']
         self.headers['token'] = api_data['token']
-        self.components_payload['set_name'] = name
-        self.components_payload['components'] = components
-        self.components_payload['project_url'] = project_url
+        self.components_payload['set_name'] = api_data['set']
+        self.components_payload['components'] = api_data['components']
+        self.components_payload['project_url'] = api_data['project_url']
         try:
             response = requests.post(
                 url=self.components_url,
@@ -290,16 +277,10 @@ class WebAPI(object):
         :param api_data: api data set
         :return: result
         """
-        platform_id = self.get_platform_id_by_name(api_data=api_data)
-        if platform_id == -1:
-            print_line(f"Platform {api_data['platform']} does not exist.")
-            return False
-
         self.headers['token'] = api_data['token']
-
         try:
             response = requests.delete(
-                url=self.platform_url + '/' + str(platform_id),
+                url=self.platform_url + '/' + str(api_data['platform_id']),
                 headers=self.headers,
                 json=self.platform_payload)
             if response.status_code == 200:
@@ -325,23 +306,10 @@ class WebAPI(object):
         :param api_data: api data set
         :return: result
         """
-        platform_number = self.get_platform_number_by_name(api_data=api_data)
-        if platform_number == -1:
-            print_line(f"Platform {api_data['platform']} does not exist.")
-            return False
-
-        project_number = self.get_project_number_by_name(api_data=api_data)
-        if project_number == -1:
-            print_line(f"Project {api_data['project']} does not exist.")
-            return False
-
-        project_id = api_data['organization']['platforms'][platform_number]['projects'][project_number]['id']
-
         self.headers['token'] = api_data['token']
-
         try:
             response = requests.delete(
-                url=self.project_url + '/' + str(project_id),
+                url=self.project_url + '/' + str(api_data['project_id']),
                 headers=self.headers,
                 json=self.project_payload)
             if response.status_code == 200:
@@ -367,13 +335,8 @@ class WebAPI(object):
         :param api_data: api data set
         :return: result
         """
-        platform_id = self.get_platform_id_by_name(api_data=api_data)
-        if platform_id == -1:
-            print_line(f"Platform {api_data['platform']} does not exist.")
-            return False
-
         self.headers['token'] = api_data['token']
-        self.platform_payload['id'] = platform_id
+        self.platform_payload['id'] = api_data['platform_id']
         self.platform_payload['options'] = dict(
             state='archive',
             archivedBy=api_data['user']
@@ -406,20 +369,8 @@ class WebAPI(object):
         :param api_data: api data set
         :return: result
         """
-        platform_number = self.get_platform_number_by_name(api_data=api_data)
-        if platform_number == -1:
-            print_line(f"Platform {api_data['platform']} does not exist.")
-            return False
-
-        project_number = self.get_project_number_by_name(api_data=api_data)
-        if project_number == -1:
-            print_line(f"Project {api_data['project']} does not exist.")
-            return False
-
-        project_id = api_data['platforms'][platform_number]['projects'][project_number]['id']
-
         self.headers['token'] = api_data['token']
-        self.project_payload['id'] = project_id
+        self.project_payload['id'] = api_data['project_id']
         self.project_payload['options'] = dict(
             state='archive',
             archivedBy=api_data['user']
@@ -452,32 +403,11 @@ class WebAPI(object):
         :param api_data:
         :return:
         """
-        if api_data['platform'] is None or api_data['platform'] == '':
-            print_line('Empty platform name.')
-            return False
-
-        if not self.send_get_archived_platforms_request(api_data=api_data):
-            print_line('There were errors in obtaining archived platforms.')
-            return False
-
-        platform_id = None
-        platform_url = None
-
-        for archive_platform in api_data['archive_platforms']:
-            if api_data['platform'] == archive_platform['name']:
-                platform_id = archive_platform['_id']
-                platform_url = archive_platform['url']
-                break
-
-        if platform_id is None:
-            print_line(f"Not such platform {api_data['platform']} in archive.")
-            return False
-
         self.headers['token'] = api_data['token']
         self.platform_payload = dict(
             newPlatform=dict(
-                id=platform_id,
-                url=platform_url,
+                id=api_data['platform_id'],
+                url=api_data['platform_url'],
                 options=dict(
                     updated=datetime.datetime.now().isoformat() + 'Z',
                     state='open',
@@ -513,42 +443,11 @@ class WebAPI(object):
         :param api_data: api data set
         :return: result
         """
-        if api_data['platform'] is None or api_data['platform'] == '':
-            print_line('Empty platform name.')
-            return False
-
-        if api_data['project'] is None or api_data['project'] == '':
-            print_line('Empty project name.')
-            return False
-
-        if not self.send_get_archived_projects_request(api_data=api_data):
-            print_line('There were errors in obtaining archived projects.')
-            return False
-
-        project_id = None
-        project_url = None
-        my_archived_project = dict()
-
-        for archive_project in api_data['archive_projects']:
-            if api_data['project'] == archive_project['name']:
-                project_id = archive_project['_id']
-                project_url = archive_project['url']
-                my_archived_project = archive_project
-                break
-
-        if project_id is None:
-            print_line(f"Not such project {api_data['project']} in archive.")
-            return False
-
-        if my_archived_project['platform_id']['name'] != api_data['platform']:
-            print_line(f"Defined project {api_data['project']} not in defined platform {api_data['platform']}.")
-            return False
-
         self.headers['token'] = api_data['token']
         self.project_payload = dict(
             newProject=dict(
-                id=project_id,
-                url=project_url,
+                id=api_data['project_id'],
+                url=api_data['project_url'],
                 options=dict(
                     updated=datetime.datetime.now().isoformat() + 'Z',
                     state='open',
@@ -655,12 +554,9 @@ class WebAPI(object):
         :return:
         """
         self.headers['token'] = api_data['token']
-        platform_number = self.get_platform_number_by_name(api_data=api_data)
-        project_number = self.get_project_number_by_name(api_data=api_data)
-        project_url = api_data['organization']['platforms'][platform_number]['projects'][project_number]['url']
         try:
             response = requests.post(
-                url=self.issues_url + '/' + project_url,
+                url=self.issues_url + '/' + api_data['project_url'],
                 headers=self.headers,
                 json=self.issues_payload)
             api_data['archive_projects'] = None

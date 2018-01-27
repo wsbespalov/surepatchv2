@@ -714,6 +714,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_os_auto_system_path(self, api_data: dict) -> bool:
@@ -729,6 +742,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     # Target = Python packages
@@ -745,6 +771,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_pip_auto_system_path(self, api_data: dict) -> bool:
@@ -760,6 +799,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_requirements_auto_system_path(self, api_data: dict) -> bool:
@@ -774,6 +826,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_npm_auto_system_none(self, api_data: dict) -> bool:
@@ -789,6 +854,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_npm_local_auto_system_path(self, api_data: dict) -> bool:
@@ -804,6 +882,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_npm_auto_system_path(self, api_data: dict) -> bool:
@@ -819,6 +910,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_package_json_auto_system_path(self, api_data: dict) -> bool:
@@ -833,6 +937,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_package_lock_json_auto_system_path(self, api_data: dict) -> bool:
@@ -847,6 +964,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_gem_auto_system_none(self, api_data: dict) -> bool:
@@ -861,6 +991,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_gem_auto_system_path(self, api_data: dict) -> bool:
@@ -876,6 +1019,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_gemfile_auto_system_path(self, api_data: dict) -> bool:
@@ -891,6 +1047,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_gemfile_lock_auto_system_path(self, api_data: dict) -> bool:
@@ -906,6 +1075,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_any_auto_user_path(self, api_data: dict) -> bool:
@@ -921,6 +1103,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_any_manual_user_none(self, api_data: dict) -> bool:
@@ -935,6 +1130,19 @@ class API(object):
             return False
 
         api_data['components'] = components
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
         return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
@@ -1111,6 +1319,19 @@ class API(object):
         :param api_data: api data set
         :return: result
         """
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}.")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+
+        if api_data['project_number'] == -1:
+            print_line(f"No such project {api_data['project']} in platform {api_data['platform']}.")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
         if not self.web_api.send_get_issues_request(api_data=api_data):
             print_line(f"Cant load issues for platform {api_data['platform']} and project {api_data['project']}.")
@@ -1121,11 +1342,11 @@ class API(object):
         printed_issues = []
 
         for issue in issues:
-            printed_issues.append({'name': '\n', 'description': ''})
             printed_issues.append({'name': 'title', 'description': issue['title']})
             printed_issues.append({'name': 'description', 'description': issue['description']})
             printed_issues.append({'name': 'author', 'description': issue['author']})
             printed_issues.append({'name': 'status', 'description': issue['status']})
+            printed_issues.append({'name': '\n', 'description': ''})
 
         print_issues(issues=printed_issues)
 
@@ -1141,6 +1362,11 @@ class API(object):
         :param api_data: api data set
         :return: result
         """
+        api_data['platform_id'] = self.web_api.get_platform_id_by_name(api_data=api_data)
+        if api_data['platform_id'] == -1:
+            print_line(f"Platform {api_data['platform']} does not exist.")
+            return False
+
         return self.web_api.send_delete_platform_request(api_data=api_data)
 
     def action_delete_project(self, api_data: dict) -> bool:
@@ -1149,6 +1375,18 @@ class API(object):
         :param api_data: api data set
         :return: result
         """
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"Platform {api_data['platform']} does not exist.")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"Project {api_data['project']} does not exist.")
+            return False
+
+        api_data['project_id'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['id']
+
         return self.web_api.send_delete_project_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
@@ -1161,6 +1399,11 @@ class API(object):
         :param api_data: api data set
         :return: result
         """
+        api_data['platform_id'] = self.web_api.get_platform_id_by_name(api_data=api_data)
+        if api_data['platform_id'] == -1:
+            print_line(f"Platform {api_data['platform']} does not exist.")
+            return False
+
         return self.web_api.send_archive_platform_request(api_data=api_data)
 
     def action_archive_project(self, api_data: dict) -> bool:
@@ -1169,6 +1412,18 @@ class API(object):
         :param api_data: api data set
         :return: result
         """
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"Platform {api_data['platform']} does not exist.")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number']  == -1:
+            print_line(f"Project {api_data['project']} does not exist.")
+            return False
+
+        api_data['project_id'] = api_data['platforms'][api_data['platform_number']]['projects'][api_data['project_number'] ]['id']
+
         return self.web_api.send_archive_project_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
@@ -1181,6 +1436,27 @@ class API(object):
         :param api_data: api data set
         :return: result
         """
+        if api_data['platform'] is None or api_data['platform'] == '':
+            print_line('Empty platform name.')
+            return False
+
+        if not self.web_api.send_get_archived_platforms_request(api_data=api_data):
+            print_line('There were errors in obtaining archived platforms.')
+            return False
+
+        api_data['platform_id'] = None
+        api_data['platform_url'] = None
+
+        for archive_platform in api_data['archive_platforms']:
+            if api_data['platform'] == archive_platform['name']:
+                api_data['platform_id'] = archive_platform['_id']
+                api_data['platform_url'] = archive_platform['url']
+                break
+
+        if api_data['platform_id'] is None:
+            print_line(f"Not such platform {api_data['platform']} in archive.")
+            return False
+
         return self.web_api.send_restore_platform_request(api_data=api_data)
 
     def action_restore_project(self, api_data: dict) -> bool:
@@ -1189,6 +1465,37 @@ class API(object):
         :param api_data:
         :return:
         """
+        if api_data['platform'] is None or api_data['platform'] == '':
+            print_line('Empty platform name.')
+            return False
+
+        if api_data['project'] is None or api_data['project'] == '':
+            print_line('Empty project name.')
+            return False
+
+        if not self.web_api.send_get_archived_projects_request(api_data=api_data):
+            print_line('There were errors in obtaining archived projects.')
+            return False
+
+        api_data['project_id'] = None
+        api_data['project_url'] = None
+        my_archived_project = dict()
+
+        for archive_project in api_data['archive_projects']:
+            if api_data['project'] == archive_project['name']:
+                api_data['project_id'] = archive_project['_id']
+                api_data['project_url'] = archive_project['url']
+                my_archived_project = archive_project
+                break
+
+        if api_data['project_id']  is None:
+            print_line(f"Not such project {api_data['project']} in archive.")
+            return False
+
+        if my_archived_project['platform_id']['name'] != api_data['platform']:
+            print_line(f"Defined project {api_data['project']} not in defined platform {api_data['platform']}.")
+            return False
+
         return self.web_api.send_restore_project_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
