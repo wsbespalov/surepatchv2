@@ -1,38 +1,70 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import print_function
+
 import sys
-import colorama
+from textwrap import wrap
+from terminaltables import AsciiTable
+from terminaltables import SingleTable
 
 
 def print_logo():
     print('\n')
-    print('+----------------------------------------------------------------------------------------+')
+    print('+------------------------------------------------------------------------------------------------+')
     text = """
-                 #####                       ######                             
-                #     # #    # #####  ###### #     #   ##   #####  ####  #    # 
-                #       #    # #    # #      #     #  #  #    #   #    # #    # 
-                 #####  #    # #    # #####  ######  #    #   #   #      ###### 
-                      # #    # #####  #      #       ######   #   #      #    # 
-                #     # #    # #   #  #      #       #    #   #   #    # #    # 
-                 #####   ####  #    # ###### #       #    #   #    ####  #    # 
-                (c) WebSailors, 2017
+                     #####                       ######                             
+                    #     # #    # #####  ###### #     #   ##   #####  ####  #    # 
+                    #       #    # #    # #      #     #  #  #    #   #    # #    # 
+                     #####  #    # #    # #####  ######  #    #   #   #      ###### 
+                          # #    # #####  #      #       ######   #   #      #    # 
+                    #     # #    # #   #  #      #       #    #   #   #    # #    # 
+                     #####   ####  #    # ###### #       #    #   #    ####  #    # 
+                    (c) WebSailors, 2018
      """
-    print(colorama.Fore.RED + text)
-    print(colorama.Fore.WHITE + '+----------------------------------------------------------------------------------------+')
+    print(text)
+    print('+------------------------------------------------------------------------------------------------+')
 
 
-def print_line(message: str, effect: str = None) -> None:
-    if effect == 'r':
-        print(colorama.Fore.RED + message + colorama.Fore.WHITE)
-    elif effect == 'g':
-        print(colorama.Fore.GREEN + message + colorama.Fore.WHITE)
-    elif effect == 'y':
-        print(colorama.Fore.YELLOW + message + colorama.Fore.WHITE)
-    else:
-        print(colorama.Fore.WHITE + message)
+def print_line(message: str) -> None:
+    print('+------------------------------------------------------------------------------------------------+')
+    print(message)
+    print('+------------------------------------------------------------------------------------------------+')
 
 
-def print_table(elements: list) -> None:
-    print(elements)
+def print_table(elements: list, title: str = None) -> None:
+    if len(elements) > 0:
+        if 'version' in elements[0].keys():
+            table_data = [
+                ['Name', 'Version']
+            ]
+            table = AsciiTable(table_data)
+            table.padding_left = 1
+            table.padding_right = 1
+            max_width = 80 # table.column_max_width(1)
+            if title is not None:
+                table.title = title
+            for element in elements:
+                table_data.append(
+                    [element['name'],
+                     '\n'.join(wrap(element['version'], max_width))]
+                )
+            print(table.table)
+        elif 'description' in elements[0].keys():
+            table_data = [
+                ['Name', 'Description']
+            ]
+            table = AsciiTable(table_data)
+            table.padding_left = 1
+            table.padding_right = 1
+            max_width = 80 # table.column_max_width(1)
+            if title is not None:
+                table.title = title
+            for element in elements:
+                table_data.append(
+                    [element['name'],
+                    '\n'.join(wrap(element['description'], max_width))]
+                )
+            print(table.table)
 
 
 def print_components(components: list) -> None:

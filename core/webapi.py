@@ -649,6 +649,11 @@ class WebAPI(object):
             return False
 
     def send_get_issues_request(self, api_data: dict) -> bool:
+        """
+        Send request to get Issues.
+        :param api_data:
+        :return:
+        """
         self.headers['token'] = api_data['token']
         platform_number = self.get_platform_number_by_name(api_data=api_data)
         project_number = self.get_project_number_by_name(api_data=api_data)

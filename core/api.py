@@ -1107,7 +1107,7 @@ class API(object):
 
     def action_show_issues(self, api_data: dict) -> bool:
         """
-        Print current issues.
+        Print current Issues tor defined Platform/Project.
         :param api_data: api data set
         :return: result
         """
@@ -1121,6 +1121,7 @@ class API(object):
         printed_issues = []
 
         for issue in issues:
+            printed_issues.append({'name': '\n', 'description': ''})
             printed_issues.append({'name': 'title', 'description': issue['title']})
             printed_issues.append({'name': 'description', 'description': issue['description']})
             printed_issues.append({'name': 'author', 'description': issue['author']})

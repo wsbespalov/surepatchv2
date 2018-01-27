@@ -1,0 +1,4 @@
+terminaltables
+PyYaml
+requests
+colorama
