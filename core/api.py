@@ -2214,21 +2214,18 @@ class API(object):
         for string in content_without_comments:
             if string.startswith('gem '):
                 cleared_content.append(string.split('gem ')[1])
-            else:
-                if string.startswith('gem('):
-                    cleared_content.append(string.split('gem(')[1])
-
+            elif string.startswith("gem('"):
+                cleared_content.append(string.split("gem('")[1][:-1])
 
         prepared_data_for_getting_packages_names_and_versions = []
         for string in cleared_content:
             intermediate_result = re.findall(
-                r'''('.*',\s*'.*\d.*?'|".*",\s*".*\d.*?"|".*",\s*'.*\d.*?'|'.*',\s*".*\d.*?")''', string)
+                r'''('.*',\s*'.*\d.*?'|".*",\s*".*\d.*?"|".*",\s*'.*\d.*?'|'.*',\s*".*\d.*?"|.*',\s*'.*\d.*?')''', string)
 
             if intermediate_result:
                 prepared_data_for_getting_packages_names_and_versions.append(intermediate_result[0])
 
         packages = []
-
         for prepared_string in prepared_data_for_getting_packages_names_and_versions:
             package = {
                 'name': '*',
@@ -2243,26 +2240,64 @@ class API(object):
             if len(splitted_string_by_comma) == 2:
                 package['version'] = re.findall(r'(\d.*)', splitted_string_by_comma[1])[0][0:-1]
                 packages.append(package)
-
             elif len(splitted_string_by_comma) == 3:
                 min_package_version = re.findall(r'(\d.*)', splitted_string_by_comma[1])[0][0:-1]
                 package['version'] = min_package_version
                 packages.append(package)
 
+                package = {
+                    'name': '*',
+                    'version': '*'
+                }
+
                 max_package_version = re.findall(r'(\d.*)', splitted_string_by_comma[2])[0][0:-1]
+                package['name'] = package_name
                 package['version'] = max_package_version
                 packages.append(package)
 
-        # TODO: DELETE DUBLICATES
+        formed_packages = []
+        buff_packages = []
+        for package in packages:
+            buff_package = {
+                'name': '*',
+                'version': '*',
+                'origin_version': '*'
+            }
 
-        # TODO: WHAT ABOUT PACKAGES WITHOUT VERSIONS?
+            splitted_packages_by_dot = package['version'].split('.')
+
+            if len(splitted_packages_by_dot) == 1:
+                buff_package['name'] = package['name']
+                buff_package['origin_version'] = package['version']
+
+                package['version'] = '{}.0.0'.format(splitted_packages_by_dot[0])
+                formed_packages.append(package)
+
+                buff_package['version'] = package['version']
+                buff_packages.append(buff_package)
+            elif len(splitted_packages_by_dot) == 2:
+                buff_package['name'] = package['name']
+                buff_package['origin_version'] = package['version']
+
+                package['version'] = '{}.{}.0'.format(splitted_packages_by_dot[0], splitted_packages_by_dot[1])
+                formed_packages.append(package)
+
+                buff_package['version'] = package['version']
+                buff_packages.append(buff_package)
+            else:
+                formed_packages.append(package)
 
         unique_packages = []
-        for i in range(len(packages)):
-            package = packages.pop()
+        for i in range(len(formed_packages)):
+            package = formed_packages.pop()
 
             if package not in unique_packages:
                 unique_packages.append(package)
+
+        for package in unique_packages:
+            for buff_package in buff_packages:
+                if package['name'] == buff_package['name'] and package['version'] == buff_package['version']:
+                    package['version'] = buff_package['origin_version']
 
         return unique_packages
 
@@ -2309,16 +2344,59 @@ class API(object):
                 package['version'] = min_version
                 packages.append(package)
 
+                package = {
+                    'name': '*',
+                    'version': '*'
+                }
+
                 max_version = splitted_data[4][0:-1]
+                package['name'] = package_name
                 package['version'] = max_version
                 packages.append(package)
 
+        formed_packages = []
+        buff_packages = []
+        for package in packages:
+            buff_package = {
+                'name': '*',
+                'version': '*',
+                'origin_version': '*'
+            }
+
+            splitted_packages_by_dot = package['version'].split('.')
+
+            if len(splitted_packages_by_dot) == 1:
+                buff_package['name'] = package['name']
+                buff_package['origin_version'] = package['version']
+
+                package['version'] = '{}.0.0'.format(splitted_packages_by_dot[0])
+                formed_packages.append(package)
+
+                buff_package['version'] = package['version']
+                buff_packages.append(buff_package)
+            elif len(splitted_packages_by_dot) == 2:
+                buff_package['name'] = package['name']
+                buff_package['origin_version'] = package['version']
+
+                package['version'] = '{}.{}.0'.format(splitted_packages_by_dot[0], splitted_packages_by_dot[1])
+                formed_packages.append(package)
+
+                buff_package['version'] = package['version']
+                buff_packages.append(buff_package)
+            else:
+                formed_packages.append(package)
+
         unique_packages = []
-        for i in range(len(packages)):
-            package = packages.pop()
+        for i in range(len(formed_packages)):
+            package = formed_packages.pop()
 
             if package not in unique_packages:
                 unique_packages.append(package)
+
+        for package in unique_packages:
+            for buff_package in buff_packages:
+                if package['name'] == buff_package['name'] and package['version'] == buff_package['version']:
+                    package['version'] = buff_package['origin_version']
 
         return unique_packages
 
