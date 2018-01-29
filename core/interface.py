@@ -5,7 +5,6 @@ from __future__ import print_function
 import sys
 from textwrap import wrap
 from terminaltables import AsciiTable
-from terminaltables import SingleTable
 
 
 def print_logo():
