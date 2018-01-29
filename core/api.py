@@ -1285,7 +1285,7 @@ class API(object):
         for project in api_data['organization']['platforms'][platform_number]['projects']:
             projects.append({'name': project['name'], 'description': 'default project'})
 
-        print_projects(projects=projects)
+        print_projects(projects=projects, title=api_data['platform'], filename=api_data['file'])
 
         return True
 
@@ -1309,7 +1309,7 @@ class API(object):
             print_line(f'Get component set error.')
             return False
 
-        print_components(components=components[0])
+        print_components(components=components, title=api_data['platform'] + '/' + api_data['project'], filename=api_data['file'])
 
         return True
 
@@ -1348,7 +1348,7 @@ class API(object):
             printed_issues.append({'name': 'status', 'description': issue['status']})
             printed_issues.append({'name': '\n', 'description': ''})
 
-        print_issues(issues=printed_issues)
+        print_issues(issues=printed_issues, title=api_data['platform'] + '/' + api_data['project'], filename=api_data['file'])
 
         return True
 
