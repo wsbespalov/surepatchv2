@@ -55,7 +55,12 @@ timeout 3
 echo 18. create project autotest_any_user_none - User packages asked from console
 c:\Python36\python.exe surepatch.py --action=create_project --platform=autotest1 --project=autotest_any_user_none --method=manual --format=user
 timeout 3
-
+echo 19. create project autotest_php_composer - PHP Composer from file
+c:\Python36\python.exe surepatch.py --action=create_project --platform=autotest1 --project=autotest_php_composer_json --target=php_composer --method=auto --format=system --file=c:\composer.json
+timeout 3
+echo 20. create project autotest_php_composer_lock - PHP Composer from file .lock
+c:\Python36\python.exe surepatch.py --action=create_project --platform=autotest1 --project=autotest_php_composer_lock --target=php_composer_lock --method=auto --format=system --file=c:\composer.lock
+timeout 3
 echo --. create project for set test
 c:\Python36\python.exe surepatch.py --action=create_project --platform=autotest1 --project=autotest_set_test --method=auto --format=user --file=c:\user_packages.txt
 timeout 3

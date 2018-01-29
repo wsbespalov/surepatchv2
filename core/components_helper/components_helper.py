@@ -428,6 +428,55 @@ class ComponentsHelper(object):
 
         return components
 
+    def get_components_php_composer_json_system_path(self, api_data: dict) -> list:
+        filename = api_data['file']
+        if os.path.isfile(filename):
+            enc = self.define_file_encoding(filename=filename)
+
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return [None]
+
+            components = []
+
+            with open(filename, 'r', encoding=enc) as pf:
+                packages = pf.read().split('\n')
+
+
+
+
+
+
+
+
+                return packages
+
+        print_line(f'File {filename} not found.')
+        return [None]
+
+    def get_components_php_composer_lock_system_path(self, api_data: dict) -> list:
+        filename = api_data['file']
+        if os.path.isfile(filename):
+            enc = self.define_file_encoding(filename=filename)
+
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return [None]
+
+            components = []
+
+            with open(filename, 'r', encoding=enc) as pf:
+                packages = pf.read().split('\n')
+
+
+
+
+
+                return packages
+
+        print_line(f'File {filename} not found.')
+        return [None]
+
     # -------------------------------------------------------------------------
     # Loaders
     # -------------------------------------------------------------------------
@@ -831,6 +880,30 @@ class ComponentsHelper(object):
                 return [None]
 
         print_line('File does not exist.')
+        return [None]
+
+    def load_components_php_composer_json_system_path(self, api_data: dict) -> list:
+
+
+
+
+
+
+
+
+        return [None]
+
+    def load_components_php_composer_lock_system_path(self, api_data: dict) -> list:
+
+
+
+
+
+
+
+
+
+
         return [None]
 
     # -------------------------------------------------------------------------
@@ -1250,6 +1323,30 @@ class ComponentsHelper(object):
                     package['version'] = buff_package['origin_version']
 
         return unique_packages
+
+    def parse_components_php_composer_json_system_path(self, api_data: dict) -> list:
+
+
+
+
+
+
+
+
+        return [None]
+
+    def parse_components_php_composer_lock_system_path(self, api_data: dict) -> list:
+
+
+
+
+
+
+
+
+
+
+        return [None]
 
     # -------------------------------------------------------------------------
     # Addition methods

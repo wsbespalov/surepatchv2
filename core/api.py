@@ -252,6 +252,20 @@ class API(object):
                 api_data['file'] is None:
             return project_helper.create_project_any_manual_user_none(api_data=api_data)
 
+        # Create project with PHP Composer.json file {from path}
+        if api_data['target'] == Targets.PHP_COMPOSER_JSON and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return project_helper.create_project_php_composer_json_system_path(api_data=api_data)
+
+        # Create project with PHP Composer.lock file {from path}
+        if api_data['target'] == Targets.PHP_COMPOSER_LOCK and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return project_helper.create_project_php_composer_lock_system_path(api_data=api_data)
+
         print_line('Something wrong with app parameters. Please, look through README.md')
         return False
 
@@ -385,6 +399,20 @@ class API(object):
                 api_data['format'] == Formats.USER and \
                 api_data['file'] is None:
             return set_helper.create_set_any_manual_user_none(api_data=api_data)
+
+        # Create project with PHP Composer.json file {from path}
+        if api_data['target'] == Targets.PHP_COMPOSER_JSON and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return set_helper.create_set_php_composer_json_system_path(api_data=api_data)
+
+        # Create project with PHP Composer.lock file {from path}
+        if api_data['target'] == Targets.PHP_COMPOSER_LOCK and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return set_helper.create_set_php_composer_lock_system_path(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # Show
@@ -699,6 +727,8 @@ class Targets(object):
     GEM = 'gem'
     GEMFILE = 'gemfile'
     GEMFILE_LOCK = 'gemfile_lock'
+    PHP_COMPOSER_JSON = 'php_composer_json'
+    PHP_COMPOSER_LOCK = 'php_composer_lock'
 
 
 class Methods(object):
