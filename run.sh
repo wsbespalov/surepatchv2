@@ -56,6 +56,10 @@ echo 18. create project autotest_any_user_none - User packages asked from consol
 python surepatch.py --action=create_project --platform=autotest1 --project=autotest_any_user_none --method=manual --format=user
 timeout 3
 
+echo --. create project for set test
+python surepatch.py --action=create_project --platform=autotest1 --project=autotest_set_test --method=auto --format=user --file=c:\user_packages.txt
+timeout 3
+
 echo 19. create set - OS packages, collected by shell command
 python surepatch.py --action=create_set --platform=autotest1 --project=autotest_set_test --set=os_none.1 --target=os --method=auto --format=system
 timeout 3

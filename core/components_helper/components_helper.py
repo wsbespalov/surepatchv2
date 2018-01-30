@@ -54,33 +54,24 @@ class ComponentsHelper(object):
         :param api_data: api data set
         :return: result
         """
-
         if api_data['os_type'] == OSs.WINDOWS:
             if api_data['os_version'] == '10' or api_data['os_version'] == '8':
-                os_packages = self.load_windows_10_packages_from_powershell()[0]
-
+                os_packages = self.load_windows_10_packages_from_shell()[0]
                 if os_packages is None:
                     print_line('Failed to load OS components.')
                     return [None]
-
                 report = os_packages.decode('utf-8').replace('\r', '').split('\n')[9:]
-
                 components = self.parse_windows_10_packages(report)
-
                 if components[0] is None:
                     print_line('Failed parse OS components.')
                     return [None]
-
                 return components
-
             elif api_data['os_version'] == '7':
                 print_line('Windows 7 does not support yet.')
                 return [None]
-
             else:
                 print_line('Windows type not defined.')
                 return [None]
-
         elif api_data['os_type'] == OSs.MACOS:
             os_packages = self.load_macos_packages_from_shell()[0]
             if os_packages is None:
@@ -91,11 +82,9 @@ class ComponentsHelper(object):
                 print_line('Failed parse OS components.')
                 return [None]
             return components
-
         elif api_data['os_type'] == OSs.CENTOS:
             print_line('Centos not support yet.')
             return [None]
-
         elif api_data['os_type'] == OSs.DEBIAN:
             os_packages = self.load_ubuntu_packages_from_shell()[0]
             if os_packages is None:
@@ -106,7 +95,6 @@ class ComponentsHelper(object):
                 print_line('Failed parse OS components.')
                 return [None]
             return components
-
         elif api_data['os_type'] == OSs.FEDORA:
             os_packages = self.load_fedora_packages_from_shell()[0]
             if os_packages is None:
@@ -117,7 +105,6 @@ class ComponentsHelper(object):
                 print_line('Failed parse OS components.')
                 return [None]
             return components
-
         return [None]
 
     def get_components_os_auto_system_path(self, api_data: dict) -> list:
@@ -128,23 +115,16 @@ class ComponentsHelper(object):
         """
         if api_data['os_type'] == OSs.WINDOWS:
             if api_data['os_version'] == '10' or api_data['os_version'] == '8':
-
-                report = self.load_windows_10_packages_from_powershell_unloaded_file(api_data['file'])[0]
-
+                report = self.load_windows_10_packages_from_path(api_data['file'])[0]
                 if report is None:
                     return [None]
-
                 components = self.parse_windows_10_packages(report=report)
-
                 if components[0] is None:
                     return [None]
-
                 return components
-
             if api_data['os_version'] == '7':
                 print_line('Windows 7 does not support yet.')
                 return [None]
-
         elif api_data['os_type'] == OSs.MACOS:
             os_packages = self.load_macos_packages_from_path(api_data['file'])[0]
             if os_packages is None:
@@ -155,12 +135,10 @@ class ComponentsHelper(object):
                 print_line('Failed parse OS components.')
                 return [None]
             return components
-
         elif api_data['os_type'] == OSs.CENTOS:
-            print_line('Centos does not support yet.')
+            print_line('CentOS does not support yet.')
             return [None]
-
-        elif api_data['os_type'] == OSs.DEBIAN:
+        elif api_data['os_type'] == OSs.DEBIAN or api_data['os_type'] == OSs.UBUNTU:
             os_packages = self.load_ubuntu_packages_from_path(api_data['file'])[0]
             if os_packages is None:
                 print_line('Failed to load OS components.')
@@ -170,7 +148,6 @@ class ComponentsHelper(object):
                 print_line('Failed parse OS components.')
                 return [None]
             return components
-
         elif api_data['os_type'] == OSs.FEDORA:
             os_packages = self.load_fedora_packages_from_path(api_data['file'])[0]
             if os_packages is None:
@@ -181,10 +158,8 @@ class ComponentsHelper(object):
                 print_line('Failed parse OS components.')
                 return [None]
             return components
-
-
-
-        return [None]
+        else:
+            return [None]
 
     def get_components_pip_auto_system_none(self) -> list:
         """
@@ -200,10 +175,8 @@ class ComponentsHelper(object):
         :return: result
         """
         packages = self.load_pip_packages_from_path(api_data['file'])
-
         if packages[0] is not None:
             return self.parse_pip_packages_from_path(packages=packages)
-
         print_line('Something wrong with packages in file path')
         return [None]
 
@@ -214,10 +187,8 @@ class ComponentsHelper(object):
         :return: result
         """
         packages = self.load_pip_packages_from_path(api_data['file'])
-
         if packages[0] is not None:
             return self.parse_pip_packages_from_path(packages=packages)
-
         print_line('Something wrong with packages in file path')
         return [None]
 
@@ -229,7 +200,7 @@ class ComponentsHelper(object):
         """
         packages = self.load_npm_packages_from_path(api_data['file'])
         if packages[0] is not None:
-            return self.parse_npm_packages(raw_npm_components)
+            return self.parse_npm_packages(api_data=api_data, comp=raw_npm_components)
         print_line('Something wrong with packages in file path')
         return [None]
 
@@ -240,10 +211,8 @@ class ComponentsHelper(object):
         :return: result
         """
         packages = self.load_package_json_packages_from_path(api_data['file'])
-
         if packages[0] is not None:
             return self.parse_package_json_packages_from_path(packages[0])
-
         print_line('Something wrong with packages in file path')
         return [None]
 
@@ -254,10 +223,8 @@ class ComponentsHelper(object):
         :return: result
         """
         packages = self.load_gem_packages_from_path(api_data['file'])
-
         if packages[0] is not None:
             return self.parse_gem_packages_from_path(packages[0])
-
         print_line('Something wrong with packages in file path')
         return [None]
 
@@ -267,30 +234,11 @@ class ComponentsHelper(object):
         :param api_data: api data set
         :return: result
         """
-        if api_data['os_type'] == OSs.WINDOWS:
-            packages = self.load_npm_packages(path='', local=False)
-
-            if packages[0] is not None:
-                return self.parse_npm_packages(raw_npm_components)
-
-            print_line('Something wrong with packages in file path')
-            return [None]
-
-        elif api_data['os_type'] == OSs.CENTOS:
-            print_line('Centos does not support yet.')
-            return [None]
-
-        elif api_data['os_type'] == OSs.DEBIAN:
-            print_line('Debian does not support yet')
-            return [None]
-
-        elif api_data['os_type'] == OSs.FEDORA:
-            print_line('Fedora does not support yet.')
-            return [None]
-
-        elif api_data['os_type'] == OSs.MACOS:
-            print_line('MacOS does not support yet.')
-            return [None]
+        packages = self.load_npm_packages(api_data=api_data, local=False)
+        if packages[0] is not None:
+            return self.parse_npm_packages(api_data=api_data, comp=raw_npm_components)
+        print_line('Something wrong with packages in file path')
+        return [None]
 
     def get_components_npm_local_auto_system_none(self, api_data: dict) -> list:
         """
@@ -298,31 +246,11 @@ class ComponentsHelper(object):
         :param api_data: api data set
         :return: result
         """
-        if api_data['os_type'] == OSs.WINDOWS:
-
-            packages = self.load_npm_packages(path=api_data['file'], local=True)
-
-            if packages[0] is not None:
-                return self.parse_npm_packages(raw_npm_components)
-
-            print_line('Something wrong with packages in file path')
-            return [None]
-
-        elif api_data['os_type'] == OSs.CENTOS:
-            print_line('Centos does not support yet.')
-            return [None]
-
-        elif api_data['os_type'] == OSs.DEBIAN:
-            print_line('Debian does not support yet')
-            return [None]
-
-        elif api_data['os_type'] == OSs.FEDORA:
-            print_line('Fedora does not support yet.')
-            return [None]
-
-        elif api_data['os_type'] == OSs.MACOS:
-            print_line('MacOS does not support yet.')
-            return [None]
+        packages = self.load_npm_packages(api_data=api_data, local=True)
+        if packages[0] is not None:
+            return self.parse_npm_packages(api_data=api_data, comp=raw_npm_components)
+        print_line('Something wrong with packages in file path')
+        return [None]
 
     def get_components_npm_lock_auto_system_path(self, api_data: dict) -> list:
         """
@@ -330,31 +258,11 @@ class ComponentsHelper(object):
         :param api_data: api data set
         :return: result
         """
-        if api_data['os_type'] == OSs.WINDOWS:
-
-            packages = self.load_npm_lock_packages_from_path(filename=api_data['file'])
-
-            if packages[0] is not None:
-                return self.parse_npm_lock_packages(packages[0])
-
-            print_line('Something wrong with packages in file path')
-            return [None]
-
-        elif api_data['os_type'] == OSs.CENTOS:
-            print_line('Centos does not support yet.')
-            return [None]
-
-        elif api_data['os_type'] == OSs.DEBIAN:
-            print_line('Debian does not support yet')
-            return [None]
-
-        elif api_data['os_type'] == OSs.FEDORA:
-            print_line('Fedora does not support yet.')
-            return [None]
-
-        elif api_data['os_type'] == OSs.MACOS:
-            print_line('MacOS does not support yet.')
-            return [None]
+        packages = self.load_npm_lock_packages_from_path(filename=api_data['file'])
+        if packages[0] is not None:
+            return self.parse_npm_lock_packages(packages[0])
+        print_line('Something wrong with packages in file path')
+        return [None]
 
     def get_components_gem_auto_system_none(self, api_data: dict) -> list:
         """
@@ -368,19 +276,15 @@ class ComponentsHelper(object):
                 return self.parse_gem_packages_system(packages=packages[0])
             print_line('Something wrong with packages in file path')
             return [None]
-
         elif api_data['os_type'] == OSs.CENTOS:
             print_line('Centos does not support yet.')
             return [None]
-
         elif api_data['os_type'] == OSs.DEBIAN:
             print_line('Debian does not support yet')
             return [None]
-
         elif api_data['os_type'] == OSs.FEDORA:
             print_line('Fedora does not support yet.')
             return [None]
-
         elif api_data['os_type'] == OSs.MACOS:
             print_line('MacOS does not support yet.')
             return [None]
@@ -392,17 +296,13 @@ class ComponentsHelper(object):
         :return: result
         """
         packages = self.load_gemfile_packages_from_path(filename=api_data['file'])
-
         if packages[0] is None:
             print(f'Gemfile packages loading error.')
             return [None]
-
         components = self.parse_gemfile_packages(packages=packages)
-
         if components[0] is None:
             print_line(f'Failed parse Gemfile packages.')
             return [None]
-
         return components
 
     def get_components_gemfile_lock_auto_system_path(self, api_data: dict) -> list:
@@ -412,17 +312,13 @@ class ComponentsHelper(object):
         :return: result
         """
         packages = self.load_gemfile_lock_packages_from_path(filename=api_data['file'])
-
         if packages[0] is None:
             print(f'Gemfile packages loading error.')
             return [None]
-
         components = self.parse_gemfile_lock_packages(packages=packages)
-
         if components[0] is None:
             print_line(f'Failed parse Gemfile packages.')
             return [None]
-
         return components
 
     def get_components_any_auto_user_path(self, api_data: dict) -> list:
@@ -434,13 +330,10 @@ class ComponentsHelper(object):
         filename = api_data['file']
         if os.path.isfile(filename):
             enc = self.define_file_encoding(filename=filename)
-
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
                 return [None]
-
             components = []
-
             with open(filename, 'r', encoding=enc) as pf:
                 packages = pf.read().split('\n')
                 for package in packages:
@@ -450,7 +343,6 @@ class ComponentsHelper(object):
                             if len(splitted_package) == 2:
                                 components.append({'name': splitted_package[0], 'version': splitted_package[1]})
                 return components
-
         print_line(f'File {filename} not found.')
         return [None]
 
@@ -461,271 +353,77 @@ class ComponentsHelper(object):
         :return:
         """
         components = []
-
         if ask('Continue (y/n)? ') == 'n':
             return [None]
-
         while True:
             name = ask('Enter component name: ')
             version = ask('Enter component version: ')
             components.append({'name': name, 'version': version})
             if ask('Continue (y/n)? ') == 'n':
                 break
-
         return components
 
     def get_components_php_composer_json_system_path(self, api_data: dict) -> list:
-        filename = api_data['file']
-        if os.path.isfile(filename):
-            enc = self.define_file_encoding(filename=filename)
-
-            if enc == 'undefined':
-                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
-                return [None]
-
-            components = []
-
-            with open(filename, 'r', encoding=enc) as pf:
-                packages = pf.read().split('\n')
-
-
-
-
-
-
-
-
-                return packages
-
-        print_line(f'File {filename} not found.')
-        return [None]
+        packages = self.load_php_composer_json_system_path(filename=api_data['file'])
+        if packages[0] is None:
+            print(f'Gemfile packages loading error.')
+            return [None]
+        components = self.parse_php_composer_json_system_path(packages=packages)
+        if components[0] is None:
+            print_line(f'Failed parse Gemfile packages.')
+            return [None]
+        return components
 
     def get_components_php_composer_lock_system_path(self, api_data: dict) -> list:
-        filename = api_data['file']
-        if os.path.isfile(filename):
-            enc = self.define_file_encoding(filename=filename)
-
-            if enc == 'undefined':
-                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
-                return [None]
-
-            components = []
-
-            with open(filename, 'r', encoding=enc) as pf:
-                packages = pf.read().split('\n')
-
-
-
-
-
-                return packages
-
-        print_line(f'File {filename} not found.')
-        return [None]
+        packages = self.load_php_composer_lock_system_path(filename=api_data['file'])
+        if packages[0] is None:
+            print(f'Gemfile packages loading error.')
+            return [None]
+        components = self.parse_php_composer_lock_system_path(packages=packages)
+        if components[0] is None:
+            print_line(f'Failed parse Gemfile packages.')
+            return [None]
+        return components
 
     # -------------------------------------------------------------------------
     # Loaders
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def load_windows_10_packages_from_powershell() -> list:
+    def load_windows_10_packages_from_shell() -> list:
         """
         Load OS packages for Windows platform by powershell command.
         :return: result
         """
         cmd = "Get-AppxPackage -AllUsers | Select Name, PackageFullName"
         try:
-            proc = subprocess.Popen(
-                ["powershell", cmd],
-                stdout=subprocess.PIPE)
-
+            proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
             output, error = proc.communicate()
-
             if error:
                 print_line(f'Powershell command throw {proc.returncode} code and {error.strip()} error message.')
                 return [None]
-
             if output:
                 return [output]
-
         except OSError as os_error:
             print_line(f'Powershell command throw errno: {os_error.errno}, '
                        f'strerror: {os_error.strerror} and '
                        f'filename: {os_error.filename}.')
             return [None]
-
         except Exception as common_exception:
             print_line(f'Powershell command throw an exception: {common_exception}.')
             return [None]
 
-    @staticmethod
-    def load_ubuntu_packages_from_shell() -> list:
-        """
-        Load OS packages for Ubuntu platform by shell command.
-        :return: result
-        """
-
-        cmd = "dpkg -l | grep '^ii '"
-        try:
-            if platform.system() == "Linux" or \
-                    platform.system() == "linux" or \
-                    platform.linux_distribution()[0] == 'debian':
-                proc = subprocess.Popen(
-                    [cmd],
-                    shell=True,
-                    stdout=subprocess.PIPE)
-
-                output, error = proc.communicate()
-
-                if error:
-                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
-                    return [None]
-
-                if output:
-                    return [output]
-
-            print_line(f'Platform not defined as Debian.')
-            return [None]
-
-        except OSError as os_error:
-            print_line(f'Shell command throw errno: {os_error.errno}, ')
-            print_line(f'strerror: {os_error.strerror} and ')
-            print_line(f'filename: {os_error.filename}.')
-            return [None]
-
-        except Exception as common_exception:
-            print_line(f'Shell command throw an exception: {common_exception}.')
-            return [None]
-
-    def load_ubuntu_packages_from_path(self, filename: str) -> list:
-        if os.path.exists(filename):
-
-            enc = self.define_file_encoding(filename=filename)
-
-            if enc == 'undefined':
-                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
-                return [None]
-
-            try:
-                with open(filename, 'r', encoding=enc) as cf:
-                    os_packages = cf.read()
-                    if os_packages is None:
-                        print_line(f'Cant read file: {filename}.')
-                        return [None]
-                    return [os_packages]
-            except Exception as e:
-                print_line(f'File read exception {e}.')
-                return [None]
-
-        print_line(f'File {filename} does not exists.')
-        return [None]
-
-    @staticmethod
-    def load_fedora_packages_from_shell() -> list:
-        cmd = "rpm -qa"
-        try:
-            return [os.popen(cmd).readlines()]
-
-        except OSError as os_error:
-            print_line(f'Shell command throw errno: {os_error.errno}, ')
-            print_line(f'strerror: {os_error.strerror} and ')
-            print_line(f'filename: {os_error.filename}.')
-            return [None]
-
-        except Exception as common_exception:
-            print_line(f'Shell command throw an exception: {common_exception}.')
-            return [None]
-
-    def load_fedora_packages_from_path(self, filename: str) -> list:
-        if os.path.exists(filename):
-
-            enc = self.define_file_encoding(filename=filename)
-
-            if enc == 'undefined':
-                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
-                return [None]
-
-            try:
-                with open(filename, 'r', encoding=enc) as cf:
-                    os_packages = cf.read()
-                    if os_packages is None:
-                        print_line(f'Cant read file: {filename}.')
-                        return [None]
-                    return [os_packages]
-            except Exception as e:
-                print_line(f'File read exception {e}.')
-                return [None]
-
-        print_line(f'File {filename} does not exists.')
-        return [None]
-
-    @staticmethod
-    def load_macos_packages_from_shell() -> list:
-        cmd = "cat /Library/Receipts/InstallHistory.plist"
-        try:
-            if platform.system() == 'darwin' or platform.system() == 'Darwin':
-                proc = subprocess.Popen(
-                    [cmd],
-                    shell=True,
-                    stdout=subprocess.PIPE)
-
-                output, error = proc.communicate()
-
-                if error:
-                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
-                    return [None]
-
-                if output:
-                    return [output]
-
-        except OSError as os_error:
-            print_line(f'Shell command throw errno: {os_error.errno}, ')
-            print_line(f'strerror: {os_error.strerror} and ')
-            print_line(f'filename: {os_error.filename}.')
-            return [None]
-
-        except Exception as common_exception:
-            print_line(f'Shell command throw an exception: {common_exception}.')
-            return [None]
-
-    def load_macos_packages_from_path(self, filename: str) -> list:
-        if os.path.exists(filename):
-
-            enc = self.define_file_encoding(filename=filename)
-
-            if enc == 'undefined':
-                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
-                return [None]
-
-            try:
-                with open(filename, 'r', encoding=enc) as cf:
-                    os_packages = cf.read()
-                    if os_packages is None:
-                        print_line(f'Cant read file: {filename}.')
-                        return [None]
-                    # report = os_packages.replace('\r', '').split('\n')[9:]
-                    return [os_packages]
-            except Exception as e:
-                print_line(f'File read exception {e}.')
-                return [None]
-
-        print_line(f'File {filename} does not exists.')
-        return [None]
-
-    def load_windows_10_packages_from_powershell_unloaded_file(self, filename: str) -> list:
+    def load_windows_10_packages_from_path(self, filename: str) -> list:
         """
         Get OS packages for Windows platform from unloaded file, that was created by shell command manually.
         :param filename: path to file
         :return: result
         """
         if os.path.exists(filename):
-
             enc = self.define_file_encoding(filename=filename)
-
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
                 return [None]
-
             try:
                 with open(filename, 'r', encoding=enc) as cf:
                     os_packages = cf.read()
@@ -742,6 +440,149 @@ class ComponentsHelper(object):
         return [None]
 
     @staticmethod
+    def load_ubuntu_packages_from_shell() -> list:
+        """
+        Load OS packages for Ubuntu platform by shell command.
+        :return: result
+        """
+        cmd = "dpkg -l | grep '^ii '"
+        try:
+            if platform.system() == "Linux" or \
+                    platform.system() == "linux" or \
+                    platform.linux_distribution()[0] == 'debian':
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+                if error:
+                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    return [None]
+                if output:
+                    return [output]
+            print_line(f'Platform not defined as Debian.')
+            return [None]
+        except OSError as os_error:
+            print_line(f'Shell command throw errno: {os_error.errno}, ')
+            print_line(f'strerror: {os_error.strerror} and ')
+            print_line(f'filename: {os_error.filename}.')
+            return [None]
+        except Exception as common_exception:
+            print_line(f'Shell command throw an exception: {common_exception}.')
+            return [None]
+
+    def load_ubuntu_packages_from_path(self, filename: str) -> list:
+        """
+        Load OS packages for Ubuntu platform from filem created by shell command.
+        :return: result
+        """
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename=filename)
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return [None]
+            try:
+                with open(filename, 'r', encoding=enc) as cf:
+                    os_packages = cf.read()
+                    if os_packages is None:
+                        print_line(f'Cant read file: {filename}.')
+                        return [None]
+                    return [os_packages]
+            except Exception as e:
+                print_line(f'File read exception {e}.')
+                return [None]
+        print_line(f'File {filename} does not exists.')
+        return [None]
+
+    @staticmethod
+    def load_fedora_packages_from_shell() -> list:
+        """
+        Load OS packages for Fedora platform by shell command.
+        :return: result
+        """
+        cmd = "rpm -qa"
+        try:
+            return [os.popen(cmd).readlines()]
+        except OSError as os_error:
+            print_line(f'Shell command throw errno: {os_error.errno}, ')
+            print_line(f'strerror: {os_error.strerror} and ')
+            print_line(f'filename: {os_error.filename}.')
+            return [None]
+        except Exception as common_exception:
+            print_line(f'Shell command throw an exception: {common_exception}.')
+            return [None]
+
+    def load_fedora_packages_from_path(self, filename: str) -> list:
+        """
+        Load OS packages for Fedora platform from file, created by shell command.
+        :return: result
+        """
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename=filename)
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return [None]
+            try:
+                with open(filename, 'r', encoding=enc) as cf:
+                    os_packages = cf.read()
+                    if os_packages is None:
+                        print_line(f'Cant read file: {filename}.')
+                        return [None]
+                    return [os_packages]
+            except Exception as e:
+                print_line(f'File read exception {e}.')
+                return [None]
+        print_line(f'File {filename} does not exists.')
+        return [None]
+
+    @staticmethod
+    def load_macos_packages_from_shell() -> list:
+        """
+        Load OS packages for MacOS platform by shell command.
+        :return: result
+        """
+        cmd = "cat /Library/Receipts/InstallHistory.plist"
+        try:
+            if platform.system() == 'darwin' or platform.system() == 'Darwin':
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+                if error:
+                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    return [None]
+                if output:
+                    return [output]
+        except OSError as os_error:
+            print_line(f'Shell command throw errno: {os_error.errno}, ')
+            print_line(f'strerror: {os_error.strerror} and ')
+            print_line(f'filename: {os_error.filename}.')
+            return [None]
+        except Exception as common_exception:
+            print_line(f'Shell command throw an exception: {common_exception}.')
+            return [None]
+
+    def load_macos_packages_from_path(self, filename: str) -> list:
+        """
+        Load OS packages for MacOS platform from file, created by shell command.
+        :return: result
+        """
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename=filename)
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return [None]
+            try:
+                with open(filename, 'r', encoding=enc) as cf:
+                    os_packages = cf.read()
+                    if os_packages is None:
+                        print_line(f'Cant read file: {filename}.')
+                        return [None]
+                    return [os_packages]
+            except Exception as e:
+                print_line(f'File read exception {e}.')
+                return [None]
+        print_line(f'File {filename} does not exists.')
+        return [None]
+
+    @staticmethod
     def load_pip_packages_from_frozen_requirement():
         """
         Load Python PI packages with pip.FrozenRequirement method.
@@ -753,12 +594,9 @@ class ComponentsHelper(object):
             for dist in get_installed_distributions(local_only=False, skip=[]):
                 req = pip.FrozenRequirement.from_dist(dist, [])
                 installations[req.name] = dist.version
-
             for key in installations:
                 components.append({'name': key, 'version': installations[key]})
-
             return components
-
         except Exception as e:
             print_line(f'Get an exception: {e}.')
             return [None]
@@ -770,13 +608,10 @@ class ComponentsHelper(object):
         :return: result
         """
         if os.path.exists(filename):
-
             enc = self.define_file_encoding(filename)
-
             if enc == 'undefined':
                 print_line(f'Undefined file {filename} encoding.')
                 return [None]
-
             try:
                 with open(filename, encoding=enc) as cf:
                     rfp = cf.read()
@@ -796,103 +631,110 @@ class ComponentsHelper(object):
         :return: result
         """
         if os.path.exists(filename):
-
             enc = self.define_file_encoding(filename)
-
             if enc == 'undefined':
                 print_line(f'Undefined file {filename} encoding.')
                 return [None]
-
             try:
                 with open(filename, 'r', encoding=enc) as pf:
                     data = json.load(pf)
                     walkdict(data)
                     return [True]
-
             except Exception as e:
                 print_line(f'File read exception: {e}')
                 return [None]
-
         print_line('File does not exist.')
         return [None]
 
-    def load_npm_packages(self, path: str, local: bool) -> list:
+    def load_npm_packages(self, api_data: dict, local: bool) -> list:
         """
         Load NPM packages from shell command through temporary file.
         :param path: path to directory, if method call locally
         :param local: run local or global
         :return: result
         """
+        path = api_data['file']
         tmp_file_name = 'tmp_npm_list_json.txt'
         file_path = os.path.expanduser('~')
         full_path = os.path.join(file_path, tmp_file_name)
-
         try:
             with open(full_path, mode='w', encoding='utf-8') as temp:
                 temp.write('')
                 temp.seek(0)
-
         except Exception as e:
             print_line(f'Cant create temp file, get an exception: {e}.')
             return [None]
-
         cmd = "npm list --json > {0}".format(full_path)
-
-        if os.name == 'nt':
-            if local:
-                os.chdir(path)
-            else:
-                os.chdir("c:\\")
-
-            try:
-                proc = subprocess.Popen(
-                    ["powershell", cmd],
-                    stdout=subprocess.PIPE)
+        if local:
+            os.chdir(path)
+        else:
+            os.chdir("c:\\")
+        output = error = None
+        try:
+            if api_data['os_type'] == OSs.WINDOWS:
+                proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
-
-                if error:
-                    print_line(f'Powershell command throw {proc.returncode} code:')
-                    print_line(f'and {error.strip()} error message.')
-                    return [None]
-
-                try:
-                    enc = self.define_file_encoding(full_path)
-
-                    if enc == 'undefined':
-                        print_line('An error with encoding occured in temp file.')
-                        return [None]
-
-                    with open(full_path, encoding=enc) as cf:
-                        data = json.load(cf)
-                        walkdict(data)
-                        return [True]
-
-                except Exception as e:
-                    print_line(f'File read exception: {e}')
-                    return [None]
-
-                finally:
-                    if os.path.isfile(full_path):
-                        os.remove(full_path)
-
-            except OSError as os_error:
-                print_line(f'Powershell command throw errno: {os_error.errno}, strerror: {os_error.strerror}')
-                print_line(f'and filename: {os_error.filename}.')
-
-                if os.path.isfile(full_path):
-                    os.remove(full_path)
-
+            if error:
+                print_line(f'Powershell command throw {proc.returncode} code:')
+                print_line(f'and {error.strip()} error message.')
                 return [None]
-
+            elif api_data['os_type'] == OSs.MACOS:
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+            if error:
+                print_line(f'Shell command throw {proc.returncode} code:')
+                print_line(f'and {error.strip()} error message.')
+                return [None]
+            elif api_data['os_type'] == OSs.UBUNTU:
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+            if error:
+                print_line(f'Shell command throw {proc.returncode} code:')
+                print_line(f'and {error.strip()} error message.')
+                return [None]
+            elif api_data['os_type'] == OSs.DEBIAN:
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+            if error:
+                print_line(f'Shell command throw {proc.returncode} code:')
+                print_line(f'and {error.strip()} error message.')
+                return [None]
+            elif api_data['os_type'] == OSs.FEDORA:
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+            if error:
+                print_line(f'Shell command throw {proc.returncode} code:')
+                print_line(f'and {error.strip()} error message.')
+                return [None]
+            try:
+                enc = self.define_file_encoding(full_path)
+                if enc == 'undefined':
+                    print_line('An error with encoding occured in temp file.')
+                    return [None]
+                with open(full_path, encoding=enc) as cf:
+                    data = json.load(cf)
+                    walkdict(data)
+                    return [True]
+            except Exception as e:
+                print_line(f'File read exception: {e}')
+                return [None]
             finally:
                 if os.path.isfile(full_path):
                     os.remove(full_path)
-
-        if os.path.isfile(full_path):
-            os.remove(full_path)
-
-        return [None]
+        except OSError as os_error:
+            print_line(f'Shell command throw errno: {os_error.errno}, strerror: {os_error.strerror}')
+            print_line(f'and filename: {os_error.filename}.')
+            if os.path.isfile(full_path):
+                os.remove(full_path)
+            return [None]
+        finally:
+            if os.path.isfile(full_path):
+                os.remove(full_path)
 
     def load_package_json_packages_from_path(self, filename: str) -> list:
         """
@@ -901,22 +743,17 @@ class ComponentsHelper(object):
         :return: result
         """
         if os.path.exists(filename):
-
             enc = self.define_file_encoding(filename)
-
             if enc == 'undefined':
                 print_line(f'Undefined file {filename} encoding.')
                 return [None]
-
             try:
                 with open(filename, 'r', encoding=enc) as pf:
                     packages = json.load(pf)
                     return [packages]
-
             except Exception as e:
                 print_line(f'File {filename} read exception: {e}')
                 return [None]
-
         print_line('File does not exist.')
         return [None]
 
@@ -927,27 +764,21 @@ class ComponentsHelper(object):
         :return: result
         """
         if os.path.exists(filename):
-
             enc = self.define_file_encoding(filename)
-
             if enc == 'undefined':
                 print_line(f'Undefined file {filename} encoding.')
                 return [None]
-
             try:
                 with open(filename, 'r', encoding=enc) as pf:
                     try:
                         packages = json.load(pf)
                         return [packages]
-
                     except json.JSONDecodeError as json_decode_error:
                         print_line(f'An exception occured with json decoder: {json_decode_error}.')
                         return [None]
-
             except Exception as e:
                 print_line(f'File {filename} read exception: {e}')
                 return [None]
-
         print_line('File does not exist.')
         return [None]
 
@@ -958,23 +789,18 @@ class ComponentsHelper(object):
         :return: result
         """
         if os.path.exists(filename):
-
             enc = self.define_file_encoding(filename)
-
             if enc == 'undefined':
                 print_line(f'Undefined file {filename} encoding.')
                 return [None]
-
             try:
                 with open(filename, 'r', encoding=enc) as pf:
                     cont = pf.read().replace('default: ', '').replace(' ', '').replace(')', '')
                     cont = cont.split('\n')
                     return [cont]
-
             except Exception as e:
                 print_line(f'File {filename} read exception: {e}')
                 return [None]
-
         print_line('File does not exist.')
         return [None]
 
@@ -986,53 +812,80 @@ class ComponentsHelper(object):
         :param api_data: api data set
         :return: result
         """
-        if api_data['os_type'] == OSs.WINDOWS:
-
-            if local:
-                os.chdir(api_data['file'])
-            else:
-                os.chdir('c:\\')
-
-            cmd = "gem list"
-
-            try:
-                proc = subprocess.Popen(
-                    ["powershell", cmd],
-                    stdout=subprocess.PIPE)
+        if local:
+            os.chdir(api_data['file'])
+        else:
+            os.chdir('c:\\')
+        cmd = "gem list"
+        output = error = None
+        try:
+            if api_data['os_type'] == OSs.WINDOWS:
+                proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
                 output, error = proc.communicate()
+                proc.kill()
                 output = output.decode('utf-8').replace('\r', '').split('\n')
-
                 if error:
                     print_line(f'Powershell command throw {proc.returncode} code and {error.strip()} error message.')
                     return [None]
-
                 if output:
                     return [output]
-
-            except OSError as os_error:
-                print_line(f'Powershell command throw errno: {os_error.errno}, '
-                           f'strerror: {os_error.strerror} and '
-                           f'filename: {os_error.filename}.')
-                return [None]
-
-            except Exception as common_exception:
-                print_line(f'Powershell command throw an exception: {common_exception}.')
-                return [None]
-
-        elif api_data['os_type'] == OSs.CENTOS:
-            print_line('Centos does not support yet.')
+            elif api_data['os_type'] == OSs.CENTOS:
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+                output = output.decode('utf-8').replace('\r', '').split('\n')
+                if error:
+                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    return [None]
+                if output:
+                    return [output]
+            elif api_data['os_type'] == OSs.DEBIAN:
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+                output = output.decode('utf-8').replace('\r', '').split('\n')
+                if error:
+                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    return [None]
+                if output:
+                    return [output]
+            elif api_data['os_type'] == OSs.UBUNTU:
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+                output = output.decode('utf-8').replace('\r', '').split('\n')
+                if error:
+                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    return [None]
+                if output:
+                    return [output]
+            elif api_data['os_type'] == OSs.FEDORA:
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+                output = output.decode('utf-8').replace('\r', '').split('\n')
+                if error:
+                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    return [None]
+                if output:
+                    return [output]
+            elif api_data['os_type'] == OSs.MACOS:
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+                output = output.decode('utf-8').replace('\r', '').split('\n')
+                if error:
+                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    return [None]
+                if output:
+                    return [output]
+        except OSError as os_error:
+            print_line(f'Powershell command throw errno: {os_error.errno}, '
+                       f'strerror: {os_error.strerror} and '
+                       f'filename: {os_error.filename}.')
             return [None]
-
-        elif api_data['os_type'] == OSs.DEBIAN:
-            print_line('Debian does not support yet')
-            return [None]
-
-        elif api_data['os_type'] == OSs.FEDORA:
-            print_line('Fedora does not support yet.')
-            return [None]
-
-        elif api_data['os_type'] == OSs.MACOS:
-            print_line('MacOS does not support yet.')
+        except Exception as common_exception:
+            print_line(f'Powershell command throw an exception: {common_exception}.')
             return [None]
 
     def load_gemfile_packages_from_path(self, filename: str) -> list:
@@ -1043,67 +896,64 @@ class ComponentsHelper(object):
         """
         if os.path.isfile(filename):
             enc = self.define_file_encoding(filename=filename)
-
             if enc == 'undefined':
                 print_line(f'Undefined file {filename} encoding.')
                 return [None]
-
             try:
                 with open(filename, 'r', encoding=enc) as pf:
                     cont = pf.read()
                     packages = cont.split('\n')
                     return packages
-
             except Exception as e:
                 print_line(f'File {filename} read exception: {e}')
                 return [None]
-
         print_line('File does not exist.')
         return [None]
 
     def load_gemfile_lock_packages_from_path(self, filename: str) -> list:
+        """
+        Load packages from Gemfile.lock defined by path.
+        :param filename: filename
+        :return: result
+        """
         if os.path.isfile(filename):
             enc = self.define_file_encoding(filename=filename)
-
             if enc == 'undefined':
                 print_line(f'Undefined file {filename} encoding.')
                 return [None]
-
             try:
                 with open(filename, 'r', encoding=enc) as pf:
                     cont = pf.read()
                     packages = cont.split('\n')
                     return packages
-
             except Exception as e:
                 print_line(f'File {filename} read exception: {e}')
                 return [None]
-
         print_line('File does not exist.')
         return [None]
 
-    def load_components_php_composer_json_system_path(self, api_data: dict) -> list:
-
-
-
-
-
-
-
-
+    def load_php_composer_json_system_path(self, filename: str) -> list:
+        if os.path.isfile(filename):
+            enc = self.define_file_encoding(filename=filename)
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return [None]
+            with open(filename, 'r', encoding=enc) as pf:
+                packages = pf.read().split('\n')
+                return packages
+        print_line(f'File {filename} not found.')
         return [None]
 
-    def load_components_php_composer_lock_system_path(self, api_data: dict) -> list:
-
-
-
-
-
-
-
-
-
-
+    def load_php_composer_lock_system_path(self, filename: str) -> list:
+        if os.path.isfile(filename):
+            enc = self.define_file_encoding(filename=filename)
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return [None]
+            with open(filename, 'r', encoding=enc) as pf:
+                packages = pf.read().split('\n')
+                return packages
+        print_line(f'File {filename} not found.')
         return [None]
 
     # -------------------------------------------------------------------------
@@ -1119,36 +969,35 @@ class ComponentsHelper(object):
         """
         packages = []
         try:
-
             for report_element in report:
                 if len(report_element) > 0:
                     splitted_report_element = report_element.split()
                     component_and_version = splitted_report_element[len(splitted_report_element) - 1]
                     element_array = component_and_version.split('_')
-
                     if len(element_array) >= 2:
                         common_component_name = element_array[0]
                         common_component_version = element_array[1]
                         component = {'name': common_component_name.split('.')}
-
                         if len(common_component_name.split('.')) >= 3 and component['name'][1] == 'NET':
                             component['name'] = 'net_framework'
-
                         else:
                             component['name'] = common_component_name.split('.')
                             component['name'] = component['name'][len(component['name']) - 1]
-
                         component['version'] = common_component_version.split('.')
                         component['version'] = component['version'][0] + '.' + component['version'][1]
                         packages.append(component)
             return packages
-
-        except:
-            print_line('Exception occured. Try run app with Administrator rights.')
+        except Exception as common_exception:
+            print_line(f'Exception {common_exception} occured.')
             return [None]
 
     @staticmethod
     def parse_ubuntu_packages(_report) -> list:
+        """
+        Parse Ubuntu package list.
+        :param _report: raw packages.
+        :return: result
+        """
         number_of_line_breaks = _report.split('\n')
         new_components = []
         pattern1 = "(\d+[.]\d+[.]?\d*)"
@@ -1171,6 +1020,11 @@ class ComponentsHelper(object):
 
     @staticmethod
     def parse_fedora_packages(_report) -> list:
+        """
+        Parse Fedora package list.
+        :param _report: raw packages.
+        :return: result
+        """
         new_components = []
         number_of_line_breaks = _report
         for line in number_of_line_breaks:
@@ -1185,6 +1039,11 @@ class ComponentsHelper(object):
 
     @staticmethod
     def parse_macos_packages(_report) -> list:
+        """
+        Parse MacOS packages.
+        :param _report: raw packages
+        :return: result
+        """
         new_components = []
         packages = xmltodict.parse(_report, xml_attribs=True)
         pdict = packages['plist']['array']['dict']
@@ -1231,7 +1090,7 @@ class ComponentsHelper(object):
         return components
 
     @staticmethod
-    def parse_npm_packages(comp: list) -> list:
+    def parse_npm_packages(api_data: dict, comp: list) -> list:
         """
         Parse NPM raw packages.
         :param comp: raw packages.
@@ -1244,35 +1103,70 @@ class ComponentsHelper(object):
                     p = c["version"].split('@')
                     p[1] = p[1].replace('~', '')
                     components2.append({"name": p[0], "version": p[1]})
-
                 else:
                     name = c["version"]
                     cmd = "npm view {0} version".format(name)
-
-                    if os.name == 'nt':
-                        try:
-                            proc = subprocess.Popen(
-                                ["powershell", cmd],
-                                stdout=subprocess.PIPE)
+                    try:
+                        if api_data['os_type'] == OSs.WINDOWS:
+                            proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
                             version, error = proc.communicate()
                             version = version.decode("utf-8").replace('\n', '')
-
                             if error:
                                 print_line(f'Powershell command throw {proc.returncode} code '
                                            f'and {error.strip()} error message.')
-
-                        except OSError as os_error:
-                            print_line(f'Powershell command throw errno: {os_error.errno}, strerror: {os_error.strerror}')
-                            print_line(f'and filename: {os_error.filename}.')
-                            continue
-
-                        except:
-                            continue
-
-                    else:
-                        # TODO: COMPLETE FOR ANOTHER PLATFORMS
-                        version = '*'
-                    components2.append({"name": name, "version": version})
+                            else:
+                                components2.append({"name": name, "version": version})
+                        elif api_data['os_type'] == OSs.MACOS:
+                            proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                            version, error = proc.communicate()
+                            version = version.decode("utf-8").replace('\n', '')
+                            if error:
+                                print_line(f'Powershell command throw {proc.returncode} code '
+                                           f'and {error.strip()} error message.')
+                            else:
+                                components2.append({"name": name, "version": version})
+                        elif api_data['os_type'] == OSs.DEBIAN:
+                            proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                            version, error = proc.communicate()
+                            version = version.decode("utf-8").replace('\n', '')
+                            if error:
+                                print_line(f'Powershell command throw {proc.returncode} code '
+                                           f'and {error.strip()} error message.')
+                            else:
+                                components2.append({"name": name, "version": version})
+                        elif api_data['os_type'] == OSs.UBUNTU:
+                            proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                            version, error = proc.communicate()
+                            version = version.decode("utf-8").replace('\n', '')
+                            if error:
+                                print_line(f'Powershell command throw {proc.returncode} code '
+                                           f'and {error.strip()} error message.')
+                            else:
+                                components2.append({"name": name, "version": version})
+                        elif api_data['os_type'] == OSs.FEDORA:
+                            proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                            version, error = proc.communicate()
+                            version = version.decode("utf-8").replace('\n', '')
+                            if error:
+                                print_line(f'Powershell command throw {proc.returncode} code '
+                                           f'and {error.strip()} error message.')
+                            else:
+                                components2.append({"name": name, "version": version})
+                        elif api_data['os_type'] == OSs.CENTOS:
+                            proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                            version, error = proc.communicate()
+                            version = version.decode("utf-8").replace('\n', '')
+                            if error:
+                                print_line(f'Powershell command throw {proc.returncode} code '
+                                           f'and {error.strip()} error message.')
+                            else:
+                                components2.append({"name": name, "version": version})
+                    except OSError as os_error:
+                        print_line(f'Powershell command throw errno: {os_error.errno}, strerror: {os_error.strerror}')
+                        print_line(f'and filename: {os_error.filename}.')
+                        continue
+                    except:
+                        continue
         return components2
 
     @staticmethod
@@ -1284,7 +1178,7 @@ class ComponentsHelper(object):
         """
         def already_in_components(components: list, key: str) -> bool:
             """
-            Filter if coponent already in list.
+            Filter if component already in list.
             :param components: component list
             :param key: component key
             :return: filtered list
@@ -1322,15 +1216,12 @@ class ComponentsHelper(object):
         components = []
         dependencies = packages['dependencies']
         dev_dependencies = packages['devDependencies']
-
         if dev_dependencies != {}:
             for key in dev_dependencies.keys():
                 components.append({'name': key, 'version': str(dev_dependencies[key]).replace('^', '')})
-
         if dependencies != {}:
             for key in dependencies.keys():
                 components.append({'name': key, 'version': str(dependencies[key]).replace('^', '')})
-
         return components
 
     def parse_gem_packages_system(self, packages: list) -> list:
@@ -1367,12 +1258,10 @@ class ComponentsHelper(object):
         :return: result
         """
         content_splitted_by_strings = packages
-
         content_without_empty_strings = []
         for string in content_splitted_by_strings:
             if len(string) > 0:
                 content_without_empty_strings.append(string)
-
         content_without_comments = []
         for string in content_without_empty_strings:
             if not string.lstrip().startswith('#'):
@@ -1380,34 +1269,27 @@ class ComponentsHelper(object):
                     content_without_comments.append(string.lstrip().split('#')[0])
                 else:
                     content_without_comments.append(string.lstrip())
-
         cleared_content = []
         for string in content_without_comments:
             if string.startswith('gem '):
                 cleared_content.append(string.split('gem ')[1])
             elif string.startswith("gem('"):
                 cleared_content.append(string.split("gem('")[1][:-1])
-
         prepared_data_for_getting_packages_names_and_versions = []
         for string in cleared_content:
             intermediate_result = re.findall(
                 r'''('.*',\s*'.*\d.*?'|".*",\s*".*\d.*?"|".*",\s*'.*\d.*?'|'.*',\s*".*\d.*?"|.*',\s*'.*\d.*?')''', string)
-
             if intermediate_result:
                 prepared_data_for_getting_packages_names_and_versions.append(intermediate_result[0])
-
         packages = []
         for prepared_string in prepared_data_for_getting_packages_names_and_versions:
             package = {
                 'name': '*',
                 'version': '*'
             }
-
             splitted_string_by_comma = prepared_string.split(',')
-
             package_name = splitted_string_by_comma[0][1:-1]
             package['name'] = package_name
-
             if len(splitted_string_by_comma) == 2:
                 package['version'] = re.findall(r'(\d.*)', splitted_string_by_comma[1])[0][0:-1]
                 packages.append(package)
@@ -1415,17 +1297,14 @@ class ComponentsHelper(object):
                 min_package_version = re.findall(r'(\d.*)', splitted_string_by_comma[1])[0][0:-1]
                 package['version'] = min_package_version
                 packages.append(package)
-
                 package = {
                     'name': '*',
                     'version': '*'
                 }
-
                 max_package_version = re.findall(r'(\d.*)', splitted_string_by_comma[2])[0][0:-1]
                 package['name'] = package_name
                 package['version'] = max_package_version
                 packages.append(package)
-
         formed_packages = []
         buff_packages = []
         for package in packages:
@@ -1434,77 +1313,59 @@ class ComponentsHelper(object):
                 'version': '*',
                 'origin_version': '*'
             }
-
             splitted_packages_by_dot = package['version'].split('.')
-
             if len(splitted_packages_by_dot) == 1:
                 buff_package['name'] = package['name']
                 buff_package['origin_version'] = package['version']
-
                 package['version'] = '{}.0.0'.format(splitted_packages_by_dot[0])
                 formed_packages.append(package)
-
                 buff_package['version'] = package['version']
                 buff_packages.append(buff_package)
             elif len(splitted_packages_by_dot) == 2:
                 buff_package['name'] = package['name']
                 buff_package['origin_version'] = package['version']
-
                 package['version'] = '{}.{}.0'.format(splitted_packages_by_dot[0], splitted_packages_by_dot[1])
                 formed_packages.append(package)
-
                 buff_package['version'] = package['version']
                 buff_packages.append(buff_package)
             else:
                 formed_packages.append(package)
-
         unique_packages = []
         for i in range(len(formed_packages)):
             package = formed_packages.pop()
-
             if package not in unique_packages:
                 unique_packages.append(package)
-
         for package in unique_packages:
             for buff_package in buff_packages:
                 if package['name'] == buff_package['name'] and package['version'] == buff_package['version']:
                     package['version'] = buff_package['origin_version']
-
         return unique_packages
 
     @staticmethod
     def parse_gemfile_lock_packages(packages: list) -> list:
         splitted_content_by_strings = packages
-
         ignore_strings_startswith = (
             'GIT', 'remote', 'revision',
             'specs', 'PATH', 'GEM',
             'PLATFORMS', 'DEPENDENCIES', 'BUNDLED')
-
         cleared_content = []
         for string in splitted_content_by_strings:
             if not string.lstrip().startswith(ignore_strings_startswith):
                 cleared_content.append(string.lstrip())
-
         prepared_data_for_getting_packages_names_and_versions = []
         for string in cleared_content:
             intermediate_result = re.findall(r'(.*\s*\(.*\))', string)
-
             if intermediate_result:
                 prepared_data_for_getting_packages_names_and_versions.append(intermediate_result)
-
         packages = []
         for data in prepared_data_for_getting_packages_names_and_versions:
             package = {
                 'name': '*',
                 'version': '*'
             }
-
             splitted_data = data[0].split(' ')
-
             package_name = splitted_data[0]
             package['name'] = package_name
-
             if len(splitted_data) == 2:
                 package['version'] = splitted_data[1][1:-1]
                 packages.append(package)
@@ -1515,17 +1376,14 @@ class ComponentsHelper(object):
                 min_version = splitted_data[2][0:-1]
                 package['version'] = min_version
                 packages.append(package)
-
                 package = {
                     'name': '*',
                     'version': '*'
                 }
-
                 max_version = splitted_data[4][0:-1]
                 package['name'] = package_name
                 package['version'] = max_version
                 packages.append(package)
-
         formed_packages = []
         buff_packages = []
         for package in packages:
@@ -1534,66 +1392,38 @@ class ComponentsHelper(object):
                 'version': '*',
                 'origin_version': '*'
             }
-
             splitted_packages_by_dot = package['version'].split('.')
-
             if len(splitted_packages_by_dot) == 1:
                 buff_package['name'] = package['name']
                 buff_package['origin_version'] = package['version']
-
                 package['version'] = '{}.0.0'.format(splitted_packages_by_dot[0])
                 formed_packages.append(package)
-
                 buff_package['version'] = package['version']
                 buff_packages.append(buff_package)
             elif len(splitted_packages_by_dot) == 2:
                 buff_package['name'] = package['name']
                 buff_package['origin_version'] = package['version']
-
                 package['version'] = '{}.{}.0'.format(splitted_packages_by_dot[0], splitted_packages_by_dot[1])
                 formed_packages.append(package)
-
                 buff_package['version'] = package['version']
                 buff_packages.append(buff_package)
             else:
                 formed_packages.append(package)
-
         unique_packages = []
         for i in range(len(formed_packages)):
             package = formed_packages.pop()
-
             if package not in unique_packages:
                 unique_packages.append(package)
-
         for package in unique_packages:
             for buff_package in buff_packages:
                 if package['name'] == buff_package['name'] and package['version'] == buff_package['version']:
                     package['version'] = buff_package['origin_version']
-
         return unique_packages
 
-    def parse_components_php_composer_json_system_path(self, api_data: dict) -> list:
-
-
-
-
-
-
-
-
+    def parse_php_composer_json_system_path(self, packages) -> list:
         return [None]
 
-    def parse_components_php_composer_lock_system_path(self, api_data: dict) -> list:
-
-
-
-
-
-
-
-
-
-
+    def parse_php_composer_lock_system_path(self,packages) -> list:
         return [None]
 
     # -------------------------------------------------------------------------
@@ -1607,9 +1437,7 @@ class ComponentsHelper(object):
         :param filename:
         :return:
         """
-
         encodings = ['utf-16', 'utf-8', 'windows-1250', 'windows-1252', 'iso-8859-7', 'macgreek']
-
         for e in encodings:
             try:
                 import codecs
@@ -1617,10 +1445,8 @@ class ComponentsHelper(object):
                 fh.readlines()
                 fh.seek(0)
                 return e
-
             except:
                 continue
-
         return 'undefined'
 
     def get_current_set_name(self, api_data: dict) -> list:
@@ -1629,23 +1455,16 @@ class ComponentsHelper(object):
         :param api_data: api data set
         :return: result
         """
-
         if api_data['organization'] is None:
             return [None]
-
         if api_data['organization']['platforms'] is None:
             return [None]
-
         platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
-
         if platform_number == -1:
             return [None]
-
         project_number = self.web_api.get_project_number_by_name(api_data=api_data)
-
         if project_number == -1:
             return ['0.0.1']
-
         return [api_data['organization']['platforms'][platform_number]['projects'][project_number]['current_component_set']['name']]
 
     def get_current_component_set(self, api_data: dict) -> list:
@@ -1654,23 +1473,16 @@ class ComponentsHelper(object):
         :param api_data: api data set
         :return: result
         """
-
         if api_data['organization'] is None:
             return [None]
-
         if api_data['organization']['platforms'] is None:
             return [None]
-
         platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
-
         if platform_number == -1:
             return [None]
-
         project_number = self.web_api.get_project_number_by_name(api_data=api_data)
-
         if project_number == -1:
             return [None]
-
         return [api_data['organization']['platforms'][platform_number]['projects'][project_number]['current_component_set']]
 
 
