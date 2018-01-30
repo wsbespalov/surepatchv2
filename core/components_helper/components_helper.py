@@ -5,6 +5,8 @@ import re
 import os
 import sys
 import json
+import xmltodict
+import platform
 import importlib
 import subprocess
 
@@ -79,21 +81,42 @@ class ComponentsHelper(object):
                 print_line('Windows type not defined.')
                 return [None]
 
+        elif api_data['os_type'] == OSs.MACOS:
+            os_packages = self.load_macos_packages_from_shell()[0]
+            if os_packages is None:
+                print_line('Failed to load OS components.')
+                return [None]
+            components = self.parse_macos_packages(os_packages)
+            if components[0] is None:
+                print_line('Failed parse OS components.')
+                return [None]
+            return components
+
         elif api_data['os_type'] == OSs.CENTOS:
             print_line('Centos not support yet.')
             return [None]
 
         elif api_data['os_type'] == OSs.DEBIAN:
-            print_line('Debian not support yet')
-            return [None]
+            os_packages = self.load_ubuntu_packages_from_shell()[0]
+            if os_packages is None:
+                print_line('Failed to load OS components.')
+                return [None]
+            components = self.parse_ubuntu_packages(os_packages)
+            if components[0] is None:
+                print_line('Failed parse OS components.')
+                return [None]
+            return components
 
         elif api_data['os_type'] == OSs.FEDORA:
-            print_line('Fedora not support yet.')
-            return [None]
-
-        elif api_data['os_type'] == OSs.MACOS:
-            print_line('MacOS dont support yet.')
-            return [None]
+            os_packages = self.load_fedora_packages_from_shell()[0]
+            if os_packages is None:
+                print_line('Failed to load OS components.')
+                return [None]
+            components = self.parse_fedora_packages(os_packages)
+            if components[0] is None:
+                print_line('Failed parse OS components.')
+                return [None]
+            return components
 
         return [None]
 
@@ -122,21 +145,44 @@ class ComponentsHelper(object):
                 print_line('Windows 7 does not support yet.')
                 return [None]
 
+        elif api_data['os_type'] == OSs.MACOS:
+            os_packages = self.load_macos_packages_from_path(api_data['file'])[0]
+            if os_packages is None:
+                print_line('Failed to load OS components.')
+                return [None]
+            components = self.parse_macos_packages(os_packages)
+            if components[0] is None:
+                print_line('Failed parse OS components.')
+                return [None]
+            return components
+
         elif api_data['os_type'] == OSs.CENTOS:
             print_line('Centos does not support yet.')
             return [None]
 
         elif api_data['os_type'] == OSs.DEBIAN:
-            print_line('Debian does not support yet')
-            return [None]
+            os_packages = self.load_ubuntu_packages_from_path(api_data['file'])[0]
+            if os_packages is None:
+                print_line('Failed to load OS components.')
+                return [None]
+            components = self.parse_ubuntu_packages(os_packages)
+            if components[0] is None:
+                print_line('Failed parse OS components.')
+                return [None]
+            return components
 
         elif api_data['os_type'] == OSs.FEDORA:
-            print_line('Fedora does not support yet.')
-            return [None]
+            os_packages = self.load_fedora_packages_from_path(api_data['file'])[0]
+            if os_packages is None:
+                print_line('Failed to load OS components.')
+                return [None]
+            components = self.parse_fedora_packages(os_packages)
+            if components[0] is None:
+                print_line('Failed parse OS components.')
+                return [None]
+            return components
 
-        elif api_data['os_type'] == OSs.MACOS:
-            print_line('MacOS does not support yet.')
-            return [None]
+
 
         return [None]
 
@@ -511,6 +557,160 @@ class ComponentsHelper(object):
         except Exception as common_exception:
             print_line(f'Powershell command throw an exception: {common_exception}.')
             return [None]
+
+    @staticmethod
+    def load_ubuntu_packages_from_shell() -> list:
+        """
+        Load OS packages for Ubuntu platform by shell command.
+        :return: result
+        """
+
+        cmd = "dpkg -l | grep '^ii '"
+        try:
+            if platform.system() == "Linux" or \
+                    platform.system() == "linux" or \
+                    platform.linux_distribution()[0] == 'debian':
+                proc = subprocess.Popen(
+                    [cmd],
+                    shell=True,
+                    stdout=subprocess.PIPE)
+
+                output, error = proc.communicate()
+
+                if error:
+                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    return [None]
+
+                if output:
+                    return [output]
+
+            print_line(f'Platform not defined as Debian.')
+            return [None]
+
+        except OSError as os_error:
+            print_line(f'Shell command throw errno: {os_error.errno}, ')
+            print_line(f'strerror: {os_error.strerror} and ')
+            print_line(f'filename: {os_error.filename}.')
+            return [None]
+
+        except Exception as common_exception:
+            print_line(f'Shell command throw an exception: {common_exception}.')
+            return [None]
+
+    def load_ubuntu_packages_from_path(self, filename: str) -> list:
+        if os.path.exists(filename):
+
+            enc = self.define_file_encoding(filename=filename)
+
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return [None]
+
+            try:
+                with open(filename, 'r', encoding=enc) as cf:
+                    os_packages = cf.read()
+                    if os_packages is None:
+                        print_line(f'Cant read file: {filename}.')
+                        return [None]
+                    return [os_packages]
+            except Exception as e:
+                print_line(f'File read exception {e}.')
+                return [None]
+
+        print_line(f'File {filename} does not exists.')
+        return [None]
+
+    @staticmethod
+    def load_fedora_packages_from_shell() -> list:
+        cmd = "rpm -qa"
+        try:
+            return [os.popen(cmd).readlines()]
+
+        except OSError as os_error:
+            print_line(f'Shell command throw errno: {os_error.errno}, ')
+            print_line(f'strerror: {os_error.strerror} and ')
+            print_line(f'filename: {os_error.filename}.')
+            return [None]
+
+        except Exception as common_exception:
+            print_line(f'Shell command throw an exception: {common_exception}.')
+            return [None]
+
+    def load_fedora_packages_from_path(self, filename: str) -> list:
+        if os.path.exists(filename):
+
+            enc = self.define_file_encoding(filename=filename)
+
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return [None]
+
+            try:
+                with open(filename, 'r', encoding=enc) as cf:
+                    os_packages = cf.read()
+                    if os_packages is None:
+                        print_line(f'Cant read file: {filename}.')
+                        return [None]
+                    return [os_packages]
+            except Exception as e:
+                print_line(f'File read exception {e}.')
+                return [None]
+
+        print_line(f'File {filename} does not exists.')
+        return [None]
+
+    @staticmethod
+    def load_macos_packages_from_shell() -> list:
+        cmd = "cat /Library/Receipts/InstallHistory.plist"
+        try:
+            if platform.system() == 'darwin' or platform.system() == 'Darwin':
+                proc = subprocess.Popen(
+                    [cmd],
+                    shell=True,
+                    stdout=subprocess.PIPE)
+
+                output, error = proc.communicate()
+
+                if error:
+                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    return [None]
+
+                if output:
+                    return [output]
+
+        except OSError as os_error:
+            print_line(f'Shell command throw errno: {os_error.errno}, ')
+            print_line(f'strerror: {os_error.strerror} and ')
+            print_line(f'filename: {os_error.filename}.')
+            return [None]
+
+        except Exception as common_exception:
+            print_line(f'Shell command throw an exception: {common_exception}.')
+            return [None]
+
+    def load_macos_packages_from_path(self, filename: str) -> list:
+        if os.path.exists(filename):
+
+            enc = self.define_file_encoding(filename=filename)
+
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return [None]
+
+            try:
+                with open(filename, 'r', encoding=enc) as cf:
+                    os_packages = cf.read()
+                    if os_packages is None:
+                        print_line(f'Cant read file: {filename}.')
+                        return [None]
+                    # report = os_packages.replace('\r', '').split('\n')[9:]
+                    return [os_packages]
+            except Exception as e:
+                print_line(f'File read exception {e}.')
+                return [None]
+
+        print_line(f'File {filename} does not exists.')
+        return [None]
 
     def load_windows_10_packages_from_powershell_unloaded_file(self, filename: str) -> list:
         """
@@ -946,6 +1146,54 @@ class ComponentsHelper(object):
         except:
             print_line('Exception occured. Try run app with Administrator rights.')
             return [None]
+
+    @staticmethod
+    def parse_ubuntu_packages(_report) -> list:
+        number_of_line_breaks = _report.split('\n')
+        new_components = []
+        pattern1 = "(\d+[.]\d+[.]?\d*)"
+        pattern = re.compile(pattern1)
+        for line in number_of_line_breaks:
+            l = re.sub(r'\s+', ' ', line)
+            l2 = l.split()
+            if len(l2) > 2:
+                start = l2[0]
+                name = l2[1]
+                raw_version = l2[2]
+                if start == 'ii' or start == 'rc':
+                    if pattern.match(raw_version):
+                        m = re.search(pattern1, raw_version)
+                        ver = m.group()
+                        if ':' in name:
+                            name = name[:name.index(':')]
+                        new_components.append({"name": name, "version": ver})
+        return new_components
+
+    @staticmethod
+    def parse_fedora_packages(_report) -> list:
+        new_components = []
+        number_of_line_breaks = _report
+        for line in number_of_line_breaks:
+            line = line.replace('\n', '')
+            pattern = '\s*\-\s*'
+            component_array = re.split(pattern, line)
+            if len(component_array) >= 2:
+                name = component_array[0]
+                version = component_array[1]
+                new_components.append({'name': name, 'version': version})
+        return new_components
+
+    @staticmethod
+    def parse_macos_packages(_report) -> list:
+        new_components = []
+        packages = xmltodict.parse(_report, xml_attribs=True)
+        pdict = packages['plist']['array']['dict']
+        for pd in pdict:
+            name = pd['string'][0]
+            version = pd['string'][1]
+            if version is not None:
+                new_components.append({'name': name, 'version': version})
+        return new_components
 
     @staticmethod
     def parse_pip_packages_from_path(packages: list) -> list:
