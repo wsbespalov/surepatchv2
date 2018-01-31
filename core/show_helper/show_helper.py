@@ -137,6 +137,7 @@ class ShowHelper(object):
 
         for issue in issues:
             printed_issues.append({'name': 'title', 'description': issue['title']})
+            printed_issues.append({'name': 'component', 'description': issue['component']['name'] + ' - ' + issue['component']['version']})
             printed_issues.append({'name': 'description', 'description': issue['description']})
             printed_issues.append({'name': 'author', 'description': issue['author']})
             printed_issues.append({'name': 'status', 'description': issue['status']})

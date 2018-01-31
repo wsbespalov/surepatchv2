@@ -474,26 +474,24 @@ class SetHelper(object):
         :param api_data: api data set
         :return: result
         """
-        print_line(f'Coming soon...')
-        return False
-        # api_data['components'] = self.components_helper.get_components_php_composer_json_system_path(api_data=api_data)
-        #
-        # if api_data['components'][0] is None:
-        #     return False
-        #
-        # api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
-        # if api_data['platform_number'] == -1:
-        #     print_line(f"No such platform: {api_data['platform']}")
-        #     return False
-        #
-        # api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
-        # if api_data['project_number'] == -1:
-        #     print_line(f"No such project: {api_data['project']}")
-        #     return False
-        #
-        # api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
-        #
-        # return self.web_api.send_create_new_component_set_request(api_data=api_data)
+        api_data['components'] = self.components_helper.get_components_php_composer_json_system_path(api_data=api_data)
+
+        if api_data['components'][0] is None:
+            return False
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     def create_set_php_composer_lock_system_path(self, api_data: dict) -> bool:
         """
@@ -501,26 +499,24 @@ class SetHelper(object):
         :param api_data: api data set
         :return: result
         """
-        print_line(f'Coming soon...')
-        return False
-        # api_data['components'] = self.components_helper.get_components_php_composer_lock_system_path(api_data=api_data)
-        #
-        # if api_data['components'][0] is None:
-        #     return False
-        #
-        # api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
-        # if api_data['platform_number'] == -1:
-        #     print_line(f"No such platform: {api_data['platform']}")
-        #     return False
-        #
-        # api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
-        # if api_data['project_number'] == -1:
-        #     print_line(f"No such project: {api_data['project']}")
-        #     return False
-        #
-        # api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
-        #
-        # return self.web_api.send_create_new_component_set_request(api_data=api_data)
+        api_data['components'] = self.components_helper.get_components_php_composer_lock_system_path(api_data=api_data)
+
+        if api_data['components'][0] is None:
+            return False
+
+        api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+        if api_data['platform_number'] == -1:
+            print_line(f"No such platform: {api_data['platform']}")
+            return False
+
+        api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+        if api_data['project_number'] == -1:
+            print_line(f"No such project: {api_data['project']}")
+            return False
+
+        api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
+
+        return self.web_api.send_create_new_component_set_request(api_data=api_data)
 
     @staticmethod
     def get_my_platforms(api_data: dict) -> list:
