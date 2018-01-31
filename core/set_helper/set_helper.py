@@ -63,7 +63,7 @@ class SetHelper(object):
         :param api_data: api data set
         :return: result
         """
-        api_data['components']  = self.components_helper.get_components_os_auto_system_none(api_data=api_data)
+        api_data['components'] = self.components_helper.get_components_os_auto_system_none(api_data=api_data)
 
         if api_data['components'] [0] is None:
             return False
