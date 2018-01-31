@@ -56,6 +56,10 @@ echo 18. create project autotest_any_user_none - User packages asked from consol
 c:\Python36\python.exe surepatch.py --action=create_project --platform=autotest1 --project=autotest_any_user_none --method=manual --format=user
 timeout 3
 
+c:\Python36\python.exe surepatch.py --action=create_project --platform=autotest1 --project=autotest_php_composer_json --target=php_composer_json --method=auto --format=system --file=c:\composer1.json
+
+c:\Python36\python.exe surepatch.py --action=create_project --platform=autotest1 --project=autotest_php_composer_lock --target=php_composer_json --method=auto --format=system --file=c:\composer1.lock
+
 echo --. create project for set test
 c:\Python36\python.exe surepatch.py --action=create_project --platform=autotest1 --project=autotest_set_test --method=auto --format=user --file=c:\user_packages.txt
 timeout 3

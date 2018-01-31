@@ -272,14 +272,12 @@ class ProjectHelper(object):
         :param api_data: api data set
         :return: result
         """
-        print_line(f'Coming soon...')
-        return False
-        # api_data['components'] = self.components_helper.get_components_php_composer_json_system_path(api_data=api_data)
-        #
-        # if api_data['components'][0] is None:
-        #     return False
-        #
-        # return self.web_api.send_create_new_project_request(api_data=api_data)
+        api_data['components'] = self.components_helper.get_components_php_composer_json_system_path(api_data=api_data)
+
+        if api_data['components'][0] is None:
+            return False
+
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def create_project_php_composer_lock_system_path(self, api_data: dict) -> bool:
         """
@@ -287,14 +285,12 @@ class ProjectHelper(object):
         :param api_data: api data set
         :return: result
         """
-        print_line(f'Coming soon...')
-        return False
-        # api_data['components'] = self.components_helper.get_components_php_composer_lock_system_path(api_data=api_data)
-        #
-        # if api_data['components'][0] is None:
-        #     return False
-        #
-        # return self.web_api.send_create_new_project_request(api_data=api_data)
+        api_data['components'] = self.components_helper.get_components_php_composer_lock_system_path(api_data=api_data)
+
+        if api_data['components'][0] is None:
+            return False
+
+        return self.web_api.send_create_new_project_request(api_data=api_data)
 
     def delete_project(self, api_data: dict) -> bool:
         """

@@ -17,7 +17,7 @@ This application is designed to work with the Surepatch Project without using th
     - Collect Packages from Windows, MacOS, Linux Operation Systems
     - Collect Packages from Python PIP and requirements.txt sources
     - Collect Packages from NPM, NodeJS package.json and package-lock.json sources
-    - Collect Packages from Ruby, Gemfile and Gemfile.lock spurces
+    - Collect Packages from Ruby, Gemfile and Gemfile.lock sources
     - Collect Packages from user format file resources and in interactive mode
 
 # Installation
@@ -36,7 +36,7 @@ This application is designed to work with the Surepatch Project without using th
 |--user| <your_username> | Your username (e-mail)|
 |--password| <your_password> | Your password|
 |--action| <action_type> | CLI App action:|
-| | save_config | Save account paramters |
+| | save_config | Save account parameters |
 | | create_platform | Create New Platform |
 | | create_project | Create New Project in defined Platform |
 | | create_set | Create New Components Set in defined Platform/Project|
