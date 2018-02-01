@@ -35,7 +35,7 @@ echo "10. create project autotest_local_none - NPM packages, collected from shel
 ./surepatch_mac --action=create_project --platform=autotest_mac --project=autotest_local_none --target=npm_local --method=auto --format=system --file=/
 
 echo "11. create project autotest_npm_package_lock_path - NPM packages, collected from package-lock.json file"
-./surepatch_mac --action=create_project --platform=autotest_mac --project=autotest_npm_package_lock_path --target=package_lock_json --method=auto --format=system --file=/package_lock.json
+./surepatch_mac --action=create_project --platform=autotest_mac --project=autotest_npm_package_lock_path --target=package_lock_json --method=auto --format=system --file=/package-lock.json
 
 echo "12. create project autotest_npm_package_json - NPM packages, collected from package.json file"
 ./surepatch_mac --action=create_project --platform=autotest_mac --project=autotest_npm_package_json --target=package_json --method=auto --format=system --file=/package.json
@@ -94,7 +94,7 @@ echo "28. create set autotest_local_none - NPM packages, collected from shell co
 ./surepatch_mac --action=create_set --platform=autotest_mac --project=autotest_set_test --set=npm_local_path.1 --target=npm_local --method=auto --format=system --file=/
 
 echo "29. create set autotest_npm_package_lock_path - NPM packages, collected from package-lock.json file"
-./surepatch_mac --action=create_set --platform=autotest_mac --project=autotest_set_test --set=npm_package_json_lock_path.1 --target=package_lock_json --method=auto --format=system --file=/package_lock.json
+./surepatch_mac --action=create_set --platform=autotest_mac --project=autotest_set_test --set=npm_package_json_lock_path.1 --target=package_lock_json --method=auto --format=system --file=/package-lock.json
 
 echo "30. create set autotest_npm_package_json - NPM packages, collected from package.json file"
 ./surepatch_mac --action=create_set --platform=autotest_mac --project=autotest_set_test --set=npm_package_json_path.1 --target=package_json --method=auto --format=system --file=/package.json
