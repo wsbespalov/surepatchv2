@@ -620,7 +620,8 @@ class API(object):
             team=api_data['team'],
             user=api_data['user'],
             password=api_data['password'],
-            auth_token=api_data['auth_token']
+            auth_token=api_data['auth_token'],
+            logo=api_data['logo']
         )
 
         with open(full_path, 'w') as yaml_config_file:
@@ -681,6 +682,8 @@ class API(object):
                     config['auth-token'] = ''
 
                 api_data['auth_token'] = config['auth_token']
+
+                api_data['logo'] = config['logo']
 
                 return True
 

@@ -96,7 +96,7 @@ def create_parser():
         '--set',
         type=str,
         required=False,
-        help='Define Set name. If is set "auto" - \
+        help='Define Set name. If is set None - \
             set name will be incremented automatically')
     parser.add_argument(
         '--auth_token',
@@ -104,6 +104,12 @@ def create_parser():
         required=False,
         help='Define token from your web dashboard \
         to login without password'
+    )
+    parser.add_argument(
+        '--logo',
+        type=str,
+        required=False,
+        help='Print logo or not (on/off)'
     )
     return parser.parse_args()
 
@@ -193,8 +199,13 @@ def main():
         os_release=get_os_release(),
         os_machine=get_os_machine(),
         components=[],
-        auth_token=arguments.auth_token
+        auth_token=arguments.auth_token,
+        logo=arguments.logo
     )
+
+    if arguments.logo is not None:
+        if arguments.logo == 'on':
+            print_logo()
 
     if api.run_action(api_data=api_data):
         print_line('Complete successfully.')
@@ -207,5 +218,5 @@ if __name__ == '__main__':
     """
     Entry point
     """
-    print_logo()
+
     sys.exit(main())
