@@ -662,7 +662,10 @@ class ComponentsHelper(object):
         if local:
             os.chdir(path)
         else:
-            os.chdir("c:\\")
+            if api_data['os_type'] == OSs.WINDOWS:
+                os.chdir("c:\\")
+            else:
+                os.chdir("/")
         output = error = None
         try:
             if api_data['os_type'] == OSs.WINDOWS:
@@ -809,7 +812,10 @@ class ComponentsHelper(object):
         if local:
             os.chdir(api_data['file'])
         else:
-            os.chdir('c:\\')
+            if api_data['os_type'] == OSs.WINDOWS:
+                os.chdir("c:\\")
+            else:
+                os.chdir("/")
         cmd = "gem list"
         output = error = None
         try:

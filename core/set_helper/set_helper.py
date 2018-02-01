@@ -116,7 +116,7 @@ class SetHelper(object):
         :param api_data:
         :return:
         """
-        api_data['components'] = self.components_helper.get_components_pip_auto_system_none(api_data=api_data)
+        api_data['components'] = self.components_helper.get_components_pip_auto_system_none()
 
         if api_data['components'][0] is None:
             return False
@@ -295,7 +295,7 @@ class SetHelper(object):
         :param api_data:
         :return:
         """
-        api_data['components'] = self.components_helper.get_components_npm_local_auto_system_none(api_data=api_data)
+        api_data['components'] = self.components_helper.get_components_npm_lock_auto_system_path(api_data=api_data)
 
         if api_data['components'][0] is None:
             return False
