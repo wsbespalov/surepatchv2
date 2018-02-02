@@ -114,7 +114,7 @@ def create_parser():
     return parser.parse_args()
 
 
-def get_os_platform() -> str:
+def get_os_platform():
     """
     Get OS platform type.
     :return: platform
@@ -132,7 +132,7 @@ def get_os_platform() -> str:
         return OSs.WINDOWS
 
 
-def get_os_version(os_platform: str) -> str:
+def get_os_version(os_platform):
     """
     Get OS version.
     :param os_platform: os
@@ -143,7 +143,7 @@ def get_os_version(os_platform: str) -> str:
     return ''
 
 
-def get_os_sp(os_platform: str) -> str:
+def get_os_sp(os_platform):
     """
     Get OS service pack (for Windows)
     :param os_platform: os
@@ -155,7 +155,7 @@ def get_os_sp(os_platform: str) -> str:
     return ''
 
 
-def get_os_release() -> str:
+def get_os_release() :
     """
     Get OS release.
     :return: release
@@ -164,7 +164,7 @@ def get_os_release() -> str:
     return platform.release()
 
 
-def get_os_machine() -> str:
+def get_os_machine():
     """
     Get OS machine code.
     :return: machine code

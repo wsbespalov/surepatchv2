@@ -14,15 +14,6 @@ from core.interface import ask
 from core.interface import print_line
 from core.webapi import WebAPI
 
-try:
-    import pip
-    from pip.utils import get_installed_distributions
-except ImportError as import_exception:
-    print_line(f"Can't import pip get_installed_distributions.")
-    print_line(f"Get an exception: {import_exception}.")
-    sys.exit(0)
-
-
 raw_npm_components = []
 
 
@@ -48,7 +39,7 @@ class ComponentsHelper(object):
     # Components
     # -------------------------------------------------------------------------
 
-    def get_components_os_auto_system_none(self, api_data: dict) -> list:
+    def get_components_os_auto_system_none(self, api_data):
         """
         Get components of OS by calling of shell script and than parse them.
         :param api_data: api data set
@@ -83,7 +74,7 @@ class ComponentsHelper(object):
                 return [None]
             return components
         elif api_data['os_type'] == OSs.CENTOS:
-            print_line('Centos not support yet.')
+            print_line('CentOS not support yet.')
             return [None]
         elif api_data['os_type'] == OSs.DEBIAN:
             os_packages = self.load_ubuntu_packages_from_shell()[0]
@@ -107,7 +98,7 @@ class ComponentsHelper(object):
             return components
         return [None]
 
-    def get_components_os_auto_system_path(self, api_data: dict) -> list:
+    def get_components_os_auto_system_path(self, api_data):
         """
         Get OS packages from file, defined by path, which were created by calling the shell command.
         :param api_data: api data set
@@ -161,7 +152,7 @@ class ComponentsHelper(object):
         else:
             return [None]
 
-    def get_components_pip_auto_system_none(self) -> list:
+    def get_components_pip_auto_system_none(self):
         """
         Get Python PIP components, collected by pip frozen requirements call.
         :return: result
@@ -171,10 +162,10 @@ class ComponentsHelper(object):
         if report[0] is None:
             print_line('Problems with PIP components loading.')
             return [None]
-        
+
         return self.parse_pip_packages_legacy(report)
 
-    def get_components_pip_auto_system_path(self, api_data: dict) -> list:
+    def get_components_pip_auto_system_path(self, api_data):
         """
         Get Python PIP components from file, defined by path.
         :param api_data: api data set
@@ -183,10 +174,10 @@ class ComponentsHelper(object):
         packages = self.load_pip_packages_from_path(api_data['file'])
         if packages[0] is not None:
             return self.parse_pip_packages_from_path(packages=packages)
-        print_line('Something wrong with packages in file path')
+        print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return [None]
 
-    def get_components_requirements_auto_system_path(self, api_data: dict) -> list:
+    def get_components_requirements_auto_system_path(self, api_data):
         """
         Get Python PIP components from requirements.txt file, defined by path.
         :param api_data: api data set
@@ -195,10 +186,10 @@ class ComponentsHelper(object):
         packages = self.load_pip_packages_from_path(api_data['file'])
         if packages[0] is not None:
             return self.parse_pip_packages_from_path(packages=packages)
-        print_line('Something wrong with packages in file path')
+        print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return [None]
 
-    def get_components_npm_auto_system_path(self, api_data: dict) -> list:
+    def get_components_npm_auto_system_path(self, api_data):
         """
         Get NPM packages, collected from file, defined by path.
         :param api_data:
@@ -207,10 +198,10 @@ class ComponentsHelper(object):
         packages = self.load_npm_packages_from_path(api_data['file'])
         if packages[0] is not None:
             return self.parse_npm_packages(api_data=api_data, comp=raw_npm_components)
-        print_line('Something wrong with packages in file path')
+        print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return [None]
 
-    def get_components_package_json_auto_system_path(self, api_data: dict) -> list:
+    def get_components_package_json_auto_system_path(self, api_data):
         """
         Get NPM packages from package.json file, defined by path.
         :param api_data: api data set
@@ -219,10 +210,10 @@ class ComponentsHelper(object):
         packages = self.load_package_json_packages_from_path(api_data['file'])
         if packages[0] is not None:
             return self.parse_package_json_packages_from_path(packages[0])
-        print_line('Something wrong with packages in file path')
+        print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return [None]
 
-    def get_components_gem_auto_system_path(self, api_data: dict) -> list:
+    def get_components_gem_auto_system_path(self, api_data):
         """
         Get Ruby gem packages, collected from file, defined by path.
         :param api_data: api data set
@@ -231,10 +222,10 @@ class ComponentsHelper(object):
         packages = self.load_gem_packages_from_path(api_data['file'])
         if packages[0] is not None:
             return self.parse_gem_packages_from_path(packages[0])
-        print_line('Something wrong with packages in file path')
+        print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return [None]
 
-    def get_components_npm_auto_system_none(self, api_data: dict) -> list:
+    def get_components_npm_auto_system_none(self, api_data):
         """
         Get NPM packages, collected from shell command, that is called globally.
         :param api_data: api data set
@@ -243,10 +234,10 @@ class ComponentsHelper(object):
         packages = self.load_npm_packages(api_data=api_data, local=False)
         if packages[0] is not None:
             return self.parse_npm_packages(api_data=api_data, comp=raw_npm_components)
-        print_line('Something wrong with packages in file path')
+        print_line('Something wrong with packages in NPM system call.')
         return [None]
 
-    def get_components_npm_local_auto_system_none(self, api_data: dict) -> list:
+    def get_components_npm_local_auto_system_none(self, api_data):
         """
         Get NPM packages, collected from shell command, that is called locally from path.
         :param api_data: api data set
@@ -258,7 +249,7 @@ class ComponentsHelper(object):
         print_line('Something wrong with packages in file path')
         return [None]
 
-    def get_components_npm_lock_auto_system_path(self, api_data: dict) -> list:
+    def get_components_npm_lock_auto_system_path(self, api_data):
         """
         Get NPM packages from lock file, defined by path.
         :param api_data: api data set
@@ -270,7 +261,7 @@ class ComponentsHelper(object):
         print_line('Something wrong with packages in file path')
         return [None]
 
-    def get_components_gem_auto_system_none(self, api_data: dict) -> list:
+    def get_components_gem_auto_system_none(self, api_data):
         """
         Get Ruby gem packages, collected from shell command, that is called globally.
         :param api_data: api data set
@@ -282,7 +273,7 @@ class ComponentsHelper(object):
         print_line('Something wrong with packages in file path')
         return [None]
 
-    def get_components_gemfile_auto_system_path(self, api_data: dict) -> list:
+    def get_components_gemfile_auto_system_path(self, api_data):
         """
         Get Ruby gem packages, collected from Gemfile, defined by path.
         :param api_data: api data set
@@ -298,7 +289,7 @@ class ComponentsHelper(object):
             return [None]
         return components
 
-    def get_components_gemfile_lock_auto_system_path(self, api_data: dict) -> list:
+    def get_components_gemfile_lock_auto_system_path(self, api_data):
         """
         Get Ruby gem packages, collected from Gemfile.lock, defined by path.
         :param api_data: api data set
@@ -306,15 +297,15 @@ class ComponentsHelper(object):
         """
         packages = self.load_gemfile_lock_packages_from_path(filename=api_data['file'])
         if packages[0] is None:
-            print(f'Gemfile packages loading error.')
+            print('Gemfile packages loading error.')
             return [None]
         components = self.parse_gemfile_lock_packages(packages=packages)
         if components[0] is None:
-            print_line(f'Failed parse Gemfile packages.')
+            print_line('Failed parse Gemfile packages.')
             return [None]
         return components
 
-    def get_components_any_auto_user_path(self, api_data: dict) -> list:
+    def get_components_any_auto_user_path(self, api_data):
         """
         Get any components from file, defined by path.
         :param api_data: api data set
@@ -340,7 +331,7 @@ class ComponentsHelper(object):
         return [None]
 
     @staticmethod
-    def get_components_any_manual_user_none() -> list:
+    def get_components_any_manual_user_none():
         """
         Get packages from console.
         :return:
@@ -356,7 +347,7 @@ class ComponentsHelper(object):
                 break
         return components
 
-    def get_components_php_composer_json_system_path(self, api_data: dict) -> list:
+    def get_components_php_composer_json_system_path(self, api_data):
         packages = self.load_php_composer_json_system_path(filename=api_data['file'])[0]
         if packages is None:
             print(f'Gemfile packages loading error.')
@@ -364,7 +355,7 @@ class ComponentsHelper(object):
         components = self.parse_php_composer_json_system_path(_packages=packages)
         return components
 
-    def get_components_php_composer_lock_system_path(self, api_data: dict) -> list:
+    def get_components_php_composer_lock_system_path(self, api_data):
         packages = self.load_php_composer_lock_system_path(filename=api_data['file'])[0]
         if packages is None:
             print(f'Gemfile packages loading error.')
@@ -377,7 +368,7 @@ class ComponentsHelper(object):
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def load_windows_10_packages_from_shell() -> list:
+    def load_windows_10_packages_from_shell():
         """
         Load OS packages for Windows platform by powershell command.
         :return: result
@@ -400,7 +391,7 @@ class ComponentsHelper(object):
             print_line(f'Powershell command throw an exception: {common_exception}.')
             return [None]
 
-    def load_windows_10_packages_from_path(self, filename: str) -> list:
+    def load_windows_10_packages_from_path(self, filename: str):
         """
         Get OS packages for Windows platform from unloaded file, that was created by shell command manually.
         :param filename: path to file
@@ -427,7 +418,7 @@ class ComponentsHelper(object):
         return [None]
 
     @staticmethod
-    def load_ubuntu_packages_from_shell() -> list:
+    def load_ubuntu_packages_from_shell():
         """
         Load OS packages for Ubuntu platform by shell command.
         :return: result
@@ -456,7 +447,7 @@ class ComponentsHelper(object):
             print_line(f'Shell command throw an exception: {common_exception}.')
             return [None]
 
-    def load_ubuntu_packages_from_path(self, filename: str) -> list:
+    def load_ubuntu_packages_from_path(self, filename: str):
         """
         Load OS packages for Ubuntu platform from filem created by shell command.
         :return: result
@@ -480,7 +471,7 @@ class ComponentsHelper(object):
         return [None]
 
     @staticmethod
-    def load_fedora_packages_from_shell() -> list:
+    def load_fedora_packages_from_shell():
         """
         Load OS packages for Fedora platform by shell command.
         :return: result
@@ -497,7 +488,7 @@ class ComponentsHelper(object):
             print_line(f'Shell command throw an exception: {common_exception}.')
             return [None]
 
-    def load_fedora_packages_from_path(self, filename: str) -> list:
+    def load_fedora_packages_from_path(self, filename: str):
         """
         Load OS packages for Fedora platform from file, created by shell command.
         :return: result
@@ -521,7 +512,7 @@ class ComponentsHelper(object):
         return [None]
 
     @staticmethod
-    def load_macos_packages_from_shell() -> list:
+    def load_macos_packages_from_shell():
         """
         Load OS packages for MacOS platform by shell command.
         :return: result
@@ -546,7 +537,7 @@ class ComponentsHelper(object):
             print_line(f'Shell command throw an exception: {common_exception}.')
             return [None]
 
-    def load_macos_packages_from_path(self, filename: str) -> list:
+    def load_macos_packages_from_path(self, filename: str):
         """
         Load OS packages for MacOS platform from file, created by shell command.
         :return: result
@@ -589,10 +580,10 @@ class ComponentsHelper(object):
                     return [None]
         except Exception as common_exception:
             print("An exception {0} occured while shell command was called.".format(common_exception))
-            return [None]    
+            return [None]
         return [None]
 
-    def load_pip_packages_from_path(self, filename: str) -> list:
+    def load_pip_packages_from_path(self, filename: str):
         """
         Load Python PIP packages from file.
         :param filename: path to file
@@ -615,7 +606,7 @@ class ComponentsHelper(object):
         print_line(f'File {filename} does not exists.')
         return [None]
 
-    def load_npm_packages_from_path(self, filename: str) -> list:
+    def load_npm_packages_from_path(self, filename: str):
         """
         Load NPM packages from file, defined by path.
         :param filename: path to file
@@ -637,7 +628,7 @@ class ComponentsHelper(object):
         print_line('File does not exist.')
         return [None]
 
-    def load_npm_packages(self, api_data: dict, local: bool) -> list:
+    def load_npm_packages(self, api_data, local: bool):
         """
         Load NPM packages from shell command through temporary file.
         :param path: path to directory, if method call locally
@@ -669,42 +660,43 @@ class ComponentsHelper(object):
                 proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
-            if error:
-                print_line(f'Powershell command throw {proc.returncode} code:')
-                print_line(f'and {error.strip()} error message.')
-                return [None]
+                if error:
+                    print_line(f'Powershell command throw {proc.returncode} code:')
+                    print_line(f'and {error.strip()} error message.')
+                    return [None]
             elif api_data['os_type'] == OSs.MACOS:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
-            if error:
-                print_line(f'Shell command throw {proc.returncode} code:')
-                print_line(f'and {error.strip()} error message.')
-                return [None]
+                if error:
+                    print_line(f'Shell command throw {proc.returncode} code:')
+                    print_line(f'and {error.strip()} error message.')
+                    return [None]
             elif api_data['os_type'] == OSs.UBUNTU:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
-            if error:
-                print_line(f'Shell command throw {proc.returncode} code:')
-                print_line(f'and {error.strip()} error message.')
-                return [None]
+                if error:
+                    print_line(f'Shell command throw {proc.returncode} code:')
+                    print_line(f'and {error.strip()} error message.')
+                    return [None]
             elif api_data['os_type'] == OSs.DEBIAN:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
-            if error:
-                print_line(f'Shell command throw {proc.returncode} code:')
-                print_line(f'and {error.strip()} error message.')
-                return [None]
+                if error:
+                    print_line(f'Shell command throw {proc.returncode} code:')
+                    print_line(f'and {error.strip()} error message.')
+                    return [None]
             elif api_data['os_type'] == OSs.FEDORA:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
-            if error:
-                print_line(f'Shell command throw {proc.returncode} code:')
-                print_line(f'and {error.strip()} error message.')
-                return [None]
+                if error:
+                    print_line('Shell command throw {0} code: '
+                               'and {1} error message.'.format(proc.returncode, error.strip()))
+                    return [None]
+
             try:
                 enc = self.define_file_encoding(full_path)
                 if enc == 'undefined':
@@ -715,14 +707,14 @@ class ComponentsHelper(object):
                     walkdict(data)
                     return [True]
             except Exception as e:
-                print_line(f'File read exception: {e}')
+                print_line('File read exception: {0}'.format(e))
                 return [None]
             finally:
                 if os.path.isfile(full_path):
                     os.remove(full_path)
         except OSError as os_error:
-            print_line(f'Shell command throw errno: {os_error.errno}, strerror: {os_error.strerror}')
-            print_line(f'and filename: {os_error.filename}.')
+            print_line('Shell command throw errno: {0}, strerror: {1} '
+                       'and filename: {2}.'format(os_error.errno, os_error.strerror, os_error.filename))
             if os.path.isfile(full_path):
                 os.remove(full_path)
             return [None]
@@ -730,7 +722,7 @@ class ComponentsHelper(object):
             if os.path.isfile(full_path):
                 os.remove(full_path)
 
-    def load_package_json_packages_from_path(self, filename: str) -> list:
+    def load_package_json_packages_from_path(self, filename):
         """
         Load NPM packages from package.json file, defined by path.
         :param filename: path to file
@@ -739,19 +731,19 @@ class ComponentsHelper(object):
         if os.path.exists(filename):
             enc = self.define_file_encoding(filename)
             if enc == 'undefined':
-                print_line(f'Undefined file {filename} encoding.')
+                print_line('Undefined file {0} encoding.'.format(filename))
                 return [None]
             try:
                 with open(filename, 'r', encoding=enc) as pf:
                     packages = json.load(pf)
                     return [packages]
             except Exception as e:
-                print_line(f'File {filename} read exception: {e}')
+                print_line('File {0} read exception: {1}'.format(filename, e))
                 return [None]
         print_line('File does not exist.')
         return [None]
 
-    def load_npm_lock_packages_from_path(self, filename: str) -> list:
+    def load_npm_lock_packages_from_path(self, filename):
         """
         Load NPM packages from lock file, defined by path.
         :param filename: path to file
@@ -760,7 +752,7 @@ class ComponentsHelper(object):
         if os.path.exists(filename):
             enc = self.define_file_encoding(filename)
             if enc == 'undefined':
-                print_line(f'Undefined file {filename} encoding.')
+                print_line('Undefined file {0} encoding.'.format(filename))
                 return [None]
             try:
                 with open(filename, 'r', encoding=enc) as pf:
@@ -768,15 +760,15 @@ class ComponentsHelper(object):
                         packages = json.load(pf)
                         return [packages]
                     except json.JSONDecodeError as json_decode_error:
-                        print_line(f'An exception occured with json decoder: {json_decode_error}.')
+                        print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))
                         return [None]
             except Exception as e:
-                print_line(f'File {filename} read exception: {e}')
+                print_line('File {0} read exception: {1}'.format(filename, e))
                 return [None]
         print_line('File does not exist.')
         return [None]
 
-    def load_gem_packages_from_path(self, filename: str) -> list:
+    def load_gem_packages_from_path(self, filename):
         """
         Load Ruby gem packages from file, defined by path.
         :param filename: path to file
@@ -785,7 +777,7 @@ class ComponentsHelper(object):
         if os.path.exists(filename):
             enc = self.define_file_encoding(filename)
             if enc == 'undefined':
-                print_line(f'Undefined file {filename} encoding.')
+                print_line('Undefined file {0} encoding.'.format(filename))
                 return [None]
             try:
                 with open(filename, 'r', encoding=enc) as pf:
@@ -793,13 +785,13 @@ class ComponentsHelper(object):
                     cont = cont.split('\n')
                     return [cont]
             except Exception as e:
-                print_line(f'File {filename} read exception: {e}')
+                print_line('File {0} read exception: {1}'.format(filename, e))
                 return [None]
         print_line('File does not exist.')
         return [None]
 
     @staticmethod
-    def load_gem_packages_system(local: bool, api_data: dict) -> list:
+    def load_gem_packages_system(local, api_data):
         """
         Load Ruby gem packages from global or local call of shell commend.
         :param local: local or global
@@ -822,70 +814,76 @@ class ComponentsHelper(object):
                 proc.kill()
                 output = output.decode('utf-8').replace('\r', '').split('\n')
                 if error:
-                    print_line(f'Powershell command throw {proc.returncode} code and {error.strip()} error message.')
+                    print_line('Powershell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return [None]
                 if output:
                     return [output]
+                return [None]
             elif api_data['os_type'] == OSs.CENTOS:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
                 output = output.decode('utf-8').replace('\r', '').split('\n')
                 if error:
-                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return [None]
                 if output:
                     return [output]
+                return [None]
             elif api_data['os_type'] == OSs.DEBIAN:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
                 output = output.decode('utf-8').replace('\r', '').split('\n')
                 if error:
-                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return [None]
                 if output:
                     return [output]
+                return [None]
             elif api_data['os_type'] == OSs.UBUNTU:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
                 output = output.decode('utf-8').replace('\r', '').split('\n')
                 if error:
-                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return [None]
                 if output:
                     return [output]
+                return [None]
             elif api_data['os_type'] == OSs.FEDORA:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
                 output = output.decode('utf-8').replace('\r', '').split('\n')
                 if error:
-                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return [None]
                 if output:
                     return [output]
+                return [None]
             elif api_data['os_type'] == OSs.MACOS:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
                 output = output.decode('utf-8').replace('\r', '').split('\n')
                 if error:
-                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return [None]
                 if output:
                     return [output]
+                return [None]
         except OSError as os_error:
-            print_line(f'Powershell command throw errno: {os_error.errno}, '
-                       f'strerror: {os_error.strerror} and '
-                       f'filename: {os_error.filename}.')
+            print_line('Shell command throw errno: {0}, '
+                       f'strerror: {1} and '
+                       f'filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
             return [None]
         except Exception as common_exception:
-            print_line(f'Powershell command throw an exception: {common_exception}.')
+            print_line('Shell command throw an exception: {0}.'.format(common_exception))
             return [None]
 
-    def load_gemfile_packages_from_path(self, filename: str) -> list:
+    def load_gemfile_packages_from_path(self, filename):
         """
         Load packages from Gemfile. defined by path.
         :param filename: filename
@@ -894,7 +892,7 @@ class ComponentsHelper(object):
         if os.path.isfile(filename):
             enc = self.define_file_encoding(filename=filename)
             if enc == 'undefined':
-                print_line(f'Undefined file {filename} encoding.')
+                print_line('Undefined file {0} encoding.'.format(filename))
                 return [None]
             try:
                 with open(filename, 'r', encoding=enc) as pf:
@@ -902,12 +900,12 @@ class ComponentsHelper(object):
                     packages = cont.split('\n')
                     return packages
             except Exception as e:
-                print_line(f'File {filename} read exception: {e}')
+                print_line(f'File {0} read exception: {1}'.format(filename, e))
                 return [None]
         print_line('File does not exist.')
         return [None]
 
-    def load_gemfile_lock_packages_from_path(self, filename: str) -> list:
+    def load_gemfile_lock_packages_from_path(self, filename):
         """
         Load packages from Gemfile.lock defined by path.
         :param filename: filename
@@ -916,7 +914,7 @@ class ComponentsHelper(object):
         if os.path.isfile(filename):
             enc = self.define_file_encoding(filename=filename)
             if enc == 'undefined':
-                print_line(f'Undefined file {filename} encoding.')
+                print_line('Undefined file {0} encoding.'.format(filename))
                 return [None]
             try:
                 with open(filename, 'r', encoding=enc) as pf:
@@ -924,12 +922,12 @@ class ComponentsHelper(object):
                     packages = cont.split('\n')
                     return packages
             except Exception as e:
-                print_line(f'File {filename} read exception: {e}')
+                print_line('File {0} read exception: {1}'.format(filename, e))
                 return [None]
         print_line('File does not exist.')
         return [None]
 
-    def load_php_composer_json_system_path(self, filename: str) -> list:
+    def load_php_composer_json_system_path(self, filename):
         if os.path.isfile(filename):
             enc = self.define_file_encoding(filename=filename)
             if enc == 'undefined':
@@ -940,12 +938,12 @@ class ComponentsHelper(object):
                     packages = json.load(pf)
                     return [packages]
                 except json.JSONDecodeError as json_decode_error:
-                    print_line(f'An exception occured with json decoder: {json_decode_error}.')
+                    print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))
                     return [None]
-        print_line(f'File {filename} not found.')
+        print_line('File {0} not found.'.format(filename))
         return [None]
 
-    def load_php_composer_lock_system_path(self, filename: str) -> list:
+    def load_php_composer_lock_system_path(self, filename):
         if os.path.isfile(filename):
             enc = self.define_file_encoding(filename=filename)
             if enc == 'undefined':
@@ -956,9 +954,9 @@ class ComponentsHelper(object):
                     packages = json.load(pf)
                     return [packages]
                 except json.JSONDecodeError as json_decode_error:
-                    print_line(f'An exception occured with json decoder: {json_decode_error}.')
+                    print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))
                     return [None]
-        print_line(f'File {filename} not found.')
+        print_line('File {0} not found.'.format(filename))
         return [None]
 
     # -------------------------------------------------------------------------
@@ -966,7 +964,7 @@ class ComponentsHelper(object):
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def parse_windows_10_packages(report: list) -> list:
+    def parse_windows_10_packages(report):
         """
         Parse Windows 10 packages.
         :param report: raw report
@@ -993,11 +991,11 @@ class ComponentsHelper(object):
                         packages.append(component)
             return packages
         except Exception as common_exception:
-            print_line(f'Exception {common_exception} occured.')
+            print_line('Exception {0} occured.'.format(common_exception))
             return [None]
 
     @staticmethod
-    def parse_ubuntu_packages(_report) -> list:
+    def parse_ubuntu_packages(_report):
         """
         Parse Ubuntu package list.
         :param _report: raw packages.
@@ -1024,7 +1022,7 @@ class ComponentsHelper(object):
         return new_components
 
     @staticmethod
-    def parse_fedora_packages(_report) -> list:
+    def parse_fedora_packages(_report):
         """
         Parse Fedora package list.
         :param _report: raw packages.
@@ -1043,7 +1041,7 @@ class ComponentsHelper(object):
         return new_components
 
     @staticmethod
-    def parse_macos_packages(_report) -> list:
+    def parse_macos_packages(_report):
         """
         Parse MacOS packages.
         :param _report: raw packages
@@ -1060,7 +1058,7 @@ class ComponentsHelper(object):
         return new_components
 
     @staticmethod
-    def parse_pip_packages_legacy(packages: list) -> list:
+    def parse_pip_packages_legacy(packages):
         packages = packages.replace(')', '')
         packages = packages.replace(' ', '')
         packages = packages.split('\r\n')
@@ -1075,7 +1073,7 @@ class ComponentsHelper(object):
         return components
 
     @staticmethod
-    def parse_pip_packages_from_path(packages: list) -> list:
+    def parse_pip_packages_from_path(packages):
         """
         Parse Python PIP packages report.
         :param packages: raw packages
@@ -1104,15 +1102,16 @@ class ComponentsHelper(object):
                         mm = importlib.import_module(ref)
                         components.append({'name': ref, 'version': mm.__version__})
                     except ImportError as import_exception:
-                        print_line(f'Get an exception {import_exception} when define component version.')
+                        print_line('Get an exception {0} when define component version.'.format(import_exception))
                         components.append({'name': ref, 'version': '*'})
                         continue
         return components
 
     @staticmethod
-    def parse_npm_packages(api_data: dict, comp: list) -> list:
+    def parse_npm_packages(api_data, comp):
         """
         Parse NPM raw packages.
+        :param api_data: api data set
         :param comp: raw packages.
         :return: result
         """
@@ -1132,8 +1131,8 @@ class ComponentsHelper(object):
                             version, error = proc.communicate()
                             version = version.decode("utf-8").replace('\n', '')
                             if error:
-                                print_line(f'Powershell command throw {proc.returncode} code '
-                                           f'and {error.strip()} error message.')
+                                print_line('Shell command throw {0} code and {1} error message.'
+                                           .format(proc.returncode, error.strip()))
                             else:
                                 components2.append({"name": name, "version": version})
                         elif api_data['os_type'] == OSs.MACOS:
@@ -1141,8 +1140,8 @@ class ComponentsHelper(object):
                             version, error = proc.communicate()
                             version = version.decode("utf-8").replace('\n', '')
                             if error:
-                                print_line(f'Powershell command throw {proc.returncode} code '
-                                           f'and {error.strip()} error message.')
+                                print_line('Shell command throw {0} code and {1} error message.'
+                                           .format(proc.returncode, error.strip()))
                             else:
                                 components2.append({"name": name, "version": version})
                         elif api_data['os_type'] == OSs.DEBIAN:
@@ -1150,8 +1149,8 @@ class ComponentsHelper(object):
                             version, error = proc.communicate()
                             version = version.decode("utf-8").replace('\n', '')
                             if error:
-                                print_line(f'Powershell command throw {proc.returncode} code '
-                                           f'and {error.strip()} error message.')
+                                print_line('Shell command throw {0} code and {1} error message.'
+                                           .format(proc.returncode, error.strip()))
                             else:
                                 components2.append({"name": name, "version": version})
                         elif api_data['os_type'] == OSs.UBUNTU:
@@ -1159,8 +1158,8 @@ class ComponentsHelper(object):
                             version, error = proc.communicate()
                             version = version.decode("utf-8").replace('\n', '')
                             if error:
-                                print_line(f'Powershell command throw {proc.returncode} code '
-                                           f'and {error.strip()} error message.')
+                                print_line('Shell command throw {0} code and {1} error message.'
+                                           .format(proc.returncode, error.strip()))
                             else:
                                 components2.append({"name": name, "version": version})
                         elif api_data['os_type'] == OSs.FEDORA:
@@ -1168,8 +1167,8 @@ class ComponentsHelper(object):
                             version, error = proc.communicate()
                             version = version.decode("utf-8").replace('\n', '')
                             if error:
-                                print_line(f'Powershell command throw {proc.returncode} code '
-                                           f'and {error.strip()} error message.')
+                                print_line('Shell command throw {0} code and {1} error message.'
+                                           .format(proc.returncode, error.strip()))
                             else:
                                 components2.append({"name": name, "version": version})
                         elif api_data['os_type'] == OSs.CENTOS:
@@ -1177,26 +1176,27 @@ class ComponentsHelper(object):
                             version, error = proc.communicate()
                             version = version.decode("utf-8").replace('\n', '')
                             if error:
-                                print_line(f'Powershell command throw {proc.returncode} code '
-                                           f'and {error.strip()} error message.')
+                                print_line('Shell command throw {0} code and {1} error message.'
+                                           .format(proc.returncode, error.strip()))
                             else:
                                 components2.append({"name": name, "version": version})
                     except OSError as os_error:
-                        print_line(f'Powershell command throw errno: {os_error.errno}, strerror: {os_error.strerror}')
-                        print_line(f'and filename: {os_error.filename}.')
+                        print_line('Shell command throw errno: {0}, strerror: {1}.'
+                                   .format(os_error.errno, os_error.strerror))
+                        print_line('and filename: {0}.'.format(os_error.filename))
                         continue
                     except:
                         continue
         return components2
 
     @staticmethod
-    def parse_npm_lock_packages(packages: dict) -> list:
+    def parse_npm_lock_packages(packages):
         """
         Parse NPM lock packages.
         :param packages: raw packages.
         :return: result
         """
-        def already_in_components(components: list, key: str) -> bool:
+        def already_in_components(components, key: str) -> bool:
             """
             Filter if component already in list.
             :param components: component list
@@ -1227,7 +1227,7 @@ class ComponentsHelper(object):
         return components
 
     @staticmethod
-    def parse_package_json_packages_from_path(packages: dict) -> list:
+    def parse_package_json_packages_from_path(packages):
         """
         Parse package.json file.
         :param packages: raw packages
@@ -1244,7 +1244,7 @@ class ComponentsHelper(object):
                 components.append({'name': key, 'version': str(dependencies[key]).replace('^', '')})
         return components
 
-    def parse_gem_packages_system(self, packages: list) -> list:
+    def parse_gem_packages_system(self, packages):
         """
         Parse Ruby gem packages.
         :param packages: raw packages.
@@ -1253,7 +1253,7 @@ class ComponentsHelper(object):
         return self.parse_gem_packages_from_path(packages=packages)
 
     @staticmethod
-    def parse_gem_packages_from_path(packages: list) -> list:
+    def parse_gem_packages_from_path(packages):
         """
         Parse Ruby gem packages from path.
         :param packages: raw packages
@@ -1271,7 +1271,7 @@ class ComponentsHelper(object):
                     continue
         return components
 
-    def parse_gemfile_packages(self, packages: list) -> list:
+    def parse_gemfile_packages(self, packages):
         """
         Parse packages from Gemfile.
         :param packages: list of packages
@@ -1362,7 +1362,12 @@ class ComponentsHelper(object):
         return unique_packages
 
     @staticmethod
-    def parse_gemfile_lock_packages(packages: list) -> list:
+    def parse_gemfile_lock_packages(packages):
+        """
+        Parse packages from Gemfile
+        :param packages: list of packages
+        :return: result
+        """
         splitted_content_by_strings = packages
         ignore_strings_startswith = (
             'GIT', 'remote', 'revision',
@@ -1441,7 +1446,7 @@ class ComponentsHelper(object):
         return unique_packages
 
     @staticmethod
-    def parse_php_composer_json_system_path(_packages) -> list:
+    def parse_php_composer_json_system_path(_packages):
         content = _packages
         packages = []
         for key in content:
@@ -1519,7 +1524,12 @@ class ComponentsHelper(object):
         return unique_packages
 
     @staticmethod
-    def parse_php_composer_lock_system_path(_packages) -> list:
+    def parse_php_composer_lock_system_path(_packages):
+        """
+        Parse packages from PHP Composer.lock file.
+        :param _packages: list of packages
+        :return: result
+        """
         content = _packages
         packages = []
         for key in content:
@@ -1632,7 +1642,7 @@ class ComponentsHelper(object):
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def define_file_encoding(filename: str) -> str:
+    def define_file_encoding(filename):
         """
         Define encoding of file.
         :param filename:
@@ -1650,7 +1660,7 @@ class ComponentsHelper(object):
                 continue
         return 'undefined'
 
-    def get_current_set_name(self, api_data: dict) -> list:
+    def get_current_set_name(self, api_data):
         """
         Get current component set name.
         :param api_data: api data set
@@ -1668,7 +1678,7 @@ class ComponentsHelper(object):
             return ['0.0.1']
         return [api_data['organization']['platforms'][platform_number]['projects'][project_number]['current_component_set']['name']]
 
-    def get_current_component_set(self, api_data: dict) -> list:
+    def get_current_component_set(self, api_data):
         """
         Get current component set for platform/project.
         :param api_data: api data set

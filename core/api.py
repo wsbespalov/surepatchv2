@@ -23,7 +23,7 @@ class API(object):
     # Run actions
     # -------------------------------------------------------------------------
 
-    def run_action(self, api_data: dict) -> bool:
+    def run_action(self, api_data):
         """
         Main routing method for app actions.
         :param api_data: api data set
@@ -78,14 +78,14 @@ class API(object):
         elif api_data['action'] == Actions.RESTORE_PROJECT:
             return self.action_restore_project(api_data=api_data)
 
-        print_line(f"Unknown action code: {api_data['action']}.")
+        print_line("Unknown action code: {0}.".format(api_data['action']))
         return False
 
     # -------------------------------------------------------------------------
     # LOGIN
     # -------------------------------------------------------------------------
 
-    def action_login_server_success(self, api_data: dict) -> bool:
+    def action_login_server_success(self, api_data):
         """
         Log in into server.
         :param api_data: api data set
@@ -98,7 +98,7 @@ class API(object):
     # GET ORGANIZATION PARAMETERS
     # -------------------------------------------------------------------------
 
-    def get_organization_parameters_from_server(self, api_data: dict) -> bool:
+    def get_organization_parameters_from_server(self, api_data):
         """
         Get organization parameters from Surepatch server and fill the
         appropriate structure.
@@ -113,7 +113,7 @@ class API(object):
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def action_create_new_platform(api_data: dict) -> bool:
+    def action_create_new_platform(api_data):
         """
         Run action: CREATE New Platform.
         :param api_data: api data set
@@ -131,7 +131,7 @@ class API(object):
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def action_create_new_project(api_data: dict) -> bool:
+    def action_create_new_project(api_data):
         """
         Run action: CREATE New Project in different cases.
         :param api_data: api data set
@@ -274,7 +274,7 @@ class API(object):
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def action_create_new_set(api_data: dict) -> bool:
+    def action_create_new_set(api_data):
         """
         Run action: CREATE New Set in different cases.
         :param api_data: api data set
@@ -390,11 +390,13 @@ class API(object):
                 api_data['file'] is not None:
             return set_helper.create_set_gemfile_lock_auto_system_path(api_data=api_data)
 
+        # Create set with User defined packages in file (from path{
         if api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.USER and \
                 api_data['file'] is not None:
             return set_helper.create_set_any_auto_user_path(api_data=api_data)
 
+        # Create set with User defined packages in interactive mode
         if api_data['method'] == Methods.MANUAL and \
                 api_data['format'] == Formats.USER and \
                 api_data['file'] is None:
@@ -418,7 +420,7 @@ class API(object):
     # Show
     # -------------------------------------------------------------------------
 
-    def action_show_platforms_projects_or_sets(self, api_data: dict) -> bool:
+    def action_show_platforms_projects_or_sets(self, api_data):
         """
         Run action: Show platforms, projects or component sets.
         :param api_data: api data set
@@ -438,7 +440,7 @@ class API(object):
             platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
 
             if platform_number == -1:
-                print_line(f"No such platform: {api_data['platform']}.")
+                print_line("No such platform: {0}.".format(api_data['platform']))
                 return False
 
             return show_helper.action_show_projects(api_data=api_data)
@@ -452,7 +454,7 @@ class API(object):
             platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
 
             if platform_number == -1:
-                print_line(f"No such platform: {api_data['platform']}.")
+                print_line("No such platform: {0}.".format(api_data['platform']))
                 return False
 
             if api_data['project'] is None or \
@@ -463,7 +465,7 @@ class API(object):
             project_number = self.web_api.get_project_number_by_name(api_data=api_data)
 
             if project_number == -1:
-                print_line(f"No such project {api_data['project']} in platform {api_data['platform']}.")
+                print_line("No such project {0} in platform {1}.".format(api_data['project'], api_data['platform']))
                 return False
 
             return show_helper.action_show_set(api_data=api_data)
@@ -477,7 +479,7 @@ class API(object):
             platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
 
             if platform_number == -1:
-                print_line(f"No such platform: {api_data['platform']}.")
+                print_line("No such platform: {0}.".format(api_data['platform']))
                 return False
 
             if api_data['project'] is None or \
@@ -488,7 +490,7 @@ class API(object):
             project_number = self.web_api.get_project_number_by_name(api_data=api_data)
 
             if project_number == -1:
-                print_line(f"No such project {api_data['project']} in platform {api_data['platform']}.")
+                print_line("No such project {0} in platform {1}.".format(api_data['project'], api_data['platform']))
                 return False
 
             return show_helper.action_show_issues(api_data=api_data)
@@ -499,7 +501,8 @@ class API(object):
     # Delete
     # -------------------------------------------------------------------------
 
-    def action_delete_platform(self, api_data: dict) -> bool:
+    @staticmethod
+    def action_delete_platform(api_data):
         """
         Run action: Delete defined Platform.
         :param api_data: api data set
@@ -509,7 +512,8 @@ class API(object):
 
         return platform_helper.delete_platform(api_data=api_data)
 
-    def action_delete_project(self, api_data: dict) -> bool:
+    @staticmethod
+    def action_delete_project(api_data):
         """
         Run action: Delete defined Project.
         :param api_data: api data set
@@ -523,7 +527,8 @@ class API(object):
     # Archive
     # -------------------------------------------------------------------------
 
-    def action_archive_platform(self, api_data: dict) -> bool:
+    @staticmethod
+    def action_archive_platform(api_data):
         """
         Run action: Archive defined Platform.
         :param api_data: api data set
@@ -533,7 +538,8 @@ class API(object):
 
         return platform_helper.archive_platform(api_data=api_data)
 
-    def action_archive_project(self, api_data: dict) -> bool:
+    @staticmethod
+    def action_archive_project(api_data):
         """
         Run action: Archive defined Project.
         :param api_data: api data set
@@ -547,7 +553,8 @@ class API(object):
     # Restore
     # -------------------------------------------------------------------------
 
-    def action_restore_platform(self, api_data: dict) -> bool:
+    @staticmethod
+    def action_restore_platform(api_data):
         """
         Run action: restore Platform from Archive.
         :param api_data: api data set
@@ -557,7 +564,8 @@ class API(object):
 
         return platform_helper.restore_platform(api_data=api_data)
 
-    def action_restore_project(self, api_data: dict) -> bool:
+    @staticmethod
+    def action_restore_project(api_data):
         """
         Run action: Restore Project from Archive.
         :param api_data:
@@ -572,7 +580,7 @@ class API(object):
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def check_action_type_match(api_data: dict) -> bool:
+    def check_action_type_match(api_data):
         """
         Check if action type, pointed in arguments match with template.
         :param api_data: api data set
@@ -605,7 +613,7 @@ class API(object):
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def save_config_to_file(api_data: dict) -> bool:
+    def save_config_to_file(api_data):
         """
         Save data into config fle in yaml format.
         :param api_data: api data set
@@ -630,13 +638,13 @@ class API(object):
                 return True
 
             except yaml.YAMLError as yaml_exception:
-                print_line(f'Config file save in yaml format exception: {yaml_exception}')
+                print_line('Config file save in yaml format exception: {0}.'.format(yaml_exception))
                 return False
 
             finally:
                 yaml_config_file.close()
 
-    def load_config_from_file(self, api_data: dict) -> bool:
+    def load_config_from_file(self, api_data):
         """
         Load data from config file in yaml format.
         :param api_data: api data set
@@ -648,8 +656,8 @@ class API(object):
         full_path = os.path.join(file_path, file_name)
 
         if not os.path.isfile(full_path):
-            print_line(f'Config file does not exist: ~/{file_name}')
-            print_line(f'Create config file first with parameter --action=save_config.')
+            print_line('Config file does not exist: ~/{0}.'.format(file_name))
+            print_line('Create config file first with parameter --action=save_config.')
             return False
 
         components_helper = ComponentsHelper()
@@ -688,7 +696,7 @@ class API(object):
                 return True
 
             except yaml.YAMLError as yaml_exception:
-                print_line(f'Get an exception while read config file: {yaml_exception}.')
+                print_line('Get an exception while read config file: {0}.'.format(yaml_exception))
                 return False
 
             finally:
