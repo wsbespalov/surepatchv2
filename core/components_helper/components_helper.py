@@ -166,7 +166,13 @@ class ComponentsHelper(object):
         Get Python PIP components, collected by pip frozen requirements call.
         :return: result
         """
-        return self.load_pip_packages_from_frozen_requirement()
+        report = self.load_pip_packages_from_shell_legacy()
+
+        if report[0] is None:
+            print_line('Problems with PIP components loading.')
+            return [None]
+        
+        return self.parse_pip_packages_legacy(report)
 
     def get_components_pip_auto_system_path(self, api_data: dict) -> list:
         """
@@ -270,24 +276,11 @@ class ComponentsHelper(object):
         :param api_data: api data set
         :return: result
         """
-        if api_data['os_type'] == OSs.WINDOWS:
-            packages = self.load_gem_packages_system(local=False, api_data=api_data)
-            if packages[0] is not None:
-                return self.parse_gem_packages_system(packages=packages[0])
-            print_line('Something wrong with packages in file path')
-            return [None]
-        elif api_data['os_type'] == OSs.CENTOS:
-            print_line('Centos does not support yet.')
-            return [None]
-        elif api_data['os_type'] == OSs.DEBIAN:
-            print_line('Debian does not support yet')
-            return [None]
-        elif api_data['os_type'] == OSs.FEDORA:
-            print_line('Fedora does not support yet.')
-            return [None]
-        elif api_data['os_type'] == OSs.MACOS:
-            print_line('MacOS does not support yet.')
-            return [None]
+        packages = self.load_gem_packages_system(local=False, api_data=api_data)
+        if packages[0] is not None:
+            return self.parse_gem_packages_system(packages=packages[0])
+        print_line('Something wrong with packages in file path')
+        return [None]
 
     def get_components_gemfile_auto_system_path(self, api_data: dict) -> list:
         """
@@ -577,23 +570,27 @@ class ComponentsHelper(object):
         return [None]
 
     @staticmethod
-    def load_pip_packages_from_frozen_requirement():
+    def load_pip_packages_from_shell_legacy():
         """
         Load Python PI packages with pip.FrozenRequirement method.
         :return: result
         """
-        components = []
-        installations = {}
+        cmd = "pip list --format=legacy"
         try:
-            for dist in get_installed_distributions(local_only=False, skip=[]):
-                req = pip.FrozenRequirement.from_dist(dist, [])
-                installations[req.name] = dist.version
-            for key in installations:
-                components.append({'name': key, 'version': installations[key]})
-            return components
-        except Exception as e:
-            print_line(f'Get an exception: {e}.')
-            return [None]
+            proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+            output, error = proc.communicate()
+            if error:
+                print('Error')
+                return [None]
+            if output:
+                if len(output) > 0:
+                    return output.decode('utf-8')
+                else:
+                    return [None]
+        except Exception as common_exception:
+            print("An exception {0} occured while shell command was called.".format(common_exception))
+            return [None]    
+        return [None]
 
     def load_pip_packages_from_path(self, filename: str) -> list:
         """
@@ -1061,6 +1058,21 @@ class ComponentsHelper(object):
             if version is not None:
                 new_components.append({'name': name, 'version': version})
         return new_components
+
+    @staticmethod
+    def parse_pip_packages_legacy(packages: list) -> list:
+        packages = packages.replace(')', '')
+        packages = packages.replace(' ', '')
+        packages = packages.split('\r\n')
+        components = []
+        for package in packages:
+            if len(package) <= 3:
+                continue
+            line = package.split('(')
+            name = line[0]
+            version = line[1]
+            components.append({'name': name, 'version': version})
+        return components
 
     @staticmethod
     def parse_pip_packages_from_path(packages: list) -> list:
