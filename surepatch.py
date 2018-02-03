@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+
+# inputs
+
 import sys
 import platform
 import argparse
