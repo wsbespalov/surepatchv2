@@ -12,7 +12,8 @@ class ProjectHelper(object):
         self.web_api = WebAPI()
         self.components_helper = ComponentsHelper()
 
-    def create_project_validate(self, api_data: dict) -> bool:
+    def create_project_validate(self, api_data):
+        # type: (dict) -> bool
         """
         Run action: CREATE New Project in different cases.
         :return: result, modify api_data
@@ -41,21 +42,20 @@ class ProjectHelper(object):
 
     # Target = OS packages
 
-    def create_project_os_auto_system_none(self, api_data: dict) -> bool:
+    def create_project_os_auto_system_none(self, api_data):
+        # type: (dict) -> bool        
         """
         Create project with OS packages, collected by shell command.
         :param api_data: api data set
         :return: result, modify api_data
         """
+        if self.components_helper.get_components_os_auto_system_none(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
+        
+        return False
 
-        api_data['components'] = self.components_helper.get_components_os_auto_system_none(api_data=api_data)
-
-        if api_data['components'][0] is None:
-            return False
-
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_os_auto_system_path(self, api_data: dict) -> bool:
+    def create_project_os_auto_system_path(self, api_data):
+        # type: (dict) -> bool        
         """
         Create project with OS packages, collected from shell command
         and stored in file, defined in path.
@@ -63,236 +63,219 @@ class ProjectHelper(object):
         :return: result, modify api_data
         """
 
-        api_data['components'] = self.components_helper.get_components_os_auto_system_path(api_data=api_data)
+        if self.components_helper.get_components_os_auto_system_path(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
-
-        return self.web_api.send_create_new_project_request(api_data=api_data)
+        return False
 
     # Target = Python packages
 
-    def create_project_pip_auto_system_none(self, api_data: dict) -> bool:
+    def create_project_pip_auto_system_none(self, api_data):
+        # type: (dict) -> bool        
         """
         Create project with Python PIP packages, collected from shell command.
         :param api_data: api data set
         :return: result, modify api_data
         """
-        api_data['components'] = self.components_helper.get_components_pip_auto_system_none()
+        if self.components_helper.get_components_pip_auto_system_none(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_pip_auto_system_path(self, api_data: dict) -> bool:
+    def create_project_pip_auto_system_path(self, api_data):
+        # type: (dict) -> bool        
         """
         Create project with Python PIP packages, collected from shell command
         and stored in file, defined in path.
         :param api_data: api data set
         :return: result, modify api_data
         """
-        api_data['components'] = self.components_helper.get_components_pip_auto_system_path(api_data=api_data)
+        if self.components_helper.get_components_pip_auto_system_path(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
+        
+        return False
 
-        if api_data['components'][0] is None:
-            return False
-
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_requirements_auto_system_path(self, api_data: dict) -> bool:
+    def create_project_requirements_auto_system_path(self, api_data):
+        # type: (dict) -> bool        
         """
         Create project with Python requirements.txt file, defined in path.
         :param api_data: api data set
         :return: result, modify api_data
         """
-        api_data['components'] = self.components_helper.get_components_requirements_auto_system_path(api_data=api_data)
+        if self.components_helper.get_components_requirements_auto_system_path(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
-
-        return self.web_api.send_create_new_project_request(api_data=api_data)
+        return False
 
     # Target = NodeJS NPM packages
 
-    def create_project_npm_auto_system_none(self, api_data: dict) -> bool:
+    def create_project_npm_auto_system_none(self, api_data):
+        # type: (dict) -> bool        
         """
         Create project with NPM packages, collected from shell command (nmp list --json).
         Shell command runs global from root path.
         :param api_data: api data set
         :return: result, modify api_data
         """
-        api_data['components'] = self.components_helper.get_components_npm_auto_system_none(api_data=api_data)
+        if self.components_helper.get_components_npm_auto_system_none(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_npm_auto_system_path(self, api_data: dict) -> bool:
+    def create_project_npm_auto_system_path(self, api_data):
+        # type: (dict) -> bool        
         """
         Create project with NPM packages, collected from shell command (npm list --json)
         and stored in file, defined in path.
         :param api_data: api data set
         :return: result, modify api_data
         """
-        api_data['components'] = self.components_helper.get_components_npm_auto_system_path(api_data=api_data)
+        if self.components_helper.get_components_npm_auto_system_path(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_npm_local_auto_system_none(self, api_data: dict) -> bool:
+    def create_project_npm_local_auto_system_none(self, api_data):
+        # type: (dict) -> bool                
         """
         Create project with NPM packages, collected from shell command (npm list --json).
         Shell command runs local from path, defined by --file parameter.
         :param api_data: api data set
         :return: result, modify api_data
         """
-        api_data['components'] = self.components_helper.get_components_npm_local_auto_system_none(api_data=api_data)
+        if self.components_helper.get_components_npm_local_auto_system_none(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_package_lock_json_auto_system_path(self, api_data: dict) -> bool:
+    def create_project_package_lock_json_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create project with NPM packages from package-lock.json, defined by --file parameter.
         :param api_data: api data set
         :return: result
         """
-        api_data['components'] = self.components_helper.get_components_npm_lock_auto_system_path(api_data=api_data)
+        if self.components_helper.get_components_npm_lock_auto_system_path(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_package_json_auto_system_path(self, api_data: dict) -> bool:
+    def create_project_package_json_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create project with NPM packages from package.json, defined by --file parameter.
         :param api_data: api data set
         :return: result
         """
-        api_data['components'] = self.components_helper.get_components_package_json_auto_system_path(api_data=api_data)
+        if self.components_helper.get_components_package_json_auto_system_path(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
-
-        return self.web_api.send_create_new_project_request(api_data=api_data)
+        return False
 
     # Target = Ruby packages
 
-    def create_project_gem_auto_system_none(self, api_data: dict) -> bool:
+    def create_project_gem_auto_system_none(self, api_data):
+        # type: (dict) -> bool
         """
         Create project with Ruby packages, collected from shell command.
         :param api_data: api data set
         :return: result
         """
-        api_data['components'] = self.components_helper.get_components_gem_auto_system_none(api_data=api_data)
+        if self.components_helper.get_components_gem_auto_system_none(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_gem_auto_system_path(self, api_data: dict) -> bool:
+    def create_project_gem_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create project with Ruby packages, collected from shell command and
         stored in gem list file, defined in --file parameter.
         :param api_data:
         :return:
         """
-        api_data['components'] = self.components_helper.get_components_gem_auto_system_path(api_data=api_data)
+        if self.components_helper.get_components_gem_auto_system_path(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_gemfile_auto_system_path(self, api_data: dict) -> bool:
+    def create_project_gemfile_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create project with Ruby packages, collected from Gemfile, defined
         by --file parameter.
         :param api_data:
         :return:
         """
-        api_data['components'] = self.components_helper.get_components_gemfile_auto_system_path(api_data=api_data)
+        if self.components_helper.get_components_gemfile_auto_system_path(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_gemfile_lock_auto_system_path(self, api_data: dict) -> bool:
+    def create_project_gemfile_lock_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create project with Ruby packages, collected from Gemfile.lock file,
         defined by --file parameter.
         :param api_data: api data set
         :return: result
         """
-        api_data['components'] = self.components_helper.get_components_gemfile_lock_auto_system_path(api_data=api_data)
+        if self.components_helper.get_components_gemfile_lock_auto_system_path(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_any_auto_user_path(self, api_data: dict) -> bool:
+    def create_project_any_auto_user_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create project with different packages, collected in file,
         defined by path with simple multiline format: name=version…
         :param api_data: api data set
         :return: result
         """
-        api_data['components'] = self.components_helper.get_components_any_auto_user_path(api_data=api_data)
+        if self.components_helper.get_components_any_auto_user_path(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_any_manual_user_none(self, api_data: dict) -> bool:
+    def create_project_any_manual_user_none(self, api_data):
+        # type: (dict) -> bool
         """
         Create project with different packages, asked in interactive mode.
         :param api_data: api data set
         :return: result
         """
-        api_data['components'] = self.components_helper.get_components_any_manual_user_none()
+        if self.components_helper.get_components_any_manual_user_none():
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_php_composer_json_system_path(self, api_data: dict) -> bool:
+    def create_project_php_composer_json_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create project with PHP packages from Composer.json file.
         :param api_data: api data set
         :return: result
         """
-        api_data['components'] = self.components_helper.get_components_php_composer_json_system_path(api_data=api_data)
+        if self.components_helper.get_components_php_composer_json_system_path(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def create_project_php_composer_lock_system_path(self, api_data: dict) -> bool:
+    def create_project_php_composer_lock_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create project with PHP packages from Composer.json file.
         :param api_data: api data set
         :return: result
         """
-        api_data['components'] = self.components_helper.get_components_php_composer_lock_system_path(api_data=api_data)
+        if self.components_helper.get_components_php_composer_lock_system_path(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        if api_data['components'][0] is None:
-            return False
+        return False
 
-        return self.web_api.send_create_new_project_request(api_data=api_data)
-
-    def delete_project(self, api_data: dict) -> bool:
+    def delete_project(self, api_data):
+        # type: (dict) -> bool
         """
         Run action: Delete defined Project.
         :param api_data: api data set
@@ -312,7 +295,8 @@ class ProjectHelper(object):
 
         return self.web_api.send_delete_project_request(api_data=api_data)
 
-    def archive_project(self, api_data: dict) -> bool:
+    def archive_project(self, api_data):
+        # type: (dict) -> bool
         """
         Run action: Archive defined Project.
         :param api_data: api data set
@@ -332,7 +316,8 @@ class ProjectHelper(object):
 
         return self.web_api.send_archive_project_request(api_data=api_data)
 
-    def restore_project(self, api_data: dict) -> bool:
+    def restore_project(self, api_data):
+        # type: (dict) -> bool
         """
         Run action: Restore Project from Archive.
         :param api_data:
@@ -372,13 +357,13 @@ class ProjectHelper(object):
         return self.web_api.send_restore_project_request(api_data=api_data)
 
     @staticmethod
-    def get_my_platforms(api_data: dict) -> list:
+    def get_my_platforms(api_data):
+        # type: (dict) -> list
         """
         Get platforms names as list.
         :param api_data: api data set
         :return: result
         """
-
         if api_data['organization'] is None:
             return []
 
@@ -391,7 +376,8 @@ class ProjectHelper(object):
 
         return platforms
 
-    def get_my_projects(self, api_data: dict) -> list:
+    def get_my_projects(self, api_data):
+        # type: (dict) -> list
         """
         Get projects names as list.
         :param api_data: api data set
