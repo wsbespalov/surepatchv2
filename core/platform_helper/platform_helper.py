@@ -33,7 +33,7 @@ class PlatformHelper(object):
         """
         api_data['platform_id'] = self.web_api.get_platform_id_by_name(api_data=api_data)
         if api_data['platform_id'] == -1:
-            print_line(f"Platform {api_data['platform']} does not exist.")
+            print_line("Platform {0} does not exist.".format(api_data['platform']))
             return False
 
         return self.web_api.send_delete_platform_request(api_data=api_data)
@@ -46,7 +46,7 @@ class PlatformHelper(object):
         """
         api_data['platform_id'] = self.web_api.get_platform_id_by_name(api_data=api_data)
         if api_data['platform_id'] == -1:
-            print_line(f"Platform {api_data['platform']} does not exist.")
+            print_line("Platform {0} does not exist.".format(api_data['platform']))
             return False
 
         return self.web_api.send_archive_platform_request(api_data=api_data)
@@ -75,7 +75,7 @@ class PlatformHelper(object):
                 break
 
         if api_data['platform_id'] is None:
-            print_line(f"Not such platform {api_data['platform']} in archive.")
+            print_line("Not such platform {0} in archive.".format(api_data['platform']))
             return False
 
         return self.web_api.send_restore_platform_request(api_data=api_data)
