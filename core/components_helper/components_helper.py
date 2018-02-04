@@ -49,20 +49,15 @@ class ComponentsHelper(object):
         if api_data['os_type'] == OSs.WINDOWS:
 
             if api_data['os_version'] == '10' or api_data['os_version'] == '8':
-                
-                if not self.load_windows_10_packages_from_shell():
-                    print_line('Failed to load OS components.')
-                    return False
-                
-                report = api_data['packages'].decode('utf-8').replace('\r', '').split('\n')[9:]
-                components = self.parse_windows_10_packages(report)
+                if self.load_windows_10_packages_from_shell(api_data=api_data):
+                    api_data['packages'] = api_data['packages'].decode('utf-8').replace('\r', '').split('\n')[9:]
+                    if self.parse_windows_10_packages(api_data=api_data):
+                        print_line('Append {0} components'.format(len(api_data['components'])))
+                        return True
 
-                if components[0] is None:
-                    print_line('Failed parse OS components.')
-                    return False
+                print_line('Failed to load or parse OS components.')
+                return False
                 
-                api_data['components'] = components
-
             elif api_data['os_version'] == '7':
                 print_line('Windows 7 does not support yet.')
                 return False
@@ -73,43 +68,39 @@ class ComponentsHelper(object):
 
         elif api_data['os_type'] == OSs.MACOS:
 
-            os_packages = self.load_macos_packages_from_shell()[0]
+            if self.load_macos_packages_from_shell(api_data=api_data):
+                if self.parse_macos_packages(api_data=api_data):
+                    print_line('Append {0} components'.format(len(api_data['components'])))
+                    return True
 
-            if os_packages is None:
-                print_line('Failed to load OS components.')
-                return False
+            print_line('Failed load or parse MACOS components.')
+            return False
 
-            components = self.parse_macos_packages(os_packages)
-            if components[0] is None:
-                print_line('Failed parse OS components.')
-                return False
-            return components
         elif api_data['os_type'] == OSs.CENTOS:
             print_line('CentOS not support yet.')
             return False
+
         elif api_data['os_type'] == OSs.DEBIAN:
-            os_packages = self.load_ubuntu_packages_from_shell()[0]
-            if os_packages is None:
-                print_line('Failed to load OS components.')
-                return False
-            components = self.parse_ubuntu_packages(os_packages)
-            if components[0] is None:
-                print_line('Failed parse OS components.')
-                return False
-            return components
+            if self.load_ubuntu_packages_from_shell(api_data=api_data):
+                if self.parse_ubuntu_packages(api_data=api_data):
+                    print_line('Append {0} components'.format(len(api_data['components'])))
+                    return True
+
+            print_line('Failed load or parse OS components.')
+            return False
+
         elif api_data['os_type'] == OSs.FEDORA:
-            os_packages = self.load_fedora_packages_from_shell()[0]
-            if os_packages is None:
-                print_line('Failed to load OS components.')
-                return False
-            components = self.parse_fedora_packages(os_packages)
-            if components[0] is None:
-                print_line('Failed parse OS components.')
-                return False
-            return components
+            if self.load_fedora_packages_from_shell(api_data=api_data):
+                if self.parse_fedora_packages(api_data=api_data):
+                    print_line('Append {0} components'.format(len(api_data['components'])))
+                    return True
+                    
+            print_line('Failed parse OS components.')
+            return False
         return False
 
     def get_components_os_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Get OS packages from file, defined by path, which were created by calling the shell command.
         :param api_data: api data set
@@ -117,206 +108,236 @@ class ComponentsHelper(object):
         """
         if api_data['os_type'] == OSs.WINDOWS:
             if api_data['os_version'] == '10' or api_data['os_version'] == '8':
-                report = self.load_windows_10_packages_from_path(api_data['file'])[0]
-                if report is None:
-                    return False
-                components = self.parse_windows_10_packages(report=report)
-                if components[0] is None:
-                    return False
-                return components
+                if self.load_windows_10_packages_from_path(api_data=api_data:
+                    if self.parse_windows_10_packages(api_data=api_data):
+                        print_line('Append {0} components'.format(len(api_data['components'])))
+                        return True
+                
+                print_line('Failed load or parse Windows 10 components.')
+                return False
+
             if api_data['os_version'] == '7':
                 print_line('Windows 7 does not support yet.')
                 return False
+
         elif api_data['os_type'] == OSs.MACOS:
-            os_packages = self.load_macos_packages_from_path(api_data['file'])[0]
-            if os_packages is None:
-                print_line('Failed to load OS components.')
-                return False
-            components = self.parse_macos_packages(os_packages)
-            if components[0] is None:
-                print_line('Failed parse OS components.')
-                return False
-            return components
+            if self.load_macos_packages_from_path(api_data=api_data):
+                if self.parse_macos_packages(api_data=api_data):
+                    print_line('Append {0} components'.format(len(api_data['components'])))
+                    return True
+                    
+            print_line('Failed load or parse MACOS components.')
+            return False
+
         elif api_data['os_type'] == OSs.CENTOS:
             print_line('CentOS does not support yet.')
             return False
+
         elif api_data['os_type'] == OSs.DEBIAN or api_data['os_type'] == OSs.UBUNTU:
-            os_packages = self.load_ubuntu_packages_from_path(api_data['file'])[0]
-            if os_packages is None:
-                print_line('Failed to load OS components.')
-                return False
-            components = self.parse_ubuntu_packages(os_packages)
-            if components[0] is None:
-                print_line('Failed parse OS components.')
-                return False
-            return components
+            if self.load_ubuntu_packages_from_path(api_data=api_data):
+                if self.parse_ubuntu_packages(api_data=api_data):
+                    print_line('Append {0} components'.format(len(api_data['components'])))
+                    return True
+
+            print_line('Failed load or parse Debian OS components.')
+            return False
+    
         elif api_data['os_type'] == OSs.FEDORA:
-            os_packages = self.load_fedora_packages_from_path(api_data['file'])[0]
-            if os_packages is None:
-                print_line('Failed to load OS components.')
-                return False
-            components = self.parse_fedora_packages(os_packages)
-            if components[0] is None:
-                print_line('Failed parse OS components.')
-                return False
-            return components
+            if self.load_fedora_packages_from_path(api_data=api_data):
+                if self.parse_fedora_packages(api_data=api_data):
+                    print_line('Append {0} components'.format(len(api_data['components'])))
+                    return True
+
+            print_line('Failed parse Fedora OS components.')
+            return False
+
         else:
             return False
 
-    def get_components_pip_auto_system_none(self):
+    def get_components_pip_auto_system_none(self, api_data):
+        # type: (dict) -> bool
         """
         Get Python PIP components, collected by pip frozen requirements call.
         :return: result
         """
-        report = self.load_pip_packages_from_shell_legacy()
-
-        if report[0] is None:
-            print_line('Problems with PIP components loading.')
-            return False
-
-        return self.parse_pip_packages_legacy(report)
+        if self.load_pip_packages_from_shell_legacy(api_data=api_data):
+            if self.parse_pip_packages_legacy(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+            
+        print_line('Problems with PIP components loading.')
+        return False
 
     def get_components_pip_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Get Python PIP components from file, defined by path.
         :param api_data: api data set
         :return: result
         """
-        packages = self.load_pip_packages_from_path(api_data['file'])
-        if packages[0] is not None:
-            return self.parse_pip_packages_from_path(packages=packages)
+        if self.load_pip_packages_from_path(api_data=api_data):
+            if self.parse_pip_packages_from_path(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return False
 
     def get_components_requirements_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Get Python PIP components from requirements.txt file, defined by path.
         :param api_data: api data set
         :return: result
         """
-        packages = self.load_pip_packages_from_path(api_data['file'])
-        if packages[0] is not None:
-            return self.parse_pip_packages_from_path(packages=packages)
+        if self.load_pip_packages_from_path(api_data=api_data):
+            if self.parse_pip_packages_from_path(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+        
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return False
 
     def get_components_npm_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Get NPM packages, collected from file, defined by path.
         :param api_data:
         :return:
         """
-        packages = self.load_npm_packages_from_path(api_data['file'])
-        if packages[0] is not None:
-            return self.parse_npm_packages(api_data=api_data, comp=raw_npm_components)
+        if self.load_npm_packages_from_path(api_data=api_data):
+            api_data['packages'] = raw_npm_components
+            if self.parse_npm_packages(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+        
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return False
 
     def get_components_package_json_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Get NPM packages from package.json file, defined by path.
         :param api_data: api data set
         :return: result
         """
-        packages = self.load_package_json_packages_from_path(api_data['file'])
-        if packages[0] is not None:
-            return self.parse_package_json_packages_from_path(packages[0])
+        if self.load_package_json_packages_from_path(api_data=api_data):
+            if self.parse_package_json_packages_from_path(api_data=api_data)):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+        
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return False
 
     def get_components_gem_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Get Ruby gem packages, collected from file, defined by path.
         :param api_data: api data set
         :return: result
         """
-        packages = self.load_gem_packages_from_path(api_data['file'])
-        if packages[0] is not None:
-            return self.parse_gem_packages_from_path(packages[0])
+        if self.load_gem_packages_from_path(api_data=api_data):
+            if self.parse_gem_packages_from_path(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return False
 
     def get_components_npm_auto_system_none(self, api_data):
+        # type: (dict) -> bool
         """
         Get NPM packages, collected from shell command, that is called globally.
         :param api_data: api data set
         :return: result
         """
-        packages = self.load_npm_packages(api_data=api_data, local=False)
-        if packages[0] is not None:
-            return self.parse_npm_packages(api_data=api_data, comp=raw_npm_components)
+        if self.load_npm_packages(api_data=api_data, local=False):
+            api_data['packages'] = raw_npm_components
+            if self.parse_npm_packages(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+
         print_line('Something wrong with packages in NPM system call.')
         return False
 
     def get_components_npm_local_auto_system_none(self, api_data):
+        # type: (dict) -> bool
         """
         Get NPM packages, collected from shell command, that is called locally from path.
         :param api_data: api data set
         :return: result
         """
-        packages = self.load_npm_packages(api_data=api_data, local=True)
-        if packages[0] is not None:
-            return self.parse_npm_packages(api_data=api_data, comp=raw_npm_components)
+        if self.load_npm_packages(api_data=api_data, local=True):
+            api_data['packages'] = raw_npm_components
+            if self.parse_npm_packages(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+
         print_line('Something wrong with packages in file path')
         return False
 
     def get_components_npm_lock_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Get NPM packages from lock file, defined by path.
         :param api_data: api data set
         :return: result
         """
-        packages = self.load_npm_lock_packages_from_path(filename=api_data['file'])
-        if packages[0] is not None:
-            return self.parse_npm_lock_packages(packages[0])
+        if self.load_npm_lock_packages_from_path(api_data=api_data):
+            if self.parse_npm_lock_packages(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+
         print_line('Something wrong with packages in file path')
         return False
 
     def get_components_gem_auto_system_none(self, api_data):
+        # type: (dict) -> bool
         """
         Get Ruby gem packages, collected from shell command, that is called globally.
         :param api_data: api data set
         :return: result
         """
-        packages = self.load_gem_packages_system(local=False, api_data=api_data)
-        if packages[0] is not None:
-            return self.parse_gem_packages_system(packages=packages[0])
+        if self.load_gem_packages_system(api_data=api_data, local=False):
+            if self.parse_gem_packages_system(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+
         print_line('Something wrong with packages in file path')
         return False
 
     def get_components_gemfile_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Get Ruby gem packages, collected from Gemfile, defined by path.
         :param api_data: api data set
         :return: result
         """
-        packages = self.load_gemfile_packages_from_path(filename=api_data['file'])
-        if packages[0] is None:
-            print('Gemfile packages loading error.')
-            return False
-        components = self.parse_gemfile_packages(packages=packages)
-        if components[0] is None:
-            print_line('Failed parse Gemfile packages.')
-            return False
-        return components
+        if self.load_gemfile_packages_from_path(api_data=api_data)):
+            if self.parse_gemfile_packages(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+
+        print_line('Failed load or parse Gemfile packages.')
+        return False
 
     def get_components_gemfile_lock_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Get Ruby gem packages, collected from Gemfile.lock, defined by path.
         :param api_data: api data set
         :return: result
         """
-        packages = self.load_gemfile_lock_packages_from_path(filename=api_data['file'])
-        if packages[0] is None:
-            print('Gemfile packages loading error.')
-            return False
-        components = self.parse_gemfile_lock_packages(packages=packages)
-        if components[0] is None:
-            print_line('Failed parse Gemfile packages.')
-            return False
-        return components
+        if self.load_gemfile_lock_packages_from_path(api_data=api_data):
+            if self.parse_gemfile_lock_packages(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+
+        print_line('Failed parse Gemfile packages.')
+        return False
 
     def get_components_any_auto_user_path(self, api_data):
+        # type: (dict) -> bool
         """
         Get any components from file, defined by path.
         :param api_data: api data set
@@ -324,10 +345,13 @@ class ComponentsHelper(object):
         """
         filename = api_data['file']
         if os.path.isfile(filename):
+
             enc = self.define_file_encoding(filename=filename)
+
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
                 return False
+
             components = []
             with open(filename, 'r', encoding=enc) as pf:
                 packages = pf.read().split('\n')
@@ -337,15 +361,18 @@ class ComponentsHelper(object):
                             splitted_package = package.split('=')
                             if len(splitted_package) == 2:
                                 components.append({'name': splitted_package[0], 'version': splitted_package[1]})
-                return components
+                api_data['components'] = components
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+
         print_line('File {0} not found.'.format(filename))
         return False
 
-    @staticmethod
-    def get_components_any_manual_user_none():
+    def get_components_any_manual_user_none(api_data):
+        # type: (dict) -> bool
         """
         Get packages from console.
-        :return:
+        :return: result
         """
         components = []
         if ask('Continue (y/n)? ') == 'n':
@@ -356,23 +383,37 @@ class ComponentsHelper(object):
             components.append({'name': name, 'version': version})
             if ask('Continue (y/n)? ') == 'n':
                 break
-        return components
+        api_data['components'] = components
+        print_line('Append {0} components'.format(len(api_data['components'])))
+        return True
 
     def get_components_php_composer_json_system_path(self, api_data):
-        packages = self.load_php_composer_json_system_path(filename=api_data['file'])[0]
-        if packages is None:
-            print('Gemfile packages loading error.')
-            return False
-        components = self.parse_php_composer_json_system_path(_packages=packages)
-        return components
+        # type: (dict) -> bool
+        """
+        Get packages from PHP Composer.json file.
+        :return: result
+        """        
+        if self.load_php_composer_json_system_path(api_data=api_data):
+            if self.parse_php_composer_json_system_path(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+
+        print('Gemfile packages loading error.')
+        return False
 
     def get_components_php_composer_lock_system_path(self, api_data):
-        packages = self.load_php_composer_lock_system_path(filename=api_data['file'])[0]
-        if packages is None:
-            print('Gemfile packages loading error.')
-            return False
-        components = self.parse_php_composer_lock_system_path(_packages=packages)
-        return components
+        # type: (dict) -> bool
+        """
+        Get packages from PHP Composer.lock file.
+        :return: result
+        """        
+        if self.load_php_composer_lock_system_path(api_data=api_data):
+            if self.parse_php_composer_lock_system_path(api_data=api_data):
+                print_line('Append {0} components'.format(len(api_data['components'])))
+                return True
+                
+        print('Gemfile packages loading error.')
+        return False
 
     # -------------------------------------------------------------------------
     # Loaders

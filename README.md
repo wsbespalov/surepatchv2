@@ -89,6 +89,7 @@ This application is designed to work with the Surepatch Project without using th
 | |user| User defined Packages format <name>=<version>|
 | | | |
 |--file|<path_to_file_or_dir>| Path to file with Packages or Directory |
+|--logo|<on_off>| Show logo when started or not |
 
 # CLI App Config:
 ### Create local config file
@@ -96,7 +97,7 @@ A local configuration file will be created in home directory (~/.surepatch.yaml)
 After that, the authorization information will be read from this file each time the action is started.
 You can change directly in file or with the help of save_config command. 
 ```sh
-@ surepatch.py --action=save_config --team=testers --user=user@gmail.com --password=test_password
+@ surepatch.py --action=save_config --team=testers --user=user@gmail.com --password=test_password --logo=off
 ```
 # Platforms:
 ### Create your first Platform
