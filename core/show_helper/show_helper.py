@@ -28,15 +28,15 @@ class ShowHelper(object):
         platforms = []
 
         if 'organization' not in api_data:
-            print_line(f'Organization info error.')
+            print_line('Organization info error.')
             return False
 
         if 'platforms' not in api_data['organization']:
-            print_line(f'Platform info error.')
+            print_line('Platform info error.')
             return False
 
         if len(api_data['organization']['platforms']) == 0:
-            print_line(f'You have not Platforms.')
+            print_line('You have not Platforms.')
             return False
 
         for platform in api_data['organization']['platforms']:
@@ -55,25 +55,25 @@ class ShowHelper(object):
         projects = []
 
         if 'organization' not in api_data:
-            print_line(f'Organization info error.')
+            print_line('Organization info error.')
             return False
 
         if 'platforms' not in api_data['organization']:
-            print_line(f'Platform info error.')
+            print_line('Platform info error.')
             return False
 
         if len(api_data['organization']['platforms']) == 0:
-            print_line(f'You have not Platforms.')
+            print_line('You have not Platforms.')
             return False
 
         platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
 
         if platform_number == -1:
-            print_line(f"No such platform: {api_data['platform']}.")
+            print_line("No such platform: {0}.".format(api_data['platform']))
             return False
 
         if len(api_data['organization']['platforms'][platform_number]['projects']) == 0:
-            print_line(f'You have not Projects.')
+            print_line('You have not Projects.')
             return False
 
         for project in api_data['organization']['platforms'][platform_number]['projects']:
@@ -92,15 +92,15 @@ class ShowHelper(object):
         my_set = self.components_helper.get_current_set_name(api_data=api_data)
 
         if my_set[0] is None:
-            print_line(f'Get set name error.')
+            print_line('Get set name error.')
             return False
 
-        print_line(f'Current component set: {my_set[0]}.')
+        print_line('Current component set: {0}.'.format(my_set[0]))
 
         components = self.components_helper.get_current_component_set(api_data=api_data)[0]['components']
 
         if components[0] is None:
-            print_line(f'Get component set error.')
+            print_line('Get component set error.')
             return False
 
         print_components(components=components, title=api_data['platform'] + '/' + api_data['project'], filename=api_data['file'])
@@ -116,19 +116,19 @@ class ShowHelper(object):
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
 
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}.")
+            print_line("No such platform: {0}.".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
 
         if api_data['project_number'] == -1:
-            print_line(f"No such project {api_data['project']} in platform {api_data['platform']}.")
+            print_line("No such project {0} in platform {1}.".format(api_data['project'], api_data['platform']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
         if not self.web_api.send_get_issues_request(api_data=api_data):
-            print_line(f"Cant load issues for platform {api_data['platform']} and project {api_data['project']}.")
+            print_line("Cant load issues for platform {0} and project {1}.".format(api_data['platform'], api_data['project']))
             return False
 
         issues = api_data['issues']
