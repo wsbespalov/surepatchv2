@@ -281,11 +281,11 @@ class ComponentsHelper(object):
         """
         packages = self.load_gemfile_packages_from_path(filename=api_data['file'])
         if packages[0] is None:
-            print(f'Gemfile packages loading error.')
+            print('Gemfile packages loading error.')
             return [None]
         components = self.parse_gemfile_packages(packages=packages)
         if components[0] is None:
-            print_line(f'Failed parse Gemfile packages.')
+            print_line('Failed parse Gemfile packages.')
             return [None]
         return components
 
@@ -327,7 +327,7 @@ class ComponentsHelper(object):
                             if len(splitted_package) == 2:
                                 components.append({'name': splitted_package[0], 'version': splitted_package[1]})
                 return components
-        print_line(f'File {filename} not found.')
+        print_line('File {0} not found.'.format(filename))
         return [None]
 
     @staticmethod
@@ -350,7 +350,7 @@ class ComponentsHelper(object):
     def get_components_php_composer_json_system_path(self, api_data):
         packages = self.load_php_composer_json_system_path(filename=api_data['file'])[0]
         if packages is None:
-            print(f'Gemfile packages loading error.')
+            print('Gemfile packages loading error.')
             return [None]
         components = self.parse_php_composer_json_system_path(_packages=packages)
         return components
@@ -358,7 +358,7 @@ class ComponentsHelper(object):
     def get_components_php_composer_lock_system_path(self, api_data):
         packages = self.load_php_composer_lock_system_path(filename=api_data['file'])[0]
         if packages is None:
-            print(f'Gemfile packages loading error.')
+            print('Gemfile packages loading error.')
             return [None]
         components = self.parse_php_composer_lock_system_path(_packages=packages)
         return components
@@ -378,17 +378,17 @@ class ComponentsHelper(object):
             proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
             output, error = proc.communicate()
             if error:
-                print_line(f'Powershell command throw {proc.returncode} code and {error.strip()} error message.')
+                print_line('Powershell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                 return [None]
             if output:
                 return [output]
         except OSError as os_error:
-            print_line(f'Powershell command throw errno: {os_error.errno}, '
-                       f'strerror: {os_error.strerror} and '
-                       f'filename: {os_error.filename}.')
+            print_line('Powershell command throw errno: {0}, '
+                       'strerror: {1} and '
+                       'filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
             return [None]
         except Exception as common_exception:
-            print_line(f'Powershell command throw an exception: {common_exception}.')
+            print_line('Powershell command throw an exception: {0}.'.format(common_exception))
             return [None]
 
     def load_windows_10_packages_from_path(self, filename: str):
@@ -406,15 +406,15 @@ class ComponentsHelper(object):
                 with open(filename, 'r', encoding=enc) as cf:
                     os_packages = cf.read()
                     if os_packages is None:
-                        print_line(f'Cant read file: {filename}.')
+                        print_line('Cant read file: {0}.'.format(filename))
                         return [None]
                     report = os_packages.replace('\r', '').split('\n')[9:]
                     return [report]
             except Exception as e:
-                print_line(f'File read exception {e}.')
+                print_line('File read exception {0}.'.format(e))
                 return [None]
 
-        print_line(f'File {filename} does not exists.')
+        print_line('File {0} does not exists.'.format(filename))
         return [None]
 
     @staticmethod
@@ -432,19 +432,17 @@ class ComponentsHelper(object):
                 output, error = proc.communicate()
                 proc.kill()
                 if error:
-                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    print_line('Shell command throw {0} code and {error.strip()} error message.'.format(proc.returncode))
                     return [None]
                 if output:
                     return [output]
-            print_line(f'Platform not defined as Debian.')
+            print_line('Platform not defined as Debian.')
             return [None]
         except OSError as os_error:
-            print_line(f'Shell command throw errno: {os_error.errno}, ')
-            print_line(f'strerror: {os_error.strerror} and ')
-            print_line(f'filename: {os_error.filename}.')
+            print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
             return [None]
         except Exception as common_exception:
-            print_line(f'Shell command throw an exception: {common_exception}.')
+            print_line('Shell command throw an exception: {0}.'.format(common_exception))
             return [None]
 
     def load_ubuntu_packages_from_path(self, filename: str):
@@ -461,13 +459,13 @@ class ComponentsHelper(object):
                 with open(filename, 'r', encoding=enc) as cf:
                     os_packages = cf.read()
                     if os_packages is None:
-                        print_line(f'Cant read file: {filename}.')
+                        print_line('Cant read file: {0}.'.format(filename))
                         return [None]
                     return [os_packages]
             except Exception as e:
-                print_line(f'File read exception {e}.')
+                print_line('File read exception {0}.'.format(e))
                 return [None]
-        print_line(f'File {filename} does not exists.')
+        print_line('File {0} does not exists.'.format(filename))
         return [None]
 
     @staticmethod
@@ -480,12 +478,10 @@ class ComponentsHelper(object):
         try:
             return [os.popen(cmd).readlines()]
         except OSError as os_error:
-            print_line(f'Shell command throw errno: {os_error.errno}, ')
-            print_line(f'strerror: {os_error.strerror} and ')
-            print_line(f'filename: {os_error.filename}.')
+            print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
             return [None]
         except Exception as common_exception:
-            print_line(f'Shell command throw an exception: {common_exception}.')
+            print_line('Shell command throw an exception: {0}.'.format(common_exception))
             return [None]
 
     def load_fedora_packages_from_path(self, filename: str):
@@ -502,13 +498,13 @@ class ComponentsHelper(object):
                 with open(filename, 'r', encoding=enc) as cf:
                     os_packages = cf.read()
                     if os_packages is None:
-                        print_line(f'Cant read file: {filename}.')
+                        print_line('Cant read file: {0}.'.format(filename))
                         return [None]
                     return [os_packages]
             except Exception as e:
-                print_line(f'File read exception {e}.')
+                print_line('File read exception {0}.'.format(e))
                 return [None]
-        print_line(f'File {filename} does not exists.')
+        print_line('File {0} does not exists.'.format(filename))
         return [None]
 
     @staticmethod
@@ -524,17 +520,15 @@ class ComponentsHelper(object):
                 output, error = proc.communicate()
                 proc.kill()
                 if error:
-                    print_line(f'Shell command throw {proc.returncode} code and {error.strip()} error message.')
+                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return [None]
                 if output:
                     return [output]
         except OSError as os_error:
-            print_line(f'Shell command throw errno: {os_error.errno}, ')
-            print_line(f'strerror: {os_error.strerror} and ')
-            print_line(f'filename: {os_error.filename}.')
+            print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
             return [None]
         except Exception as common_exception:
-            print_line(f'Shell command throw an exception: {common_exception}.')
+            print_line('Shell command throw an exception: {0}.'.format(common_exception))
             return [None]
 
     def load_macos_packages_from_path(self, filename: str):
@@ -551,13 +545,13 @@ class ComponentsHelper(object):
                 with open(filename, 'r', encoding=enc) as cf:
                     os_packages = cf.read()
                     if os_packages is None:
-                        print_line(f'Cant read file: {filename}.')
+                        print_line('Cant read file: {0}.'.format(filename))
                         return [None]
                     return [os_packages]
             except Exception as e:
-                print_line(f'File read exception {e}.')
+                print_line('File read exception {0}.'.format(e))
                 return [None]
-        print_line(f'File {filename} does not exists.')
+        print_line('File {0} does not exists.'.format(filename))
         return [None]
 
     @staticmethod
@@ -592,7 +586,7 @@ class ComponentsHelper(object):
         if os.path.exists(filename):
             enc = self.define_file_encoding(filename)
             if enc == 'undefined':
-                print_line(f'Undefined file {filename} encoding.')
+                print_line('Undefined file {0} encoding.'.format(filename))
                 return [None]
             try:
                 with open(filename, encoding=enc) as cf:
@@ -600,10 +594,10 @@ class ComponentsHelper(object):
                     rfps = rfp.replace(' ', '').split('\n')
                     return rfps
             except Exception as e:
-                print_line(f'Get an exception {e}, when read file {filename}')
+                print_line('Get an exception {0}, when read file {1}'.format(e, filename))
                 return [None]
 
-        print_line(f'File {filename} does not exists.')
+        print_line('File {0} does not exists.'.format(filename))
         return [None]
 
     def load_npm_packages_from_path(self, filename: str):
@@ -615,7 +609,7 @@ class ComponentsHelper(object):
         if os.path.exists(filename):
             enc = self.define_file_encoding(filename)
             if enc == 'undefined':
-                print_line(f'Undefined file {filename} encoding.')
+                print_line('Undefined file {0} encoding.'.format(filename))
                 return [None]
             try:
                 with open(filename, 'r', encoding=enc) as pf:
@@ -623,9 +617,9 @@ class ComponentsHelper(object):
                     walkdict(data)
                     return [True]
             except Exception as e:
-                print_line(f'File read exception: {e}')
+                print_line('File read exception: {0}'.format(e))
                 return [None]
-        print_line('File does not exist.')
+        print_line('File {0} does not exist.'.format(filename))
         return [None]
 
     def load_npm_packages(self, api_data, local: bool):
@@ -644,7 +638,7 @@ class ComponentsHelper(object):
                 temp.write('')
                 temp.seek(0)
         except Exception as e:
-            print_line(f'Cant create temp file, get an exception: {e}.')
+            print_line('Cant create temp file, get an exception: {0}.'.format(e))
             return [None]
         cmd = "npm list --json > {0}".format(full_path)
         if local:
@@ -661,40 +655,36 @@ class ComponentsHelper(object):
                 output, error = proc.communicate()
                 proc.kill()
                 if error:
-                    print_line(f'Powershell command throw {proc.returncode} code:')
-                    print_line(f'and {error.strip()} error message.')
+                    print_line('Powershell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return [None]
+                return output
             elif api_data['os_type'] == OSs.MACOS:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
                 if error:
-                    print_line(f'Shell command throw {proc.returncode} code:')
-                    print_line(f'and {error.strip()} error message.')
+                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return [None]
             elif api_data['os_type'] == OSs.UBUNTU:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
                 if error:
-                    print_line(f'Shell command throw {proc.returncode} code:')
-                    print_line(f'and {error.strip()} error message.')
+                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return [None]
             elif api_data['os_type'] == OSs.DEBIAN:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
                 if error:
-                    print_line(f'Shell command throw {proc.returncode} code:')
-                    print_line(f'and {error.strip()} error message.')
+                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return [None]
             elif api_data['os_type'] == OSs.FEDORA:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
                 if error:
-                    print_line('Shell command throw {0} code: '
-                               'and {1} error message.'.format(proc.returncode, error.strip()))
+                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return [None]
 
             try:
@@ -713,8 +703,7 @@ class ComponentsHelper(object):
                 if os.path.isfile(full_path):
                     os.remove(full_path)
         except OSError as os_error:
-            print_line('Shell command throw errno: {0}, strerror: {1} '
-                       'and filename: {2}.'format(os_error.errno, os_error.strerror, os_error.filename))
+            print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
             if os.path.isfile(full_path):
                 os.remove(full_path)
             return [None]
@@ -875,9 +864,7 @@ class ComponentsHelper(object):
                     return [output]
                 return [None]
         except OSError as os_error:
-            print_line('Shell command throw errno: {0}, '
-                       f'strerror: {1} and '
-                       f'filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
+            print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
             return [None]
         except Exception as common_exception:
             print_line('Shell command throw an exception: {0}.'.format(common_exception))
@@ -900,7 +887,7 @@ class ComponentsHelper(object):
                     packages = cont.split('\n')
                     return packages
             except Exception as e:
-                print_line(f'File {0} read exception: {1}'.format(filename, e))
+                print_line('File {0} read exception: {1}'.format(filename, e))
                 return [None]
         print_line('File does not exist.')
         return [None]
