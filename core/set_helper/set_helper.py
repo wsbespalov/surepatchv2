@@ -20,7 +20,7 @@ class SetHelper(object):
         platforms = self.get_my_platforms(api_data=api_data)
 
         if api_data['platform'] not in platforms:
-            print_line(f"Platform {api_data['platform']} does not exists.")
+            print_line("Platform {0} does not exists.".format(api_data['platform']))
             return False
 
         if api_data['project'] is None:
@@ -30,14 +30,14 @@ class SetHelper(object):
         projects = self.get_my_projects(api_data=api_data)
 
         if api_data['project'] not in projects:
-            print_line(f"Project {api_data['project']} does not exists.")
+            print_line("Project {0} does not exists.".format(api_data['project']))
             return False
 
         set_name = api_data['set']
         current_set_name = self.components_helper.get_current_set_name(api_data=api_data)[0]
 
         if current_set_name == set_name:
-            print_line(f'Current set with name {set_name} already exists.')
+            print_line('Current set with name {0} already exists.'.format(set_name))
             print_line('Please, use another name, or use no --set parameter to autoincrement set name.')
             return False
 
@@ -70,12 +70,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -96,12 +96,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -123,12 +123,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -149,12 +149,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -174,12 +174,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -200,12 +200,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -226,12 +226,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -252,12 +252,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -277,12 +277,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -302,12 +302,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -327,12 +327,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -353,12 +353,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -379,12 +379,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -405,12 +405,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -431,12 +431,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -456,12 +456,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -481,12 +481,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".api_data['project'])
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
@@ -506,12 +506,12 @@ class SetHelper(object):
 
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"No such platform: {api_data['platform']}")
+            print_line("No such platform: {0}".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"No such project: {api_data['project']}")
+            print_line("No such project: {0}".format(api_data['project']))
             return False
 
         api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
