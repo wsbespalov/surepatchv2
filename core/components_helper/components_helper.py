@@ -399,6 +399,8 @@ class ComponentsHelper(object):
                 api_data['packages'] = output
                 return True
 
+            return False
+
         except OSError as os_error:
             print_line('Powershell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
             return False
@@ -468,6 +470,8 @@ class ComponentsHelper(object):
                 if output:
                     api_data['packages'] = output
                     return True
+
+                return False
         
             print_line('Platform not defined as Debian.')
             return False
@@ -595,6 +599,8 @@ class ComponentsHelper(object):
                     api_data['packages'] = output
                     return True
 
+                return False
+
         except OSError as os_error:
             print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
             return False
@@ -621,7 +627,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(filename, 'r', encoding=enc) as cf:
+                with open(file=filename, mode='r', encoding=enc) as cf:
                     os_packages = cf.read()
 
                     if os_packages is None:
@@ -630,6 +636,7 @@ class ComponentsHelper(object):
 
                     api_data['packages'] = os_packages
                     return True
+                    
             except Exception as e:
                 print_line('File read exception {0}.'.format(e))
                 return False
@@ -978,84 +985,130 @@ class ComponentsHelper(object):
         except OSError as os_error:
             print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
             return False
-            
+
         except Exception as common_exception:
             print_line('Shell command throw an exception: {0}.'.format(common_exception))
             return False
 
-    def load_gemfile_packages_from_path(self, filename):
+    def load_gemfile_packages_from_path(self, api_data):
+        # type: (dict) -> bool
         """
         Load packages from Gemfile. defined by path.
         :param filename: filename
         :return: result
         """
+
+        filename = api_data['file']
+
         if os.path.isfile(filename):
+
             enc = self.define_file_encoding(filename=filename)
+
             if enc == 'undefined':
                 print_line('Undefined file {0} encoding.'.format(filename))
                 return False
+
             try:
-                with open(filename, 'r', encoding=enc) as pf:
+                with open(file=filename, mode='r', encoding=enc) as pf:
                     cont = pf.read()
-                    packages = cont.split('\n')
-                    return packages
+                    api_data['packages'] = cont.split('\n')
+                    return True
+
             except Exception as e:
                 print_line('File {0} read exception: {1}'.format(filename, e))
                 return False
+
         print_line('File does not exist.')
         return False
 
-    def load_gemfile_lock_packages_from_path(self, filename):
+    def load_gemfile_lock_packages_from_path(self, api_data):
+        # type: (dict) -> bool
         """
         Load packages from Gemfile.lock defined by path.
         :param filename: filename
         :return: result
         """
+
+        filename = api_data['file']
+
         if os.path.isfile(filename):
+
             enc = self.define_file_encoding(filename=filename)
+
             if enc == 'undefined':
                 print_line('Undefined file {0} encoding.'.format(filename))
                 return False
+
             try:
                 with open(filename, 'r', encoding=enc) as pf:
                     cont = pf.read()
-                    packages = cont.split('\n')
-                    return packages
+                    api_data['packages'] = cont.split('\n')
+                    return True
+
             except Exception as e:
                 print_line('File {0} read exception: {1}'.format(filename, e))
                 return False
+
         print_line('File does not exist.')
         return False
 
-    def load_php_composer_json_system_path(self, filename):
+    def load_php_composer_json_system_path(self, api_data):
+        # type: (dict) -> bool
+        """
+        Load packages from PHP Composer.json defined by path.
+        :param filename: filename
+        :return: result
+        """
+
+        filename = api_data['file']
+
         if os.path.isfile(filename):
+
             enc = self.define_file_encoding(filename=filename)
+
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
                 return False
-            with open(filename, 'r', encoding=enc) as pf:
+
+            with open(file=filename, mode='r', encoding=enc) as pf:
                 try:
-                    packages = json.load(pf)
-                    return [packages]
+                    api_data['packages'] = json.load(pf)
+                    return True
+
                 except json.JSONDecodeError as json_decode_error:
                     print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))
                     return False
+
         print_line('File {0} not found.'.format(filename))
         return False
 
-    def load_php_composer_lock_system_path(self, filename):
+    def load_php_composer_lock_system_path(self, api_data):
+        # type: (dict) -> bool
+        """
+        Load packages from PHP Composer.lock defined by path.
+        :param filename: filename
+        :return: result
+        """  
+
+        filename = api_data['file']
+
         if os.path.isfile(filename):
+
             enc = self.define_file_encoding(filename=filename)
+
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
                 return False
+
             with open(filename, 'r', encoding=enc) as pf:
                 try:
-                    packages = json.load(pf)
-                    return [packages]
+                    api_data['packages'] = json.load(pf)
+                    return True
+
                 except json.JSONDecodeError as json_decode_error:
                     print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))
                     return False
+
         print_line('File {0} not found.'.format(filename))
         return False
 
