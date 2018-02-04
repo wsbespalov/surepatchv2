@@ -74,21 +74,21 @@ class WebAPI(object):
                     print_line('Login success.')
                     return True
                 except ValueError as json_value_exception:
-                    print_line(f'Response JSON parsing exception: {json_value_exception}')
+                    print_line('Response JSON parsing exception: {0}'.format(json_value_exception))
                     return False
-            print_line(f'Login failed. Status code: {response.status_code}')
+            print_line('Login failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_get_organization_parameters_request(self, api_data: dict) -> bool:
@@ -161,19 +161,19 @@ class WebAPI(object):
                 except ValueError as json_value_exception:
                     print_line(f'Response JSON parsing exception: {json_value_exception}')
                     return False
-            print_line(f'Get organization parameters failed. Status code: {response.status_code}')
+            print_line('Get organization parameters failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_create_new_platform_request(self, api_data: dict) -> bool:
@@ -192,19 +192,19 @@ class WebAPI(object):
                 json=self.platform_payload)
             if response.status_code == 200:
                 return True
-            print_line(f'Create platform failed. Status code: {response.status_code}')
+            print_line('Create platform failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_create_new_project_request(self, api_data: dict) -> bool:
@@ -224,19 +224,19 @@ class WebAPI(object):
                 json=self.project_payload)
             if response.status_code == 200:
                 return True
-            print_line(f'Create project failed. Status code: {response.status_code}')
+            print_line('Create project failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_create_new_component_set_request(self, api_data: dict) -> bool:
@@ -256,19 +256,19 @@ class WebAPI(object):
                 json=self.components_payload)
             if response.status_code == 200:
                 return True
-            print_line(f'Create component set failed. Status code: {response.status_code}')
+            print_line('Create component set failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_delete_platform_request(self, api_data: dict) -> bool:
@@ -285,19 +285,19 @@ class WebAPI(object):
                 json=self.platform_payload)
             if response.status_code == 200:
                 return True
-            print_line(f'Delete Platform failed. Status code: {response.status_code}')
+            print_line('Delete Platform failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_delete_project_request(self, api_data: dict) -> bool:
@@ -314,19 +314,19 @@ class WebAPI(object):
                 json=self.project_payload)
             if response.status_code == 200:
                 return True
-            print_line(f'Delete Project failed. Status code: {response.status_code}')
+            print_line('Delete Project failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_archive_platform_request(self, api_data: dict) -> bool:
@@ -348,19 +348,19 @@ class WebAPI(object):
                 json=self.platform_payload)
             if response.status_code == 200:
                 return True
-            print_line(f'Archive Platform failed. Status code: {response.status_code}')
+            print_line('Archive Platform failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_archive_project_request(self, api_data: dict) -> bool:
@@ -382,19 +382,19 @@ class WebAPI(object):
                 json=self.project_payload)
             if response.status_code == 200:
                 return True
-            print_line(f'Archive Project failed. Status code: {response.status_code}')
+            print_line('Archive Project failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_restore_platform_request(self, api_data: dict) -> bool:
@@ -422,19 +422,19 @@ class WebAPI(object):
                 json=self.platform_payload)
             if response.status_code == 200:
                 return True
-            print_line(f'Archive Platform failed. Status code: {response.status_code}')
+            print_line('Archive Platform failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_restore_project_request(self, api_data: dict) -> bool:
@@ -462,19 +462,19 @@ class WebAPI(object):
                 json=self.project_payload)
             if response.status_code == 200:
                 return True
-            print_line(f'Archive Platform failed. Status code: {response.status_code}')
+            print_line('Archive Platform failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_get_archived_platforms_request(self, api_data: dict) -> bool:
@@ -497,19 +497,19 @@ class WebAPI(object):
                     print_line(f'An exception occured with json decoder: {json_decode_error}.')
                     return False
                 return True
-            print_line(f'Archive Platform get information failed. Status code: {response.status_code}')
+            print_line('Archive Platform get information failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_get_archived_projects_request(self, api_data: dict) -> bool:
@@ -532,19 +532,19 @@ class WebAPI(object):
                     print_line(f'An exception occured with json decoder: {json_decode_error}.')
                     return False
                 return True
-            print_line(f'Archive Project get information failed. Status code: {response.status_code}')
+            print_line('Archive Project get information failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     def send_get_issues_request(self, api_data: dict) -> bool:
@@ -565,21 +565,21 @@ class WebAPI(object):
                     api_data['issues'] = json.loads(response.content)['project']['issues']
                     return True
                 except json.JSONDecodeError as json_decode_error:
-                    print_line(f'An exception occured with json decoder: {json_decode_error}.')
+                    print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))
                     return False
-            print_line(f'Archive Project get information failed. Status code: {response.status_code}')
+            print_line('Archive Project get information failed. Status code: {0}'.format(response.status_code))
             return False
         except requests.exceptions.HTTPError as http_exception:
-            print_line(f'HTTP Error: {http_exception}')
+            print_line('HTTP Error: {0}'.format(http_exception))
             return False
         except requests.exceptions.ConnectionError as connection_exception:
-            print_line(f'Connection error: {connection_exception}')
+            print_line('Connection error: {0}'.format(connection_exception))
             return False
         except requests.exceptions.Timeout as timeout_exception:
-            print_line(f'Connection timeout: {timeout_exception}')
+            print_line('Connection timeout: {0}'.format(timeout_exception))
             return False
         except requests.exceptions.RequestException as request_exception:
-            print_line(f'Request exception: {request_exception}')
+            print_line('Request exception: {0}'.format(request_exception))
             return False
 
     @staticmethod
