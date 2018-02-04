@@ -40,63 +40,74 @@ class ComponentsHelper(object):
     # -------------------------------------------------------------------------
 
     def get_components_os_auto_system_none(self, api_data):
+        # type: (dict) -> bool
         """
         Get components of OS by calling of shell script and than parse them.
         :param api_data: api data set
         :return: result
         """
         if api_data['os_type'] == OSs.WINDOWS:
+
             if api_data['os_version'] == '10' or api_data['os_version'] == '8':
-                os_packages = self.load_windows_10_packages_from_shell()[0]
-                if os_packages is None:
+                
+                if not self.load_windows_10_packages_from_shell():
                     print_line('Failed to load OS components.')
-                    return [None]
-                report = os_packages.decode('utf-8').replace('\r', '').split('\n')[9:]
+                    return False
+                
+                report = api_data['packages'].decode('utf-8').replace('\r', '').split('\n')[9:]
                 components = self.parse_windows_10_packages(report)
+
                 if components[0] is None:
                     print_line('Failed parse OS components.')
-                    return [None]
-                return components
+                    return False
+                
+                api_data['components'] = components
+
             elif api_data['os_version'] == '7':
                 print_line('Windows 7 does not support yet.')
-                return [None]
+                return False
+
             else:
                 print_line('Windows type not defined.')
-                return [None]
+                return False
+
         elif api_data['os_type'] == OSs.MACOS:
+
             os_packages = self.load_macos_packages_from_shell()[0]
+
             if os_packages is None:
                 print_line('Failed to load OS components.')
-                return [None]
+                return False
+
             components = self.parse_macos_packages(os_packages)
             if components[0] is None:
                 print_line('Failed parse OS components.')
-                return [None]
+                return False
             return components
         elif api_data['os_type'] == OSs.CENTOS:
             print_line('CentOS not support yet.')
-            return [None]
+            return False
         elif api_data['os_type'] == OSs.DEBIAN:
             os_packages = self.load_ubuntu_packages_from_shell()[0]
             if os_packages is None:
                 print_line('Failed to load OS components.')
-                return [None]
+                return False
             components = self.parse_ubuntu_packages(os_packages)
             if components[0] is None:
                 print_line('Failed parse OS components.')
-                return [None]
+                return False
             return components
         elif api_data['os_type'] == OSs.FEDORA:
             os_packages = self.load_fedora_packages_from_shell()[0]
             if os_packages is None:
                 print_line('Failed to load OS components.')
-                return [None]
+                return False
             components = self.parse_fedora_packages(os_packages)
             if components[0] is None:
                 print_line('Failed parse OS components.')
-                return [None]
+                return False
             return components
-        return [None]
+        return False
 
     def get_components_os_auto_system_path(self, api_data):
         """
@@ -108,49 +119,49 @@ class ComponentsHelper(object):
             if api_data['os_version'] == '10' or api_data['os_version'] == '8':
                 report = self.load_windows_10_packages_from_path(api_data['file'])[0]
                 if report is None:
-                    return [None]
+                    return False
                 components = self.parse_windows_10_packages(report=report)
                 if components[0] is None:
-                    return [None]
+                    return False
                 return components
             if api_data['os_version'] == '7':
                 print_line('Windows 7 does not support yet.')
-                return [None]
+                return False
         elif api_data['os_type'] == OSs.MACOS:
             os_packages = self.load_macos_packages_from_path(api_data['file'])[0]
             if os_packages is None:
                 print_line('Failed to load OS components.')
-                return [None]
+                return False
             components = self.parse_macos_packages(os_packages)
             if components[0] is None:
                 print_line('Failed parse OS components.')
-                return [None]
+                return False
             return components
         elif api_data['os_type'] == OSs.CENTOS:
             print_line('CentOS does not support yet.')
-            return [None]
+            return False
         elif api_data['os_type'] == OSs.DEBIAN or api_data['os_type'] == OSs.UBUNTU:
             os_packages = self.load_ubuntu_packages_from_path(api_data['file'])[0]
             if os_packages is None:
                 print_line('Failed to load OS components.')
-                return [None]
+                return False
             components = self.parse_ubuntu_packages(os_packages)
             if components[0] is None:
                 print_line('Failed parse OS components.')
-                return [None]
+                return False
             return components
         elif api_data['os_type'] == OSs.FEDORA:
             os_packages = self.load_fedora_packages_from_path(api_data['file'])[0]
             if os_packages is None:
                 print_line('Failed to load OS components.')
-                return [None]
+                return False
             components = self.parse_fedora_packages(os_packages)
             if components[0] is None:
                 print_line('Failed parse OS components.')
-                return [None]
+                return False
             return components
         else:
-            return [None]
+            return False
 
     def get_components_pip_auto_system_none(self):
         """
@@ -161,7 +172,7 @@ class ComponentsHelper(object):
 
         if report[0] is None:
             print_line('Problems with PIP components loading.')
-            return [None]
+            return False
 
         return self.parse_pip_packages_legacy(report)
 
@@ -175,7 +186,7 @@ class ComponentsHelper(object):
         if packages[0] is not None:
             return self.parse_pip_packages_from_path(packages=packages)
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
-        return [None]
+        return False
 
     def get_components_requirements_auto_system_path(self, api_data):
         """
@@ -187,7 +198,7 @@ class ComponentsHelper(object):
         if packages[0] is not None:
             return self.parse_pip_packages_from_path(packages=packages)
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
-        return [None]
+        return False
 
     def get_components_npm_auto_system_path(self, api_data):
         """
@@ -199,7 +210,7 @@ class ComponentsHelper(object):
         if packages[0] is not None:
             return self.parse_npm_packages(api_data=api_data, comp=raw_npm_components)
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
-        return [None]
+        return False
 
     def get_components_package_json_auto_system_path(self, api_data):
         """
@@ -211,7 +222,7 @@ class ComponentsHelper(object):
         if packages[0] is not None:
             return self.parse_package_json_packages_from_path(packages[0])
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
-        return [None]
+        return False
 
     def get_components_gem_auto_system_path(self, api_data):
         """
@@ -223,7 +234,7 @@ class ComponentsHelper(object):
         if packages[0] is not None:
             return self.parse_gem_packages_from_path(packages[0])
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
-        return [None]
+        return False
 
     def get_components_npm_auto_system_none(self, api_data):
         """
@@ -235,7 +246,7 @@ class ComponentsHelper(object):
         if packages[0] is not None:
             return self.parse_npm_packages(api_data=api_data, comp=raw_npm_components)
         print_line('Something wrong with packages in NPM system call.')
-        return [None]
+        return False
 
     def get_components_npm_local_auto_system_none(self, api_data):
         """
@@ -247,7 +258,7 @@ class ComponentsHelper(object):
         if packages[0] is not None:
             return self.parse_npm_packages(api_data=api_data, comp=raw_npm_components)
         print_line('Something wrong with packages in file path')
-        return [None]
+        return False
 
     def get_components_npm_lock_auto_system_path(self, api_data):
         """
@@ -259,7 +270,7 @@ class ComponentsHelper(object):
         if packages[0] is not None:
             return self.parse_npm_lock_packages(packages[0])
         print_line('Something wrong with packages in file path')
-        return [None]
+        return False
 
     def get_components_gem_auto_system_none(self, api_data):
         """
@@ -271,7 +282,7 @@ class ComponentsHelper(object):
         if packages[0] is not None:
             return self.parse_gem_packages_system(packages=packages[0])
         print_line('Something wrong with packages in file path')
-        return [None]
+        return False
 
     def get_components_gemfile_auto_system_path(self, api_data):
         """
@@ -282,11 +293,11 @@ class ComponentsHelper(object):
         packages = self.load_gemfile_packages_from_path(filename=api_data['file'])
         if packages[0] is None:
             print('Gemfile packages loading error.')
-            return [None]
+            return False
         components = self.parse_gemfile_packages(packages=packages)
         if components[0] is None:
             print_line('Failed parse Gemfile packages.')
-            return [None]
+            return False
         return components
 
     def get_components_gemfile_lock_auto_system_path(self, api_data):
@@ -298,11 +309,11 @@ class ComponentsHelper(object):
         packages = self.load_gemfile_lock_packages_from_path(filename=api_data['file'])
         if packages[0] is None:
             print('Gemfile packages loading error.')
-            return [None]
+            return False
         components = self.parse_gemfile_lock_packages(packages=packages)
         if components[0] is None:
             print_line('Failed parse Gemfile packages.')
-            return [None]
+            return False
         return components
 
     def get_components_any_auto_user_path(self, api_data):
@@ -316,7 +327,7 @@ class ComponentsHelper(object):
             enc = self.define_file_encoding(filename=filename)
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
-                return [None]
+                return False
             components = []
             with open(filename, 'r', encoding=enc) as pf:
                 packages = pf.read().split('\n')
@@ -328,7 +339,7 @@ class ComponentsHelper(object):
                                 components.append({'name': splitted_package[0], 'version': splitted_package[1]})
                 return components
         print_line('File {0} not found.'.format(filename))
-        return [None]
+        return False
 
     @staticmethod
     def get_components_any_manual_user_none():
@@ -338,7 +349,7 @@ class ComponentsHelper(object):
         """
         components = []
         if ask('Continue (y/n)? ') == 'n':
-            return [None]
+            return False
         while True:
             name = ask('Enter component name: ')
             version = ask('Enter component version: ')
@@ -351,7 +362,7 @@ class ComponentsHelper(object):
         packages = self.load_php_composer_json_system_path(filename=api_data['file'])[0]
         if packages is None:
             print('Gemfile packages loading error.')
-            return [None]
+            return False
         components = self.parse_php_composer_json_system_path(_packages=packages)
         return components
 
@@ -359,7 +370,7 @@ class ComponentsHelper(object):
         packages = self.load_php_composer_lock_system_path(filename=api_data['file'])[0]
         if packages is None:
             print('Gemfile packages loading error.')
-            return [None]
+            return False
         components = self.parse_php_composer_lock_system_path(_packages=packages)
         return components
 
@@ -367,508 +378,610 @@ class ComponentsHelper(object):
     # Loaders
     # -------------------------------------------------------------------------
 
-    @staticmethod
-    def load_windows_10_packages_from_shell():
+    def load_windows_10_packages_from_shell(self, api_data):
+        # type: (dict) -> bool
         """
         Load OS packages for Windows platform by powershell command.
         :return: result
         """
+        
         cmd = "Get-AppxPackage -AllUsers | Select Name, PackageFullName"
+        
         try:
             proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
             output, error = proc.communicate()
+
             if error:
                 print_line('Powershell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                return [None]
+                return False
+
             if output:
-                return [output]
+                api_data['packages'] = output
+                return True
+
         except OSError as os_error:
-            print_line('Powershell command throw errno: {0}, '
-                       'strerror: {1} and '
-                       'filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
-            return [None]
+            print_line('Powershell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
+            return False
+
         except Exception as common_exception:
             print_line('Powershell command throw an exception: {0}.'.format(common_exception))
-            return [None]
+            return False
 
-    def load_windows_10_packages_from_path(self, filename: str):
+    def load_windows_10_packages_from_path(self, api_data):
+        # type: (dict) -> bool
         """
         Get OS packages for Windows platform from unloaded file, that was created by shell command manually.
         :param filename: path to file
         :return: result
         """
+        
+        filename = api_data['file']
+        
         if os.path.exists(filename):
+        
             enc = self.define_file_encoding(filename=filename)
+        
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
-                return [None]
+                return False
+
             try:
-                with open(filename, 'r', encoding=enc) as cf:
+                with open(file=filename, mode='r', encoding=enc) as cf:
                     os_packages = cf.read()
+                
                     if os_packages is None:
                         print_line('Cant read file: {0}.'.format(filename))
-                        return [None]
-                    report = os_packages.replace('\r', '').split('\n')[9:]
-                    return [report]
+                        return False
+                
+                    api_data['packages'] = os_packages.replace('\r', '').split('\n')[9:]
+                    return True
+
             except Exception as e:
                 print_line('File read exception {0}.'.format(e))
-                return [None]
+                return False
 
         print_line('File {0} does not exists.'.format(filename))
-        return [None]
+        return False
 
-    @staticmethod
-    def load_ubuntu_packages_from_shell():
+    def load_ubuntu_packages_from_shell(self, api_data):
+        # type: (dict) -> bool
         """
         Load OS packages for Ubuntu platform by shell command.
         :return: result
         """
+
         cmd = "dpkg -l | grep '^ii '"
+
         try:
             if platform.system() == "Linux" or \
                     platform.system() == "linux" or \
                     platform.linux_distribution()[0] == 'debian':
+                
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
+        
                 if error:
                     print_line('Shell command throw {0} code and {error.strip()} error message.'.format(proc.returncode))
-                    return [None]
+                    return False
+        
                 if output:
-                    return [output]
+                    api_data['packages'] = output
+                    return True
+        
             print_line('Platform not defined as Debian.')
-            return [None]
+            return False
+
         except OSError as os_error:
             print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
-            return [None]
+            return False
+
         except Exception as common_exception:
             print_line('Shell command throw an exception: {0}.'.format(common_exception))
-            return [None]
+            return False
 
-    def load_ubuntu_packages_from_path(self, filename: str):
+    def load_ubuntu_packages_from_path(self, api_data):
+        # type: (dict) -> bool
         """
         Load OS packages for Ubuntu platform from filem created by shell command.
         :return: result
         """
+
+        filename = api_data['file']
+
         if os.path.exists(filename):
+
             enc = self.define_file_encoding(filename=filename)
+
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
-                return [None]
+                return False
+
             try:
-                with open(filename, 'r', encoding=enc) as cf:
+                with open(file=filename, mode='r', encoding=enc) as cf:
+
                     os_packages = cf.read()
+
                     if os_packages is None:
                         print_line('Cant read file: {0}.'.format(filename))
-                        return [None]
-                    return [os_packages]
+                        return False
+
+                    api_data['packages'] = os_packages
+                    return True
+
             except Exception as e:
                 print_line('File read exception {0}.'.format(e))
-                return [None]
-        print_line('File {0} does not exists.'.format(filename))
-        return [None]
+                return False
 
-    @staticmethod
-    def load_fedora_packages_from_shell():
+        print_line('File {0} does not exists.'.format(filename))
+        return False
+
+    def load_fedora_packages_from_shell(self, api_data):
+        # type: (dict) -> bool
         """
         Load OS packages for Fedora platform by shell command.
         :return: result
         """
+        
         cmd = "rpm -qa"
+
         try:
-            return [os.popen(cmd).readlines()]
+            api_data['packages'] = os.popen(cmd).readlines()
+            return True
+
         except OSError as os_error:
             print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
-            return [None]
+            return False
+
         except Exception as common_exception:
             print_line('Shell command throw an exception: {0}.'.format(common_exception))
-            return [None]
+            return False
 
-    def load_fedora_packages_from_path(self, filename: str):
+    def load_fedora_packages_from_path(self, api_data):
+        # type: (dict) -> bool
         """
         Load OS packages for Fedora platform from file, created by shell command.
         :return: result
         """
+
+        filename = api_data['file']
+
         if os.path.exists(filename):
+
             enc = self.define_file_encoding(filename=filename)
+
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
-                return [None]
+                return False
+
             try:
-                with open(filename, 'r', encoding=enc) as cf:
+                with open(file=filename, mode='r', encoding=enc) as cf:
                     os_packages = cf.read()
+
                     if os_packages is None:
                         print_line('Cant read file: {0}.'.format(filename))
-                        return [None]
-                    return [os_packages]
+                        return False
+
+                    api_data['packages'] = os_packages
+                    return True
+
             except Exception as e:
                 print_line('File read exception {0}.'.format(e))
-                return [None]
-        print_line('File {0} does not exists.'.format(filename))
-        return [None]
+                return False
 
-    @staticmethod
-    def load_macos_packages_from_shell():
+        print_line('File {0} does not exists.'.format(filename))
+        return False
+
+    def load_macos_packages_from_shell(self, api_data):
+        # type: (dict) -> bool
         """
         Load OS packages for MacOS platform by shell command.
         :return: result
         """
+
         cmd = "cat /Library/Receipts/InstallHistory.plist"
+
         try:
             if platform.system() == 'darwin' or platform.system() == 'Darwin':
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
+
                 if error:
                     print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return [None]
+                    return False
+
                 if output:
-                    return [output]
+                    api_data['packages'] = output
+                    return True
+
         except OSError as os_error:
             print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
-            return [None]
+            return False
+
         except Exception as common_exception:
             print_line('Shell command throw an exception: {0}.'.format(common_exception))
-            return [None]
+            return False
 
-    def load_macos_packages_from_path(self, filename: str):
+    def load_macos_packages_from_path(self, api_data):
+        # type: (dict) -> bool
         """
         Load OS packages for MacOS platform from file, created by shell command.
         :return: result
         """
+
+        filename = api_data['file']
+
         if os.path.exists(filename):
+
             enc = self.define_file_encoding(filename=filename)
+
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
-                return [None]
+                return False
+
             try:
                 with open(filename, 'r', encoding=enc) as cf:
                     os_packages = cf.read()
+
                     if os_packages is None:
                         print_line('Cant read file: {0}.'.format(filename))
-                        return [None]
-                    return [os_packages]
+                        return False
+
+                    api_data['packages'] = os_packages
+                    return True
             except Exception as e:
                 print_line('File read exception {0}.'.format(e))
-                return [None]
-        print_line('File {0} does not exists.'.format(filename))
-        return [None]
+                return False
 
-    @staticmethod
-    def load_pip_packages_from_shell_legacy():
+        print_line('File {0} does not exists.'.format(filename))
+        return False
+
+    def load_pip_packages_from_shell_legacy(self, api_data):
+        # type: (dict) -> bool
         """
         Load Python PI packages with pip.FrozenRequirement method.
         :return: result
         """
+
         cmd = "pip list --format=legacy"
+
         try:
             proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
             output, error = proc.communicate()
+
             if error:
-                print('Error')
-                return [None]
+                print('Get Python PIP packages from shell error.')
+                return False
+
             if output:
                 if len(output) > 0:
-                    return output.decode('utf-8')
+                    api_data['packages'] = output.decode('utf-8')
+                    return True
+
                 else:
-                    return [None]
+                    return False
+
         except Exception as common_exception:
             print("An exception {0} occured while shell command was called.".format(common_exception))
-            return [None]
-        return [None]
+            return False
 
-    def load_pip_packages_from_path(self, filename: str):
+    def load_pip_packages_from_path(self, api_data):
+        # type: (dict) -> bool
         """
         Load Python PIP packages from file.
         :param filename: path to file
         :return: result
         """
+
+        filename = api_data['file']
+        
         if os.path.exists(filename):
+
             enc = self.define_file_encoding(filename)
+
             if enc == 'undefined':
                 print_line('Undefined file {0} encoding.'.format(filename))
-                return [None]
+                return False
+
             try:
-                with open(filename, encoding=enc) as cf:
+                with open(file=filename, mode='r', encoding=enc) as cf:
                     rfp = cf.read()
-                    rfps = rfp.replace(' ', '').split('\n')
-                    return rfps
+                    api_data['packages'] = rfp.replace(' ', '').split('\n')
+                    return True
+
             except Exception as e:
                 print_line('Get an exception {0}, when read file {1}'.format(e, filename))
-                return [None]
+                return False
 
         print_line('File {0} does not exists.'.format(filename))
-        return [None]
+        return False
 
-    def load_npm_packages_from_path(self, filename: str):
+    def load_npm_packages_from_path(self, api_data):
+        # type: (dict) -> bool
         """
         Load NPM packages from file, defined by path.
         :param filename: path to file
         :return: result
         """
+
+        filename = api_data[file]
+
         if os.path.exists(filename):
+
             enc = self.define_file_encoding(filename)
+
             if enc == 'undefined':
                 print_line('Undefined file {0} encoding.'.format(filename))
-                return [None]
+                return False
+
             try:
                 with open(filename, 'r', encoding=enc) as pf:
                     data = json.load(pf)
                     walkdict(data)
-                    return [True]
+                    return True
+
             except Exception as e:
                 print_line('File read exception: {0}'.format(e))
-                return [None]
-        print_line('File {0} does not exist.'.format(filename))
-        return [None]
+                return False
 
-    def load_npm_packages(self, api_data, local: bool):
+        print_line('File {0} does not exist.'.format(filename))
+        return False
+
+    def load_npm_packages(self, api_data, local):
+        # type: (dict, bool) -> bool
         """
         Load NPM packages from shell command through temporary file.
         :param path: path to directory, if method call locally
         :param local: run local or global
         :return: result
         """
+
         path = api_data['file']
+
         tmp_file_name = 'tmp_npm_list_json.txt'
         file_path = os.path.expanduser('~')
         full_path = os.path.join(file_path, tmp_file_name)
+
         try:
             with open(full_path, mode='w', encoding='utf-8') as temp:
                 temp.write('')
                 temp.seek(0)
+
         except Exception as e:
             print_line('Cant create temp file, get an exception: {0}.'.format(e))
-            return [None]
+            return False
+
         cmd = "npm list --json > {0}".format(full_path)
+
         if local:
-            os.chdir(path)
+            try:
+                os.chdir(path)
+            except Exception as common_exception:
+                print_line('Get an exception {0}'.format(common_exception))
+                return False
         else:
             if api_data['os_type'] == OSs.WINDOWS:
                 os.chdir("c:\\")
             else:
                 os.chdir("/")
+
         output = error = None
+
         try:
             if api_data['os_type'] == OSs.WINDOWS:
                 proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
+        
                 if error:
                     print_line('Powershell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return [None]
-                return output
-            elif api_data['os_type'] == OSs.MACOS:
+                    return False
+
+            elif api_data['os_type'] == OSs.MACOS or \
+                    api_data['os_type'] == OSs.UBUNTU or \
+                    api_data['os_type'] == OSs.DEBIAN or \
+                    api_data['os_type'] == OSs.FEDORA:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
+
                 if error:
                     print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return [None]
-            elif api_data['os_type'] == OSs.UBUNTU:
-                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                output, error = proc.communicate()
-                proc.kill()
-                if error:
-                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return [None]
-            elif api_data['os_type'] == OSs.DEBIAN:
-                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                output, error = proc.communicate()
-                proc.kill()
-                if error:
-                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return [None]
-            elif api_data['os_type'] == OSs.FEDORA:
-                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                output, error = proc.communicate()
-                proc.kill()
-                if error:
-                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return [None]
+                    return False
 
             try:
                 enc = self.define_file_encoding(full_path)
                 if enc == 'undefined':
                     print_line('An error with encoding occured in temp file.')
-                    return [None]
+                    return False
+
                 with open(full_path, encoding=enc) as cf:
                     data = json.load(cf)
                     walkdict(data)
-                    return [True]
+                    return True
+
             except Exception as e:
                 print_line('File read exception: {0}'.format(e))
-                return [None]
+                return False
+
             finally:
                 if os.path.isfile(full_path):
                     os.remove(full_path)
+
         except OSError as os_error:
             print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
+        
             if os.path.isfile(full_path):
                 os.remove(full_path)
-            return [None]
+
+            return False
+        
         finally:
             if os.path.isfile(full_path):
                 os.remove(full_path)
 
-    def load_package_json_packages_from_path(self, filename):
+    def load_package_json_packages_from_path(self, api_data):
+        # type: (dict) -> bool
         """
         Load NPM packages from package.json file, defined by path.
         :param filename: path to file
         :return: result
         """
+
+        filename = api_data['file']
+
         if os.path.exists(filename):
-            enc = self.define_file_encoding(filename)
+            enc = self.define_file_encoding(filename=filename)
+
             if enc == 'undefined':
                 print_line('Undefined file {0} encoding.'.format(filename))
-                return [None]
+                return False
+
             try:
-                with open(filename, 'r', encoding=enc) as pf:
-                    packages = json.load(pf)
-                    return [packages]
+                with open(file=filename, mode='r', encoding=enc) as pf:
+                    api_data['packages'] = json.load(pf)
+                    return True
+
             except Exception as e:
                 print_line('File {0} read exception: {1}'.format(filename, e))
-                return [None]
-        print_line('File does not exist.')
-        return [None]
+                return False
 
-    def load_npm_lock_packages_from_path(self, filename):
+        print_line('File does not exist.')
+        return False
+
+    def load_npm_lock_packages_from_path(self, api_data):
+        # type: (dict) -> bool
         """
         Load NPM packages from lock file, defined by path.
         :param filename: path to file
         :return: result
         """
+
+        filename = api_data['file']
+
         if os.path.exists(filename):
-            enc = self.define_file_encoding(filename)
+
+            enc = self.define_file_encoding(filename=filename)
+
             if enc == 'undefined':
                 print_line('Undefined file {0} encoding.'.format(filename))
-                return [None]
+                return False
+
             try:
-                with open(filename, 'r', encoding=enc) as pf:
+                with open(file=filename, mode='r', encoding=enc) as pf:
                     try:
-                        packages = json.load(pf)
-                        return [packages]
+                        api_data['packages'] = json.load(pf)
+                        return True
+
                     except json.JSONDecodeError as json_decode_error:
                         print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))
-                        return [None]
+                        return False
+
             except Exception as e:
                 print_line('File {0} read exception: {1}'.format(filename, e))
-                return [None]
-        print_line('File does not exist.')
-        return [None]
+                return False
 
-    def load_gem_packages_from_path(self, filename):
+        print_line('File does not exist.')
+        return False
+
+    def load_gem_packages_from_path(self, api_data):
+        # type: (dict) -> bool
         """
         Load Ruby gem packages from file, defined by path.
         :param filename: path to file
         :return: result
         """
+
+        filename = api_data['file']
+
         if os.path.exists(filename):
+
             enc = self.define_file_encoding(filename)
+            
             if enc == 'undefined':
                 print_line('Undefined file {0} encoding.'.format(filename))
-                return [None]
+                return False
+
             try:
                 with open(filename, 'r', encoding=enc) as pf:
                     cont = pf.read().replace('default: ', '').replace(' ', '').replace(')', '')
-                    cont = cont.split('\n')
-                    return [cont]
+                    api_data['packages'] = cont.split('\n')
+                    return True
+
             except Exception as e:
                 print_line('File {0} read exception: {1}'.format(filename, e))
-                return [None]
-        print_line('File does not exist.')
-        return [None]
+                return False
 
-    @staticmethod
-    def load_gem_packages_system(local, api_data):
+        print_line('File {0} does not exist.'.format(filename))
+        return False
+
+    def load_gem_packages_system(self, api_data, local):
+        # type: (dict, bool) -> bool
         """
         Load Ruby gem packages from global or local call of shell commend.
         :param local: local or global
         :param api_data: api data set
         :return: result
         """
+
         if local:
-            os.chdir(api_data['file'])
+            try:
+                os.chdir(api_data['file'])
+            except Exception as common_exception:
+                print_line('OS.Chdir get an exception {common_exception}'.format(common_exception))
+                return False
         else:
             if api_data['os_type'] == OSs.WINDOWS:
                 os.chdir("c:\\")
             else:
                 os.chdir("/")
+
         cmd = "gem list"
+
         output = error = None
+
         try:
             if api_data['os_type'] == OSs.WINDOWS:
                 proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
+        
                 output = output.decode('utf-8').replace('\r', '').split('\n')
+        
                 if error:
                     print_line('Powershell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return [None]
+                    return False
+        
                 if output:
-                    return [output]
-                return [None]
-            elif api_data['os_type'] == OSs.CENTOS:
+                    api_data['packages'] = output
+                    return True
+
+            elif api_data['os_type'] == OSs.CENTOS or \
+                    api_data['os_type'] == OSs.DEBIAN or \
+                    api_data['os_type'] == OSs.UBUNTU or \
+                    api_data['os_type'] == OSs.FEDORA or \
+                    api_data['os_type'] == OSs.MACOS:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
                 output = output.decode('utf-8').replace('\r', '').split('\n')
+
                 if error:
                     print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return [None]
+                    return False
+
                 if output:
-                    return [output]
-                return [None]
-            elif api_data['os_type'] == OSs.DEBIAN:
-                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                output, error = proc.communicate()
-                proc.kill()
-                output = output.decode('utf-8').replace('\r', '').split('\n')
-                if error:
-                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return [None]
-                if output:
-                    return [output]
-                return [None]
-            elif api_data['os_type'] == OSs.UBUNTU:
-                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                output, error = proc.communicate()
-                proc.kill()
-                output = output.decode('utf-8').replace('\r', '').split('\n')
-                if error:
-                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return [None]
-                if output:
-                    return [output]
-                return [None]
-            elif api_data['os_type'] == OSs.FEDORA:
-                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                output, error = proc.communicate()
-                proc.kill()
-                output = output.decode('utf-8').replace('\r', '').split('\n')
-                if error:
-                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return [None]
-                if output:
-                    return [output]
-                return [None]
-            elif api_data['os_type'] == OSs.MACOS:
-                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                output, error = proc.communicate()
-                proc.kill()
-                output = output.decode('utf-8').replace('\r', '').split('\n')
-                if error:
-                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return [None]
-                if output:
-                    return [output]
-                return [None]
+                    api_data['packages'] = output
+                    return True
+
         except OSError as os_error:
             print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
-            return [None]
+            return False
+            
         except Exception as common_exception:
             print_line('Shell command throw an exception: {0}.'.format(common_exception))
-            return [None]
+            return False
 
     def load_gemfile_packages_from_path(self, filename):
         """
@@ -880,7 +993,7 @@ class ComponentsHelper(object):
             enc = self.define_file_encoding(filename=filename)
             if enc == 'undefined':
                 print_line('Undefined file {0} encoding.'.format(filename))
-                return [None]
+                return False
             try:
                 with open(filename, 'r', encoding=enc) as pf:
                     cont = pf.read()
@@ -888,9 +1001,9 @@ class ComponentsHelper(object):
                     return packages
             except Exception as e:
                 print_line('File {0} read exception: {1}'.format(filename, e))
-                return [None]
+                return False
         print_line('File does not exist.')
-        return [None]
+        return False
 
     def load_gemfile_lock_packages_from_path(self, filename):
         """
@@ -902,7 +1015,7 @@ class ComponentsHelper(object):
             enc = self.define_file_encoding(filename=filename)
             if enc == 'undefined':
                 print_line('Undefined file {0} encoding.'.format(filename))
-                return [None]
+                return False
             try:
                 with open(filename, 'r', encoding=enc) as pf:
                     cont = pf.read()
@@ -910,41 +1023,41 @@ class ComponentsHelper(object):
                     return packages
             except Exception as e:
                 print_line('File {0} read exception: {1}'.format(filename, e))
-                return [None]
+                return False
         print_line('File does not exist.')
-        return [None]
+        return False
 
     def load_php_composer_json_system_path(self, filename):
         if os.path.isfile(filename):
             enc = self.define_file_encoding(filename=filename)
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
-                return [None]
+                return False
             with open(filename, 'r', encoding=enc) as pf:
                 try:
                     packages = json.load(pf)
                     return [packages]
                 except json.JSONDecodeError as json_decode_error:
                     print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))
-                    return [None]
+                    return False
         print_line('File {0} not found.'.format(filename))
-        return [None]
+        return False
 
     def load_php_composer_lock_system_path(self, filename):
         if os.path.isfile(filename):
             enc = self.define_file_encoding(filename=filename)
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
-                return [None]
+                return False
             with open(filename, 'r', encoding=enc) as pf:
                 try:
                     packages = json.load(pf)
                     return [packages]
                 except json.JSONDecodeError as json_decode_error:
                     print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))
-                    return [None]
+                    return False
         print_line('File {0} not found.'.format(filename))
-        return [None]
+        return False
 
     # -------------------------------------------------------------------------
     # Parsers
@@ -979,7 +1092,7 @@ class ComponentsHelper(object):
             return packages
         except Exception as common_exception:
             print_line('Exception {0} occured.'.format(common_exception))
-            return [None]
+            return False
 
     @staticmethod
     def parse_ubuntu_packages(_report):
@@ -1654,12 +1767,12 @@ class ComponentsHelper(object):
         :return: result
         """
         if api_data['organization'] is None:
-            return [None]
+            return False
         if api_data['organization']['platforms'] is None:
-            return [None]
+            return False
         platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
         if platform_number == -1:
-            return [None]
+            return False
         project_number = self.web_api.get_project_number_by_name(api_data=api_data)
         if project_number == -1:
             return ['0.0.1']
@@ -1672,15 +1785,15 @@ class ComponentsHelper(object):
         :return: result
         """
         if api_data['organization'] is None:
-            return [None]
+            return False
         if api_data['organization']['platforms'] is None:
-            return [None]
+            return False
         platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
         if platform_number == -1:
-            return [None]
+            return False
         project_number = self.web_api.get_project_number_by_name(api_data=api_data)
         if project_number == -1:
-            return [None]
+            return False
         return [api_data['organization']['platforms'][platform_number]['projects'][project_number]['current_component_set']]
 
 
