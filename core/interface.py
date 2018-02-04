@@ -25,9 +25,7 @@ def print_logo():
 
 
 def print_line(message: str) -> None:
-    print('+------------------------------------------------------------------------------------------------+')
     print(message)
-    print('+------------------------------------------------------------------------------------------------+')
 
 
 def print_table(elements: list, title: str = None, filename: str = None) -> None:
@@ -53,7 +51,7 @@ def print_table(elements: list, title: str = None, filename: str = None) -> None
                     with open(filename, 'w') as fp:
                         fp.write(table.table)
                 except IOError as e:
-                    print_line(f"Exception {e} occured while write file {filename}.")
+                    print_line("Exception {0} occured while write file {1}.".format(e, filename))
         elif 'description' in elements[0].keys():
             table_data = [
                 ['Name', 'Description']
@@ -75,7 +73,7 @@ def print_table(elements: list, title: str = None, filename: str = None) -> None
                     with open(filename, 'w') as fp:
                         fp.write(table.table)
                 except IOError as e:
-                    print_line(f"Exception occured while write file {filename}.")
+                    print_line("Exception occured while write file {0}.".format(filename))
 
 
 def print_components(components: list,  title: str = None, filename: str = None) -> None:
