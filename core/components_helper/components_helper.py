@@ -636,7 +636,7 @@ class ComponentsHelper(object):
 
                     api_data['packages'] = os_packages
                     return True
-                    
+
             except Exception as e:
                 print_line('File read exception {0}.'.format(e))
                 return False
@@ -712,7 +712,7 @@ class ComponentsHelper(object):
         :return: result
         """
 
-        filename = api_data[file]
+        filename = api_data['file']
 
         if os.path.exists(filename):
 
@@ -1100,7 +1100,7 @@ class ComponentsHelper(object):
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
                 return False
 
-            with open(filename, 'r', encoding=enc) as pf:
+            with open(file=filename, mode='r', encoding=enc) as pf:
                 try:
                     api_data['packages'] = json.load(pf)
                     return True
@@ -1117,12 +1117,14 @@ class ComponentsHelper(object):
     # -------------------------------------------------------------------------
 
     @staticmethod
-    def parse_windows_10_packages(report):
+    def parse_windows_10_packages(api_data):
+        # type: (dict) -> bool
         """
         Parse Windows 10 packages.
         :param report: raw report
         :return: result
         """
+        report = api_data['packages']
         packages = []
         try:
             for report_element in report:
@@ -1142,19 +1144,23 @@ class ComponentsHelper(object):
                         component['version'] = common_component_version.split('.')
                         component['version'] = component['version'][0] + '.' + component['version'][1]
                         packages.append(component)
-            return packages
+            api_data['components'] = packages
+            return True
+
         except Exception as common_exception:
             print_line('Exception {0} occured.'.format(common_exception))
             return False
 
     @staticmethod
-    def parse_ubuntu_packages(_report):
+    def parse_ubuntu_packages(api_data):
+        # type: (dict) -> bool
         """
         Parse Ubuntu package list.
         :param _report: raw packages.
         :return: result
         """
-        number_of_line_breaks = _report.split('\n')
+
+        number_of_line_breaks = api_data['packages'].split('\n')
         new_components = []
         pattern1 = "(\d+[.]\d+[.]?\d*)"
         pattern = re.compile(pattern1)
@@ -1172,17 +1178,20 @@ class ComponentsHelper(object):
                         if ':' in name:
                             name = name[:name.index(':')]
                         new_components.append({"name": name, "version": ver})
-        return new_components
+        api_data['components'] = new_components
+        return True
 
     @staticmethod
-    def parse_fedora_packages(_report):
+    def parse_fedora_packages(api_data):
+        # type: (dict) -> bool
         """
         Parse Fedora package list.
         :param _report: raw packages.
         :return: result
         """
+        
         new_components = []
-        number_of_line_breaks = _report
+        number_of_line_breaks = api_data['packages']
         for line in number_of_line_breaks:
             line = line.replace('\n', '')
             pattern = '\s*\-\s*'
@@ -1191,15 +1200,19 @@ class ComponentsHelper(object):
                 name = component_array[0]
                 version = component_array[1]
                 new_components.append({'name': name, 'version': version})
-        return new_components
+        api_data['components'] = new_components
+        return True
 
     @staticmethod
-    def parse_macos_packages(_report):
+    def parse_macos_packages(api_data):
+        # type: (dict) -> bool
         """
         Parse MacOS packages.
         :param _report: raw packages
         :return: result
         """
+
+        _report = api_data['packages']
         new_components = []
         packages = xmltodict.parse(_report, xml_attribs=True)
         pdict = packages['plist']['array']['dict']
@@ -1208,10 +1221,19 @@ class ComponentsHelper(object):
             version = pd['string'][1]
             if version is not None:
                 new_components.append({'name': name, 'version': version})
-        return new_components
+        api_data['components'] = new_components
+        return True
 
     @staticmethod
-    def parse_pip_packages_legacy(packages):
+    def parse_pip_packages_legacy(api_data):
+        # type: (dict) -> bool
+        """
+        Parse PIP legacy packages.
+        :param _report: raw packages
+        :return: result
+        """
+
+        packages = api_data['packages']
         packages = packages.replace(')', '')
         packages = packages.replace(' ', '')
         packages = packages.split('\r\n')
@@ -1223,15 +1245,18 @@ class ComponentsHelper(object):
             name = line[0]
             version = line[1]
             components.append({'name': name, 'version': version})
-        return components
+        api_data['components'] = components
+        return True
 
     @staticmethod
-    def parse_pip_packages_from_path(packages):
+    def parse_pip_packages_from_path(api_data):
+        # type: (dict) -> bool
         """
         Parse Python PIP packages report.
         :param packages: raw packages
         :return: result
         """
+        packages = api_data['packages']
         components = []
         for ref in packages:
             if len(ref) > 0:
@@ -1258,16 +1283,19 @@ class ComponentsHelper(object):
                         print_line('Get an exception {0} when define component version.'.format(import_exception))
                         components.append({'name': ref, 'version': '*'})
                         continue
-        return components
+        api_data['components'] = components
+        return True
 
     @staticmethod
-    def parse_npm_packages(api_data, comp):
+    def parse_npm_packages(api_data):
+        # type: (dict) -> bool
         """
         Parse NPM raw packages.
         :param api_data: api data set
         :param comp: raw packages.
         :return: result
         """
+        comp = api_data['packages']
         components2 = []
         for c in comp:
             if c["name"] == "from":
@@ -1340,10 +1368,12 @@ class ComponentsHelper(object):
                         continue
                     except:
                         continue
-        return components2
+        api_data['components'] = components2
+        return True
 
     @staticmethod
-    def parse_npm_lock_packages(packages):
+    def parse_npm_lock_packages(api_data):
+        # type: (dict) -> bool
         """
         Parse NPM lock packages.
         :param packages: raw packages.
@@ -1361,6 +1391,7 @@ class ComponentsHelper(object):
                     return True
             return False
 
+        packages = api_data['packages']
         dependencies = packages['dependencies']
         keys = dependencies.keys()
         components = []
@@ -1377,15 +1408,18 @@ class ComponentsHelper(object):
                 for dkey in deps.keys():
                     if not already_in_components(components=components, key=dkey):
                         components.append({'name': dkey, 'version': deps[dkey]})
-        return components
+        api_data['components'] = components
+        return True
 
     @staticmethod
-    def parse_package_json_packages_from_path(packages):
+    def parse_package_json_packages_from_path(api_data):
+        # type: (dict) -> bool
         """
         Parse package.json file.
         :param packages: raw packages
         :return: result
         """
+        packages = api_data['packages']
         components = []
         dependencies = packages['dependencies']
         dev_dependencies = packages['devDependencies']
@@ -1395,23 +1429,27 @@ class ComponentsHelper(object):
         if dependencies != {}:
             for key in dependencies.keys():
                 components.append({'name': key, 'version': str(dependencies[key]).replace('^', '')})
-        return components
+        api_data['components'] = components
+        return True
 
-    def parse_gem_packages_system(self, packages):
+    def parse_gem_packages_system(self, api_data):
+        # type: (dict) -> bool
         """
         Parse Ruby gem packages.
         :param packages: raw packages.
         :return: result
         """
-        return self.parse_gem_packages_from_path(packages=packages)
+        return self.parse_gem_packages_from_path(api_data=api_data)
 
     @staticmethod
-    def parse_gem_packages_from_path(packages):
+    def parse_gem_packages_from_path(api_data):
+        # type: (dict) -> bool
         """
         Parse Ruby gem packages from path.
         :param packages: raw packages
         :return: result
         """
+        packages = api_data['packages']
         components = []
         for c in packages:
             if len(c) > 0:
@@ -1422,15 +1460,18 @@ class ComponentsHelper(object):
                         components.append({'name': cs[0], 'version': cs[1]})
                 except:
                     continue
-        return components
+        api_data['components'] = components
+        return True
 
-    def parse_gemfile_packages(self, packages):
+    @staticmethod
+    def parse_gemfile_packages( api_data):
+        # type: (dict) -> bool
         """
         Parse packages from Gemfile.
         :param packages: list of packages
         :return: result
         """
-        content_splitted_by_strings = packages
+        content_splitted_by_strings = api_data['packages']
         content_without_empty_strings = []
         for string in content_splitted_by_strings:
             if len(string) > 0:
@@ -1512,16 +1553,18 @@ class ComponentsHelper(object):
             for buff_package in buff_packages:
                 if package['name'] == buff_package['name'] and package['version'] == buff_package['version']:
                     package['version'] = buff_package['origin_version']
-        return unique_packages
+        api_data['components'] = unique_packages
+        return True
 
     @staticmethod
-    def parse_gemfile_lock_packages(packages):
+    def parse_gemfile_lock_packages(api_data):
+        # type: (dict) -> bool
         """
         Parse packages from Gemfile
         :param packages: list of packages
         :return: result
         """
-        splitted_content_by_strings = packages
+        splitted_content_by_strings = api_data['packages']
         ignore_strings_startswith = (
             'GIT', 'remote', 'revision',
             'specs', 'PATH', 'GEM',
@@ -1596,11 +1639,18 @@ class ComponentsHelper(object):
             for buff_package in buff_packages:
                 if package['name'] == buff_package['name'] and package['version'] == buff_package['version']:
                     package['version'] = buff_package['origin_version']
-        return unique_packages
+        api_data['components'] = unique_packages
+        return True
 
     @staticmethod
-    def parse_php_composer_json_system_path(_packages):
-        content = _packages
+    def parse_php_composer_json_system_path(api_data):
+        # type: (dict) -> bool
+        """
+        Parse packages from PHP Composer json file
+        :param packages: list of packages
+        :return: result
+        """  
+        content = api_data['packages']
         packages = []
         for key in content:
             if key == 'require' or key == 'require-dev':
@@ -1674,16 +1724,18 @@ class ComponentsHelper(object):
                 if package['name'] == buff_package['name'] and package['version'] == buff_package['version']:
                     package['version'] = buff_package['origin_version']
 
-        return unique_packages
+        api_data['components'] = unique_packages
+        return True
 
     @staticmethod
-    def parse_php_composer_lock_system_path(_packages):
+    def parse_php_composer_lock_system_path(api_data):
+        # type: (dict) -> bool
         """
         Parse packages from PHP Composer.lock file.
         :param _packages: list of packages
         :return: result
         """
-        content = _packages
+        content = api_data['packages']
         packages = []
         for key in content:
             if key == 'packages' or key == 'packages-dev':
@@ -1788,7 +1840,8 @@ class ComponentsHelper(object):
                 if package['name'] == buff_package['name'] and package['version'] == buff_package['version']:
                     package['version'] = buff_package['origin_version']
 
-        return unique_packages
+        api_data['components'] = unique_packages
+        return True
 
     # -------------------------------------------------------------------------
     # Addition methods
@@ -1796,6 +1849,7 @@ class ComponentsHelper(object):
 
     @staticmethod
     def define_file_encoding(filename):
+        # type: (str) -> str
         """
         Define encoding of file.
         :param filename:
@@ -1814,6 +1868,7 @@ class ComponentsHelper(object):
         return 'undefined'
 
     def get_current_set_name(self, api_data):
+        # type: (dict) -> str
         """
         Get current component set name.
         :param api_data: api data set
@@ -1832,6 +1887,7 @@ class ComponentsHelper(object):
         return [api_data['organization']['platforms'][platform_number]['projects'][project_number]['current_component_set']['name']]
 
     def get_current_component_set(self, api_data):
+        # type: (dict) -> list
         """
         Get current component set for platform/project.
         :param api_data: api data set
