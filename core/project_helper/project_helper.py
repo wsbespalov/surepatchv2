@@ -28,13 +28,13 @@ class ProjectHelper(object):
         platforms = self.get_my_platforms(api_data=api_data)
 
         if api_data['platform'] not in platforms:
-            print_line(f"Platform {api_data['platform']} does not exists.")
+            print_line("Platform {0} does not exists.".format(api_data['platform']))
             return False
 
         projects = self.get_my_projects(api_data=api_data)
 
         if api_data['project'] in projects:
-            print_line(f"Project {api_data['project']} already exists.")
+            print_line("Project {0} already exists.".format(api_data['project']))
             return False
 
         return True
@@ -300,12 +300,12 @@ class ProjectHelper(object):
         """
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"Platform {api_data['platform']} does not exist.")
+            print_line("Platform {0} does not exist.".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"Project {api_data['project']} does not exist.")
+            print_line("Project {0} does not exist.".format(api_data['project']))
             return False
 
         api_data['project_id'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['id']
@@ -320,12 +320,12 @@ class ProjectHelper(object):
         """
         api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
         if api_data['platform_number'] == -1:
-            print_line(f"Platform {api_data['platform']} does not exist.")
+            print_line("Platform {0} does not exist.".format(api_data['platform']))
             return False
 
         api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
         if api_data['project_number'] == -1:
-            print_line(f"Project {api_data['project']} does not exist.")
+            print_line("Project {0} does not exist.".format(api_data['project']))
             return False
 
         api_data['project_id'] = api_data['platforms'][api_data['platform_number']]['projects'][api_data['project_number'] ]['id']
@@ -362,11 +362,11 @@ class ProjectHelper(object):
                 break
 
         if api_data['project_id']  is None:
-            print_line(f"Not such project {api_data['project']} in archive.")
+            print_line("Not such project {0} in archive.".format(api_data['project']))
             return False
 
         if my_archived_project['platform_id']['name'] != api_data['platform']:
-            print_line(f"Defined project {api_data['project']} not in defined platform {api_data['platform']}.")
+            print_line("Defined project {0} not in defined platform {1}.".format(api_data['project'], api_data['platform']))
             return False
 
         return self.web_api.send_restore_project_request(api_data=api_data)
