@@ -24,11 +24,13 @@ def print_logo():
     print('+------------------------------------------------------------------------------------------------+')
 
 
-def print_line(message: str) -> None:
+def print_line(message):
+    # type: (dict) -> None
     print(message)
 
 
-def print_table(elements: list, title: str = None, filename: str = None) -> None:
+def print_table(elements, title = None, filename = None):
+    # type: (list, str, str) -> None
     if len(elements) > 0:
         if 'version' in elements[0].keys():
             table_data = [
@@ -76,27 +78,31 @@ def print_table(elements: list, title: str = None, filename: str = None) -> None
                     print_line("Exception occured while write file {0}.".format(filename))
 
 
-def print_components(components: list,  title: str = None, filename: str = None) -> None:
+def print_components(components,  title = None, filename = None):
+    # type: (list, str, str) -> None
     print_line('Components:')
     print_table(elements=components, title=title, filename=filename)
 
 
-def print_platforms(platforms: list,  title: str = None, filename: str = None) -> None:
+def print_platforms(platforms,  title = None, filename = None):
+    # type: (list, str, str) -> None
     print_line('Platforms:')
     print_table(elements=platforms, title=title, filename=filename)
 
 
-def print_projects(projects: list,  title: str = None, filename: str = None) -> None:
+def print_projects(projects,  title = None, filename = None):
+    # type: (list, str, str) -> None
     print_line('Projects:')
     print_table(elements=projects, title=title, filename=filename)
 
 
-def print_issues(issues: list, title: str = None, filename: str = None) -> None:
+def print_issues(issues, title = None, filename = None):
     print_line('Issues:')
     print_table(elements=issues, title=title, filename=filename)
 
 
-def ask(message: str) -> str:
+def ask(message):
+    # type: (str) -> str
     if sys.version_info > (3, 0):
         return input(message)
     else:

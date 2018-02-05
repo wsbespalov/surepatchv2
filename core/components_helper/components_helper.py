@@ -1420,7 +1420,8 @@ class ComponentsHelper(object):
         :param packages: raw packages.
         :return: result
         """
-        def already_in_components(components, key: str) -> bool:
+        def already_in_components(components, key):
+            # type: (str) -> bool
             """
             Filter if component already in list.
             :param components: component list
