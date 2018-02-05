@@ -49,12 +49,23 @@ class WebAPI(object):
 
     )
 
-    def send_login_request(self, api_data: dict) -> bool:
+    def send_login_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send login request to Surepatch server.
         :param api_data: api data set
         :return: result
         """
+        # 1. We have token in command line
+
+        # 2. We have team/user/password in command line
+
+        # 3. We have token in config file
+
+        # 4. We have team/user/password in config file
+
+        # Send login request
+
         self.login_payload['username'] = api_data['user']
         self.login_payload['password'] = api_data['password']
         self.login_payload['referalToken'] = None
@@ -91,7 +102,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_get_organization_parameters_request(self, api_data: dict) -> bool:
+    def send_get_organization_parameters_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send special request to Surepatch server to get Organization information.
         :param api_data: api data set
@@ -159,7 +171,7 @@ class WebAPI(object):
                         api_data['organization']['platforms'].append(platform)
                     return True
                 except ValueError as json_value_exception:
-                    print_line(f'Response JSON parsing exception: {json_value_exception}')
+                    print_line('Response JSON parsing exception: {0}'.format(json_value_exception))
                     return False
             print_line('Get organization parameters failed. Status code: {0}'.format(response.status_code))
             return False
@@ -176,7 +188,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_create_new_platform_request(self, api_data: dict) -> bool:
+    def send_create_new_platform_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send request to Surepatch server to create new Platform.
         :param api_data: api data set
@@ -207,7 +220,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_create_new_project_request(self, api_data: dict) -> bool:
+    def send_create_new_project_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send request to Surepatch server to create new Project.
         :param api_data: api data set
@@ -239,7 +253,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_create_new_component_set_request(self, api_data: dict) -> bool:
+    def send_create_new_component_set_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send request to Surepatch server to create new Component Set.
         :param api_data: api data set
@@ -271,7 +286,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_delete_platform_request(self, api_data: dict) -> bool:
+    def send_delete_platform_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send request to delete Platform.
         :param api_data: api data set
@@ -300,7 +316,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_delete_project_request(self, api_data: dict) -> bool:
+    def send_delete_project_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send request to delete Project.
         :param api_data: api data set
@@ -329,7 +346,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_archive_platform_request(self, api_data: dict) -> bool:
+    def send_archive_platform_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send request to archive Platform.
         :param api_data: api data set
@@ -363,7 +381,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_archive_project_request(self, api_data: dict) -> bool:
+    def send_archive_project_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send request to archive Project.
         :param api_data: api data set
@@ -397,7 +416,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_restore_platform_request(self, api_data: dict) -> bool:
+    def send_restore_platform_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send request to restore defined Platform from archive.
         :param api_data:
@@ -437,7 +457,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_restore_project_request(self, api_data: dict) -> bool:
+    def send_restore_project_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send request to restore defined Project from archive.
         :param api_data: api data set
@@ -477,7 +498,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_get_archived_platforms_request(self, api_data: dict) -> bool:
+    def send_get_archived_platforms_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send request to get all archived platforms.
         :param api_data: api data set
@@ -494,7 +516,7 @@ class WebAPI(object):
                 try:
                     api_data['archive_platforms'] = json.loads(response.text)
                 except json.JSONDecodeError as json_decode_error:
-                    print_line(f'An exception occured with json decoder: {json_decode_error}.')
+                    print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))
                     return False
                 return True
             print_line('Archive Platform get information failed. Status code: {0}'.format(response.status_code))
@@ -512,7 +534,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_get_archived_projects_request(self, api_data: dict) -> bool:
+    def send_get_archived_projects_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send request to get all archived projects.
         :param api_data: api data set
@@ -547,7 +570,8 @@ class WebAPI(object):
             print_line('Request exception: {0}'.format(request_exception))
             return False
 
-    def send_get_issues_request(self, api_data: dict) -> bool:
+    def send_get_issues_request(self, api_data):
+        # type: (dict) -> bool
         """
         Send request to get Issues.
         :param api_data:
@@ -583,7 +607,8 @@ class WebAPI(object):
             return False
 
     @staticmethod
-    def get_platform_id_by_name(api_data: dict) -> int:
+    def get_platform_id_by_name(api_data):
+        # type: (dict) -> int
         """
         Get platform ID by its name.
         :param api_data: api data set
@@ -596,7 +621,8 @@ class WebAPI(object):
         return -1
 
     @staticmethod
-    def get_platform_number_by_name(api_data: dict)-> int:
+    def get_platform_number_by_name(api_data):
+        # type: (dict) -> int
         """
         Get Platform number in list by its name.
         :param api_data: api data set
@@ -609,7 +635,8 @@ class WebAPI(object):
                 return index
         return -1
 
-    def get_project_number_by_name(self, api_data: dict) -> int:
+    def get_project_number_by_name(self, api_data):
+        # type: (dict) -> int
         """
         Get project number (index) by its name.
         :param api_data: api data set

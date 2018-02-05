@@ -91,7 +91,21 @@ class API(object):
         :param api_data: api data set
         :return: result, modify api_data
         """
+        # 1. We have token in command line
+        if 'auth_token' in api_data and \
+                api_data['auth_token'] is not None and \
+                api_data['auth_token'] != "":
+            api_data['team'] = None
+            api_data['user'] = None
+            api_data['password'] = None
 
+        # 2. We have team/user/password in command line
+
+        # 3. We have token in config file
+
+        # 4. We have team/user/password in config file
+
+        # Send login request
         return self.web_api.send_login_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
