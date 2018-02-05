@@ -1334,7 +1334,7 @@ class ComponentsHelper(object):
                         components.append({'name': ref, 'version': mm.__version__})
                     except ImportError as import_exception:
                         print_line('Get an exception {0} when define component version.'.format(import_exception))
-                        components.append({'name': ref, 'version': '*'})
+                        # components.append({'name': ref, 'version': '*'})
                         continue
         api_data['components'] = components
         return True
