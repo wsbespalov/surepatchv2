@@ -750,8 +750,11 @@ class Targets(object):
 
     OS = 'os'
     PIP = 'pip'
+    PIP3 = 'pip3'
     REQ = 'req'
+    REQ3 = 'req3'
     REQUIREMENTS = 'requirements'
+    REQUIREMENTS3 = 'requirements3'
     NPM = 'npm'
     NPM_LOCAL = 'npm_local'
     PACKAGE_JSON = 'package_json'
