@@ -1,0 +1,3 @@
+tomcat=8.0
+actionmailer=5.1
+mime-types=2.1.17

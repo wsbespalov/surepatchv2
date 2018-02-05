@@ -89,6 +89,15 @@ class ComponentsHelper(object):
             print_line('Failed load or parse OS components.')
             return False
 
+        elif api_data['os_type'] == OSs.UBUNTU:
+            if self.load_ubuntu_packages_from_shell(api_data=api_data):
+                if self.parse_ubuntu_packages(api_data=api_data):
+                    print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                    return True
+
+            print_line('Failed load or parse OS components.')
+            return False
+
         elif api_data['os_type'] == OSs.FEDORA:
             if self.load_fedora_packages_from_shell(api_data=api_data):
                 if self.parse_fedora_packages(api_data=api_data):
@@ -353,7 +362,7 @@ class ComponentsHelper(object):
                 return False
 
             components = []
-            with open(filename, 'r', encoding=enc) as pf:
+            with open(filename, 'r') as pf:
                 packages = pf.read().split('\n')
                 for package in packages:
                     if len(package) != 0:
@@ -469,7 +478,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(filename, 'r', encoding=enc) as cf:
+                with open(filename, 'r') as cf:
                     os_packages = cf.read()
                 
                     if os_packages is None:
@@ -500,13 +509,15 @@ class ComponentsHelper(object):
                     platform.system() == "linux" or \
                     platform.linux_distribution()[0] == 'debian':
                 
-                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                output, error = proc.communicate()
-                proc.kill()
+                # proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                # output, error = proc.communicate()
+                # proc.kill()
+
+                output = os.popen(cmd).readlines()
         
-                if error:
-                    print_line('Shell command throw {0} code and {error.strip()} error message.'.format(proc.returncode))
-                    return False
+                # if error:
+                #     print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
+                #     return False
         
                 if output:
                     api_data['packages'] = output
@@ -543,7 +554,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(filename, 'r', encoding=enc) as cf:
+                with open(filename, 'r') as cf:
 
                     os_packages = cf.read()
 
@@ -600,7 +611,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(filename, 'r', encoding=enc) as cf:
+                with open(filename, 'r') as cf:
                     os_packages = cf.read()
 
                     if os_packages is None:
@@ -668,7 +679,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(filename, 'r', encoding=enc) as cf:
+                with open(filename, 'r') as cf:
                     os_packages = cf.read()
 
                     if os_packages is None:
@@ -733,7 +744,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(filename, 'r', encoding=enc) as cf:
+                with open(filename, 'r') as cf:
                     rfp = cf.read()
                     api_data['packages'] = rfp.replace(' ', '').split('\n')
                     return True
@@ -764,7 +775,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(filename, 'r', encoding=enc) as pf:
+                with open(filename, 'r') as pf:
                     data = json.load(pf)
                     walkdict(data)
                     return True
@@ -844,7 +855,7 @@ class ComponentsHelper(object):
                     print_line('An error with encoding occured in temp file.')
                     return False
 
-                with open(full_path, 'r', encoding=enc) as cf:
+                with open(full_path, 'r') as cf:
                     data = json.load(cf)
                     walkdict(data)
                     return True
@@ -887,7 +898,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(filename, 'r', encoding=enc) as pf:
+                with open(filename, 'r') as pf:
                     api_data['packages'] = json.load(pf)
                     return True
 
@@ -917,7 +928,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(filename, 'r', encoding=enc) as pf:
+                with open(filename, 'r') as pf:
                     try:
                         api_data['packages'] = json.load(pf)
                         return True
@@ -952,7 +963,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(filename, 'r', encoding=enc) as pf:
+                with open(filename, 'r') as pf:
                     cont = pf.read().replace('default: ', '').replace(' ', '').replace(')', '')
                     api_data['packages'] = cont.split('\n')
                     return True
@@ -1050,7 +1061,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(filename, 'r', encoding=enc) as pf:
+                with open(filename, 'r') as pf:
                     cont = pf.read()
                     api_data['packages'] = cont.split('\n')
                     return True
@@ -1081,7 +1092,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(filename, 'r', encoding=enc) as pf:
+                with open(filename, 'r') as pf:
                     cont = pf.read()
                     api_data['packages'] = cont.split('\n')
                     return True
@@ -1111,7 +1122,7 @@ class ComponentsHelper(object):
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
                 return False
 
-            with open(filename, mode='r', encoding=enc) as pf:
+            with open(filename, mode='r') as pf:
                 try:
                     api_data['packages'] = json.load(pf)
                     return True
@@ -1141,7 +1152,7 @@ class ComponentsHelper(object):
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
                 return False
 
-            with open(filename, 'r', encoding=enc) as pf:
+            with open(filename, 'r') as pf:
                 try:
                     api_data['packages'] = json.load(pf)
                     return True
@@ -1201,7 +1212,8 @@ class ComponentsHelper(object):
         :return: result
         """
 
-        number_of_line_breaks = api_data['packages'].split('\n')
+        # number_of_line_breaks = api_data['packages'].split('\n')
+        number_of_line_breaks = api_data['packages']
         new_components = []
         pattern1 = "(\d+[.]\d+[.]?\d*)"
         pattern = re.compile(pattern1)

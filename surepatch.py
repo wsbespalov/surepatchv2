@@ -131,6 +131,8 @@ def get_os_platform():
             return OSs.DEBIAN
         if 'fedora' in dist:
             return OSs.FEDORA
+        if 'Ubuntu' in dist or 'ubuntu' in dist:
+            return OSs.UBUNTU
     if sys.platform == 'win32' or sys.platform == 'win64':
         return OSs.WINDOWS
 
