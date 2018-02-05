@@ -28,7 +28,7 @@ This application is designed to work with the Surepatch Project without using th
 ## From OS package
 ...
 ## From Gihtub
-[Package](link)
+[Package](http://surepatch.com)
 
 # Usage examples
 ## CLI App arguments
@@ -40,6 +40,8 @@ This application is designed to work with the Surepatch Project without using th
 |--user| <your_username> | Your username (e-mail)|
 | | | |
 |--password| <your_password> | Your password|
+| | | |
+|--auth_token| <your_token> | Token to authorize without username/password |
 | | | |
 |--action| <action_type> | CLI App action:|
 | | save_config | Save account parameters |
@@ -99,12 +101,32 @@ You can change directly in file or with the help of save_config command.
 ```sh
 @ surepatch.py --action=save_config --team=testers --user=user@gmail.com --password=test_password --logo=off
 ```
+# Login variants:
+Note, that login operation call before every CLI App run to make your server information in actial state, so authirization parameters should be define in command line interface in CLI App or in config file.
+### 1. With auth token from CLI App parameters
+This variant usefull for quick authirization with auth token from surepatch server. This is first priority login way.
+Note, that you should point your irganization with --team parameter.
+For example we want look through our issues:
+```sh
+@ surepatch  --action=show_issues --platform=wintest --project=my_platform --auth_token=3a4953e5sdf1235df598b34e434fd0754e3 --team=my_team
+```
+### 2. With auth token from CLI App config file
+This variand has second priority and usefull for more than one account. In this case, token will be take from config file, and no matter what is specified in the interface.
+### 3. With username/password from CLI App parameters
+For example there are two accounts, and the first organization "org1" login parameters store in config file, but you want look through projects from "org2" account. So, actual login parameters will be take from console parameters, not from config file.
+```sh
+@ surepatch.py --action=save_config --team=org1 --user=user@gmail.com --password=test_password --logo=off
+...
+@ surepatch  --action=show_projects --platform=platform2 --team=org2 --user=user2@gmail.com --password=test_password_2
+```
+### 4. With username/password from CLI App config file
+This is simple way to use CLI App - you save config file with team, username and password and than use those parameters without token automatically.
 # Platforms:
 ### Create your first Platform
 Note, thad Platform description should be wrote like "My Description".
 If --description is empty, Platform will be named as "default platform".
 ```sh
-@ surepatch.py --action=create_platform --platform=autotest1 --description="New Platform for Autotest"
+@ surepatch --action=create_platform --platform=autotest1 --description="New Platform for Autotest"
 ```
 # Projects:
 ### Create Project from OS Packages, collected by shell command inside CLI App.

@@ -210,6 +210,15 @@ def main():
         if arguments.logo == 'on':
             print_logo()
 
+    if api_data['auth_token'] is not None and api_data['auth_token'] != '':
+        api_data['login_method'] = 'token'
+    else:
+        if (api_data['user'] is not None and api_data['user'] != '') and \
+                api_data['password'] is not None and api_data['password'] != '':
+            api_data['login_method'] = 'username_and_password'
+        else:
+            api_data['login_method'] = 'config_file'
+
     if api.run_action(api_data=api_data):
         print_line('Complete successfully.')
         return 0

@@ -12,7 +12,8 @@ class SetHelper(object):
         self.web_api = WebAPI()
         self.components_helper = ComponentsHelper()
 
-    def create_set_validate(self, api_data: dict) -> bool:
+    def create_set_validate(self, api_data):
+        # type: (dict) -> bool
         if api_data['platform'] is None:
             print_line('Empty Platform name. Please use --platform=platform_name parameter.')
             return False
@@ -57,7 +58,8 @@ class SetHelper(object):
 
     # Target = OS packages
 
-    def create_set_os_auto_system_none(self, api_data: dict) -> bool:
+    def create_set_os_auto_system_none(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with OS packages, collected by shell command.
         :param api_data: api data set
@@ -80,7 +82,8 @@ class SetHelper(object):
         
         return False
 
-    def create_set_os_auto_system_path(self, api_data: dict) -> bool:
+    def create_set_os_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with OS packages, collected from shell command
         and stored in file, defined in path.
@@ -106,7 +109,8 @@ class SetHelper(object):
 
     # Target = Python packages
 
-    def create_set_pip_auto_system_none(self, api_data: dict) -> bool:
+    def create_set_pip_auto_system_none(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with Python PIP packages, collected from shell command.
         :param api_data:
@@ -129,7 +133,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_pip_auto_system_path(self, api_data: dict) -> bool:
+    def create_set_pip_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with Python PIP packages, collected from shell command
         and stored in file, defined in path.
@@ -153,7 +158,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_requirements_auto_system_path(self, api_data: dict) -> bool:
+    def create_set_requirements_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with Python requirements.txt file, defined in path.
         :param api_data: spi data set
@@ -176,7 +182,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_npm_auto_system_none(self, api_data: dict) -> bool:
+    def create_set_npm_auto_system_none(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with NPM packages, collected from shell command (nmp list --json).
         Shell command runs global from root path.
@@ -200,7 +207,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_npm_local_auto_system_path(self, api_data: dict) -> bool:
+    def create_set_npm_local_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with NPM packages, collected from shell command (npm list --json).
         Shell command runs local from path, defined by --file parameter.
@@ -224,7 +232,8 @@ class SetHelper(object):
         
         return False
 
-    def create_set_npm_auto_system_path(self, api_data: dict) -> bool:
+    def create_set_npm_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with NPM packages, collected from shell command (npm list --json)
         and stored in file, defined in path.
@@ -248,7 +257,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_package_json_auto_system_path(self, api_data: dict) -> bool:
+    def create_set_package_json_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with NPM packages from package.json, defined by --file parameter.
         :param api_data: api data set
@@ -271,7 +281,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_package_lock_json_auto_system_path(self, api_data: dict) -> bool:
+    def create_set_package_lock_json_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with NPM packages from package-lock.json, defined by --file parameter.
         :param api_data:
@@ -294,7 +305,8 @@ class SetHelper(object):
         
         return False
 
-    def create_set_gem_auto_system_none(self, api_data: dict) -> bool:
+    def create_set_gem_auto_system_none(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with Ruby packages, collected from shell command.
         :param api_data:
@@ -317,7 +329,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_gem_auto_system_path(self, api_data: dict) -> bool:
+    def create_set_gem_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with Ruby packages, collected from shell command and
         stored in gem list file, defined in --file parameter.
@@ -341,7 +354,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_gemfile_auto_system_path(self, api_data: dict) -> bool:
+    def create_set_gemfile_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with Ruby packages, collected from Gemfile, defined
         by --file parameter.
@@ -365,7 +379,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_gemfile_lock_auto_system_path(self, api_data: dict) -> bool:
+    def create_set_gemfile_lock_auto_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with Ruby packages, collected from Gemfile.lock file,
         defined by --file parameter.
@@ -389,7 +404,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_any_auto_user_path(self, api_data: dict) -> bool:
+    def create_set_any_auto_user_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with different packages, collected in file,
         defined by path with simple multiline format: name=version…
@@ -413,7 +429,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_any_manual_user_none(self, api_data: dict) -> bool:
+    def create_set_any_manual_user_none(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with different packages, asked in interactive mode.
         :param api_data: api data set
@@ -436,7 +453,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_php_composer_json_system_path(self, api_data: dict) -> bool:
+    def create_set_php_composer_json_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with packages from PHP Composer.json file.
         :param api_data: api data set
@@ -459,7 +477,8 @@ class SetHelper(object):
 
         return False
 
-    def create_set_php_composer_lock_system_path(self, api_data: dict) -> bool:
+    def create_set_php_composer_lock_system_path(self, api_data):
+        # type: (dict) -> bool
         """
         Create Component Set with packages from PHP Composer.lock file.
         :param api_data: api data set
@@ -483,7 +502,8 @@ class SetHelper(object):
         return False
 
     @staticmethod
-    def get_my_platforms(api_data: dict) -> list:
+    def get_my_platforms(api_data):
+        # type: (dict) -> list
         """
         Get platforms names as list.
         :param api_data: api data set
@@ -502,7 +522,8 @@ class SetHelper(object):
 
         return platforms
 
-    def get_my_projects(self, api_data: dict) -> list:
+    def get_my_projects(self, api_data):
+        # type: (dict) -> list
         """
         Get projects names as list.
         :param api_data: api data set

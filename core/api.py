@@ -36,7 +36,7 @@ class API(object):
         if api_data['action'] == Actions.SAVE_CONFIG:
             return self.save_config_to_file(api_data=api_data)
 
-        if not self.load_config_from_file(api_data=api_data):
+        if not self.select_login_method(api_data=api_data):
             return False
 
         if not self.action_login_server_success(api_data=api_data):
@@ -85,28 +85,32 @@ class API(object):
     # LOGIN
     # -------------------------------------------------------------------------
 
+    def select_login_method(self, api_data):
+        # type: (dict) -> bool
+        if api_data['login_method'] == 'token' or api_data['login_method'] == 'username_and_password':
+            if api_data['team'] is None or api_data['team'] == '':
+                print_line('Token authorization requires --team parameter.')
+                return False
+            return True
+        elif api_data['login_method'] == 'config_file':
+            if self.load_config_from_file(api_data=api_data):
+                if api_data['auth_token'] is not None and api_data['auth_token'] != '':
+                    api_data['login_method'] = 'token'
+                else:
+                    api_data['login_method'] = 'username_and_password'
+                return True
+        return False
+
     def action_login_server_success(self, api_data):
         """
         Log in into server.
         :param api_data: api data set
         :return: result, modify api_data
         """
-        # 1. We have token in command line
-        if 'auth_token' in api_data and \
-                api_data['auth_token'] is not None and \
-                api_data['auth_token'] != "":
-            api_data['team'] = None
-            api_data['user'] = None
-            api_data['password'] = None
-
-        # 2. We have team/user/password in command line
-
-        # 3. We have token in config file
-
-        # 4. We have team/user/password in config file
-
-        # Send login request
-        return self.web_api.send_login_request(api_data=api_data)
+        if api_data['login_method'] == 'token':
+            return self.web_api.send_login_token_request(api_data=api_data)
+        elif api_data['login_method'] == 'username_and_password':
+            return self.web_api.send_login_user_password_request(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # GET ORGANIZATION PARAMETERS
@@ -681,29 +685,32 @@ class API(object):
             print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
             return False
 
-        with open(full_path, 'r', encoding=enc) as yaml_config_file:
+        with open(full_path, 'r') as yaml_config_file:
             try:
                 config = yaml.load(yaml_config_file)
 
-                if 'team' not in config or config['team'] is None or config['team'] == '':
-                    return False
+                if 'team' not in config:
+                    config['team'] = None
 
                 api_data['team'] = config['team']
 
-                if 'user' not in config or config['user'] is None or config['user'] == '':
-                    return False
+                if 'user' not in config:
+                    config['user'] = None
 
                 api_data['user'] = config['user']
 
-                if 'password' not in config or config['password'] is None or config['password'] == '':
-                    return False
+                if 'password' not in config:
+                    config['password'] = None
 
                 api_data['password'] = config['password']
 
                 if 'auth_token' not in config:
-                    config['auth-token'] = ''
+                    config['auth-token'] = None
 
                 api_data['auth_token'] = config['auth_token']
+
+                if 'logi' not in config:
+                    config['logo'] = 'off'
 
                 api_data['logo'] = config['logo']
 

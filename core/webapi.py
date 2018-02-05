@@ -18,6 +18,7 @@ class WebAPI(object):
         'token': ''}
     base_url = "https://beta.surepatch.net"
     login_url = base_url + "/api/auth/login"
+    login_token_url = base_url + "/api/auth/token/login"
     organization_url = base_url + "/api/organization"
     platform_url = base_url + "/api/platforms"
     project_url = base_url + "/api/projects"
@@ -49,22 +50,55 @@ class WebAPI(object):
 
     )
 
-    def send_login_request(self, api_data):
+    def send_login_token_request(self, api_data):
         # type: (dict) -> bool
         """
-        Send login request to Surepatch server.
+        Send login request with auth token to Surepatch server
         :param api_data: api data set
         :return: result
         """
-        # 1. We have token in command line
+        self.login_payload['authToken'] = api_data['auth_token']
+        self.login_payload['org_domain'] = api_data['team']
+        try:
+            response = requests.post(
+                url=self.login_token_url,
+                headers=self.headers,
+                json=self.login_payload)
+            if response.status_code == 200:
+                try:
+                    text = response.text
+                    login_response_text = json.loads(text)
+                    api_data['token'] = login_response_text['token']
+                    api_data['user_id'] = login_response_text['userID']
+                    api_data['org_id'] = login_response_text['orgID']
+                    api_data['organization'] = None
+                    print_line('Login success.')
+                    return True
+                except ValueError as json_value_exception:
+                    print_line('Response JSON parsing exception: {0}'.format(json_value_exception))
+                    return False
+            print_line('Login failed. Status code: {0}'.format(response.status_code))
+            return False
+        except requests.exceptions.HTTPError as http_exception:
+            print_line('HTTP Error: {0}'.format(http_exception))
+            return False
+        except requests.exceptions.ConnectionError as connection_exception:
+            print_line('Connection error: {0}'.format(connection_exception))
+            return False
+        except requests.exceptions.Timeout as timeout_exception:
+            print_line('Connection timeout: {0}'.format(timeout_exception))
+            return False
+        except requests.exceptions.RequestException as request_exception:
+            print_line('Request exception: {0}'.format(request_exception))
+            return False
 
-        # 2. We have team/user/password in command line
-
-        # 3. We have token in config file
-
-        # 4. We have team/user/password in config file
-
-        # Send login request
+    def send_login_user_password_request(self, api_data):
+        # type: (dict) -> bool
+        """
+        Send login request with username and password to Surepatch server.
+        :param api_data: api data set
+        :return: result
+        """
 
         self.login_payload['username'] = api_data['user']
         self.login_payload['password'] = api_data['password']
@@ -77,7 +111,8 @@ class WebAPI(object):
                 json=self.login_payload)
             if response.status_code == 200:
                 try:
-                    login_response_text = json.loads(response.text)
+                    text = response.text
+                    login_response_text = json.loads(text)
                     api_data['token'] = login_response_text['token']
                     api_data['user_id'] = login_response_text['userID']
                     api_data['org_id'] = login_response_text['orgID']
@@ -116,7 +151,8 @@ class WebAPI(object):
                 headers=self.headers)
             if response.status_code == 200:
                 try:
-                    organization_data = json.loads(response.text)[0]
+                    text = response.text
+                    organization_data = json.loads(text)[0]
                     api_data['organization'] = dict(
                         id=organization_data['_id'],
                         name=organization_data['name'],
@@ -514,7 +550,8 @@ class WebAPI(object):
             api_data['archive_platforms'] = None
             if response.status_code == 200:
                 try:
-                    api_data['archive_platforms'] = json.loads(response.text)
+                    text = response.text
+                    api_data['archive_platforms'] = json.loads(text)
                 except json.JSONDecodeError as json_decode_error:
                     print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))
                     return False
@@ -550,9 +587,10 @@ class WebAPI(object):
             api_data['archive_projects'] = None
             if response.status_code == 200:
                 try:
-                    api_data['archive_projects'] = json.loads(response.text)
+                    text = response.text
+                    api_data['archive_projects'] = json.loads(text)
                 except json.JSONDecodeError as json_decode_error:
-                    print_line(f'An exception occured with json decoder: {json_decode_error}.')
+                    print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))
                     return False
                 return True
             print_line('Archive Project get information failed. Status code: {0}'.format(response.status_code))
@@ -586,7 +624,8 @@ class WebAPI(object):
             api_data['archive_projects'] = None
             if response.status_code == 200:
                 try:
-                    api_data['issues'] = json.loads(response.content)['project']['issues']
+                    content = response.content.decode("utf-8")
+                    api_data['issues'] = json.loads(content)['project']['issues']
                     return True
                 except json.JSONDecodeError as json_decode_error:
                     print_line('An exception occured with json decoder: {0}.'.format(json_decode_error))

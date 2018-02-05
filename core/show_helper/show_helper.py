@@ -19,7 +19,8 @@ class ShowHelper(object):
         self.components_helper = ComponentsHelper()
 
     @staticmethod
-    def action_show_platforms(api_data: dict) -> bool:
+    def action_show_platforms(api_data):
+        # type: (dict) -> bool
         """
         Print existing platforms.
         :param api_data: api data set
@@ -46,7 +47,8 @@ class ShowHelper(object):
 
         return True
 
-    def action_show_projects(self, api_data: dict) -> bool:
+    def action_show_projects(self, api_data):
+        # type: (dict) -> bool
         """
         Print existing project for defined Platform.
         :param api_data: api data set
@@ -83,7 +85,8 @@ class ShowHelper(object):
 
         return True
 
-    def action_show_set(self, api_data: dict) -> bool:
+    def action_show_set(self, api_data):
+        # type: (dict) -> bool
         """
         Print current Component set for defined Platform/Project.
         :param api_data: api data set
@@ -107,7 +110,8 @@ class ShowHelper(object):
 
         return True
 
-    def action_show_issues(self, api_data: dict) -> bool:
+    def action_show_issues(self, api_data):
+        # type: (dict) -> bool
         """
         Print current Issues tor defined Platform/Project.
         :param api_data: api data set

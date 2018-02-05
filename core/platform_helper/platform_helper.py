@@ -11,7 +11,13 @@ class PlatformHelper(object):
         self.web_api = WebAPI()
 
     @staticmethod
-    def create_platform_validate(api_data: dict) -> bool:
+    def create_platform_validate(api_data):
+        # type: (dict) -> bool
+        """
+        Validate parameters/
+        :param api_data:
+        :return:
+        """
         if api_data['platform'] is None or api_data['platform'] == '':
             print_line('Empty platform name, please use --platform flag.')
             return False
@@ -22,10 +28,12 @@ class PlatformHelper(object):
 
         return True
 
-    def create_platform(self, api_data: dict) -> bool:
+    def create_platform(self, api_data):
+        # type: (dict) -> bool
         return self.web_api.send_create_new_platform_request(api_data=api_data)
 
-    def delete_platform(self, api_data: dict) -> bool:
+    def delete_platform(self, api_data):
+        # type: (dict) -> bool
         """
         Run action: Delete defined Platform.
         :param api_data: api data set
@@ -38,7 +46,8 @@ class PlatformHelper(object):
 
         return self.web_api.send_delete_platform_request(api_data=api_data)
 
-    def archive_platform(self, api_data: dict) -> bool:
+    def archive_platform(self, api_data):
+        # type: (dict) -> bool
         """
         Run action: Archive defined Platform.
         :param api_data: api data set
@@ -51,7 +60,8 @@ class PlatformHelper(object):
 
         return self.web_api.send_archive_platform_request(api_data=api_data)
 
-    def restore_platform(self, api_data: dict) -> bool:
+    def restore_platform(self, api_data):
+        # type: (dict) -> bool
         """
         Run action: restore Platform from Archive.
         :param api_data: api data set

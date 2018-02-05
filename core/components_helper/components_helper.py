@@ -469,7 +469,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(file=filename, mode='r', encoding=enc) as cf:
+                with open(filename, 'r', encoding=enc) as cf:
                     os_packages = cf.read()
                 
                     if os_packages is None:
@@ -543,7 +543,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(file=filename, mode='r', encoding=enc) as cf:
+                with open(filename, 'r', encoding=enc) as cf:
 
                     os_packages = cf.read()
 
@@ -600,7 +600,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(file=filename, mode='r', encoding=enc) as cf:
+                with open(filename, 'r', encoding=enc) as cf:
                     os_packages = cf.read()
 
                     if os_packages is None:
@@ -668,7 +668,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(file=filename, mode='r', encoding=enc) as cf:
+                with open(filename, 'r', encoding=enc) as cf:
                     os_packages = cf.read()
 
                     if os_packages is None:
@@ -733,7 +733,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(file=filename, mode='r', encoding=enc) as cf:
+                with open(filename, 'r', encoding=enc) as cf:
                     rfp = cf.read()
                     api_data['packages'] = rfp.replace(' ', '').split('\n')
                     return True
@@ -792,7 +792,7 @@ class ComponentsHelper(object):
         full_path = os.path.join(file_path, tmp_file_name)
 
         try:
-            with open(full_path, mode='w', encoding='utf-8') as temp:
+            with open(full_path, 'w', encoding='utf-8') as temp:
                 temp.write('')
                 temp.seek(0)
 
@@ -844,7 +844,7 @@ class ComponentsHelper(object):
                     print_line('An error with encoding occured in temp file.')
                     return False
 
-                with open(full_path, encoding=enc) as cf:
+                with open(full_path, 'r', encoding=enc) as cf:
                     data = json.load(cf)
                     walkdict(data)
                     return True
@@ -887,7 +887,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(file=filename, mode='r', encoding=enc) as pf:
+                with open(filename, 'r', encoding=enc) as pf:
                     api_data['packages'] = json.load(pf)
                     return True
 
@@ -917,7 +917,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(file=filename, mode='r', encoding=enc) as pf:
+                with open(filename, 'r', encoding=enc) as pf:
                     try:
                         api_data['packages'] = json.load(pf)
                         return True
@@ -1050,7 +1050,7 @@ class ComponentsHelper(object):
                 return False
 
             try:
-                with open(file=filename, mode='r', encoding=enc) as pf:
+                with open(filename, 'r', encoding=enc) as pf:
                     cont = pf.read()
                     api_data['packages'] = cont.split('\n')
                     return True
@@ -1111,7 +1111,7 @@ class ComponentsHelper(object):
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
                 return False
 
-            with open(file=filename, mode='r', encoding=enc) as pf:
+            with open(filename, mode='r', encoding=enc) as pf:
                 try:
                     api_data['packages'] = json.load(pf)
                     return True
@@ -1141,7 +1141,7 @@ class ComponentsHelper(object):
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
                 return False
 
-            with open(file=filename, mode='r', encoding=enc) as pf:
+            with open(filename, 'r', encoding=enc) as pf:
                 try:
                     api_data['packages'] = json.load(pf)
                     return True

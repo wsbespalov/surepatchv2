@@ -25,7 +25,7 @@ def print_logo():
 
 
 def print_line(message):
-    # type: (dict) -> None
+    # type: (str) -> None
     print(message)
 
 
