@@ -533,9 +533,11 @@ class ComponentsHelper(object):
 
                 for section in sections:
                     name = section[0].replace(':', '')
-                    name = name[:name.index('@')]
-                    version = section[1].replace(' ', '').replace('version', '').replace('"', '')
-                    components.append({"name": name, "version": version})
+                    name = name[:name.index('@')].replace('"', '')
+                    version = section[1].replace(' ', '').replace('version', '').replace('"', '').replace('~', '')
+                    if version != '*':
+                        if '|' not in version:
+                            components.append({"name": name, "version": version})
                     if len(section) > 4:
                         if 'dependencies' in section[3]:
                             for i in range(4, len(section)):
@@ -547,9 +549,11 @@ class ComponentsHelper(object):
                                     .replace('<', '')\
                                     .replace('>', '')\
                                     .replace('=', '')
-                                dname = ssection[:ssection.index('"')]
-                                dversion = ssection[ssection.index('"'):].replace('"', '')
-                                components.append({"name": dname, "version": dversion})
+                                dname = ssection[:ssection.index('"')].replace('"', '')
+                                dversion = ssection[ssection.index('"'):].replace('"', '').replace('~', '')
+                                if dversion != '*':
+                                    if '|' not in dversion:
+                                        components.append({"name": dname, "version": dversion})
 
                 api_data['components'] = components
                 return True
