@@ -86,6 +86,7 @@ This application is designed to work with the Surepatch Project without using th
 | |php_composer_json| Target is PHP composer.json source |
 | |php_composer_lock| Target is PHP composer.lock source |
 | |pom| Target is Maven pom.xml source |
+| |yarn| Target is yarn.lock source |
 | | | |
 |--method:|<method_type>|CLI App Methods:|
 | |auto|Collect Packages automatically |
@@ -247,6 +248,12 @@ Note, that CLI App use Maven pom.xml system format for those data.
 ```sh
 @ surepatch --action=create_project --platform=autotest2 --project=autotest_maven_pom --target=pom --method=auto --format=system --file=/home/user/pom.xml
 ```
+### Create project from yarn.lock file, for example /home/user/yarn.lock
+This way, CLI App process yarn.lock file with dependencies.
+Note, that CLI App use yarn.lock system format for those data.
+```sh
+@ surepatch --action=create_project --platform=autotest2 --project=autotest_yarn --target=yarn --method=auto --format=system --file=/home/user/yarn.lock
+```
 ### Create Project from User defined source file, for example /home/user/user_packages.txt, where packages defined as lines in <name>=<version> format
 Now, you can create some file and fill it with different packages and versions. 
 The type of package and its ownership does not matter.
@@ -350,6 +357,10 @@ And for pip3 packages:
 ### Create set from Maven pom.xml file, for example /home/user/pom.xml
 ```sh
 @ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pom.1 --target=pom --method=auto --format=system --file=/home/user/pom.xml
+```
+### Create set from yarn.lock file, for example /home/user/yarn.lock
+```sh
+@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=yarn.1 --target=yarn --method=auto --format=system --file=/home/user/yarn.lock
 ```
 ### Create set from User packages, formatted as name=version
 ```sh

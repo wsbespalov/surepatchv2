@@ -407,7 +407,7 @@ class ComponentsHelper(object):
                 print_line('Collect {0} raw components'.format(len(api_data['components'])))
                 return True
 
-        print('PHP Composer packages loading error.')
+        print_line('PHP Composer packages loading error.')
         return False
 
     def get_components_php_composer_lock_system_path(self, api_data):
@@ -421,7 +421,7 @@ class ComponentsHelper(object):
                 print_line('Collect {0} raw components'.format(len(api_data['components'])))
                 return True
                 
-        print('PHP Composer.lock packages loading error.')
+        print_line('PHP Composer.lock packages loading error.')
         return False
 
     def get_components_maven_pom(self, api_data):
@@ -435,7 +435,21 @@ class ComponentsHelper(object):
             print_line('Collect {0} raw components'.format(len(api_data['components'])))
             return True
 
-        print('Maven pom.xml file packages loading error.')
+        print_line('Maven pom.xml file packages loading error.')
+        return False
+
+    def get_components_yarn_lock(self, api_data):
+        # type: (dict) -> bool
+        """
+        Get dependencies from yarn.lock file.
+        :param api_data: api data set
+        :return: result
+        """
+        if self.load_yarn_lock_components_path(api_data=api_data):
+            print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
+            return True
+
+        print_line('Yarn.lock file packages loading error.')
         return False
 
     # -------------------------------------------------------------------------
@@ -468,9 +482,6 @@ class ComponentsHelper(object):
                     if 'dependencies' in project:
                         dependencies = project['dependencies']
                         for dependency in dependencies['dependency']:
-                            # jd = json.dumps(dependency)
-                            # print(jd)
-                            # components.append({"name": jd["groupId"], "version": jd["version"]})
                             components.append({"name": dependency["groupId"], "version": dependency["version"]})
                 api_data['components'] = components
                 return True
@@ -481,6 +492,75 @@ class ComponentsHelper(object):
 
         print_line('File {0} does not exists.'.format(filename))
         return False
+
+    def load_yarn_lock_components_path(self, api_data):
+        # type: (dict) -> bool
+        """
+        Load packages from yarn.lock file.
+        :param api_data: api data set
+        :return: result
+        """
+        filename = api_data['file']
+        components = []
+
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename=filename)
+
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return False
+
+            try:
+                with open(filename, 'r') as pf:
+                    yarn_file = pf.read()
+
+                yarn_sections = yarn_file.split('\n\n')
+
+                components = []
+                sections = []
+
+                for section in yarn_sections:
+                    ysection = []
+                    ss = section.split('\n')
+                    for s in ss:
+                        if s.startswith('#'):
+                            continue
+                        if s == '':
+                            continue
+                        ysection.append(s)
+                    if len(ysection) > 1:
+                        sections.append(ysection)
+
+                for section in sections:
+                    name = section[0].replace(':', '')
+                    name = name[:name.index('@')]
+                    version = section[1].replace(' ', '').replace('version', '').replace('"', '')
+                    components.append({"name": name, "version": version})
+                    if len(section) > 4:
+                        if 'dependencies' in section[3]:
+                            for i in range(4, len(section)):
+                                if 'optionalDependencies:' in section[i]:
+                                    continue
+                                ssection = section[i]\
+                                    .replace(' ', '')\
+                                    .replace('^', '')\
+                                    .replace('<', '')\
+                                    .replace('>', '')\
+                                    .replace('=', '')
+                                dname = ssection[:ssection.index('"')]
+                                dversion = ssection[ssection.index('"'):].replace('"', '')
+                                components.append({"name": dname, "version": dversion})
+
+                api_data['components'] = components
+                return True
+
+            except Exception as e:
+                print_line('File read exception {0}.'.format(e))
+                return False
+
+        print_line('File {0} does not exists.'.format(filename))
+        return False
+
 
     def load_windows_10_packages_from_shell(self, api_data):
         # type: (dict) -> bool

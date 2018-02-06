@@ -286,6 +286,18 @@ class ProjectHelper(object):
 
         return False
 
+    def create_project_yarn_lock_system_path(self, api_data):
+        # type: (dict) -> bool
+        """
+        Create project with yarn.lock file
+        :param api_data: api data set
+        :return: result
+        """
+        if self.components_helper.get_components_yarn_lock(api_data=api_data):
+            return self.web_api.send_create_new_project_request(api_data=api_data)
+
+        return False
+
     def delete_project(self, api_data):
         # type: (dict) -> bool
         """

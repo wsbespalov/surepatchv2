@@ -314,11 +314,19 @@ class API(object):
                 api_data['file'] is not None:
             return project_helper.create_project_php_composer_lock_system_path(api_data=api_data)
 
+        # Create project with Maven pom.xml file {from path}
         if api_data['target'] == Targets.POM and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
             return project_helper.create_project_maven_pom_system_path(api_data=api_data)
+
+        # Create project with yarn.lock file {from path}
+        if api_data['target'] == Targets.YARN and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return project_helper.create_project_yarn_lock_system_path(api_data=api_data)
 
         print_line('Something wrong with app parameters. Please, look through README.md')
         return False
@@ -480,25 +488,26 @@ class API(object):
                 api_data['file'] is None:
             return set_helper.create_set_any_manual_user_none(api_data=api_data)
 
-        # Create project with PHP Composer.json file {from path}
+        # Create set with PHP Composer.json file {from path}
         if api_data['target'] == Targets.PHP_COMPOSER_JSON and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
             return set_helper.create_set_php_composer_json_system_path(api_data=api_data)
 
-        # Create project with PHP Composer.lock file {from path}
+        # Create set with PHP Composer.lock file {from path}
         if api_data['target'] == Targets.PHP_COMPOSER_LOCK and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
             return set_helper.create_set_php_composer_lock_system_path(api_data=api_data)
 
-        if api_data['target'] == Targets.POM and \
+        # Create set with yarn.lock file {from path}
+        if api_data['target'] == Targets.YARN and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
-            return set_helper.create_set_maven_pom_system_path(api_data=api_data)
+            return set_helper.create_set_yarn_lock_system_path(api_data=api_data)
 
     # -------------------------------------------------------------------------
     # Show
@@ -831,6 +840,7 @@ class Targets(object):
     PHP_COMPOSER_JSON = 'php_composer_json'
     PHP_COMPOSER_LOCK = 'php_composer_lock'
     POM = 'pom'
+    YARN = 'yarn'
 
 
 class Methods(object):
