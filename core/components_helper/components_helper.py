@@ -468,9 +468,10 @@ class ComponentsHelper(object):
                     if 'dependencies' in project:
                         dependencies = project['dependencies']
                         for dependency in dependencies['dependency']:
-                            jd = json.dumps(dependency)
-                            print(jd)
-                            components.append({"name": jd["groupId"], "version": jd["version"]})
+                            # jd = json.dumps(dependency)
+                            # print(jd)
+                            # components.append({"name": jd["groupId"], "version": jd["version"]})
+                            components.append({"name": dependency["groupId"], "version": dependency["version"]})
                 api_data['components'] = components
                 return True
 

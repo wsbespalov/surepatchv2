@@ -11,7 +11,7 @@ This application is designed to work with the Surepatch Project without using th
     - Automatic
     - Manual
 - Supported formats:
-    - System formats for package manager like shell, python pip, gem, npm, composer, etc.
+    - System formats for package manager like shell, python pip, gem, npm, composer, pom, etc.
     - User format for special files with custom packages
 - Packages Management:
     - Collect Packages from Windows, MacOS, Linux Operation Systems
@@ -19,6 +19,7 @@ This application is designed to work with the Surepatch Project without using th
     - Collect Packages from NPM, NodeJS package.json and package-lock.json sources
     - Collect Packages from Ruby, Gemfile and Gemfile.lock sources
     - Collect Packages from PHP, composer.json and composer.lock files
+    - Collect Packages from Maven pom.xml files
     - Collect Packages from user format file resources
     - Collect Packages in interactive dialog mode
 
