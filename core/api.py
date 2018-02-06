@@ -183,6 +183,12 @@ class API(object):
                 api_data['file'] is None:
             return project_helper.create_project_pip_auto_system_none(api_data=api_data)
 
+        if api_data['target'] == Targets.PIP3 and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return project_helper.create_project_pip_auto_system_none(api_data=api_data)
+
         # Create new project with PIP from file {from path}
         if api_data['target'] == Targets.PIP and \
                 api_data['method'] == Methods.AUTO and \
@@ -190,8 +196,32 @@ class API(object):
                 api_data['file'] is not None:
             return project_helper.create_project_pip_auto_system_path(api_data=api_data)
 
+        if api_data['target'] == Targets.PIP3 and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return project_helper.create_project_pip_auto_system_path(api_data=api_data)
+
         # Create new project with PIP requirements.txt {from path}
         if api_data['target'] == Targets.REQ and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return project_helper.create_project_requirements_auto_system_path(api_data=api_data)
+
+        if api_data['target'] == Targets.REQ3 and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return project_helper.create_project_requirements_auto_system_path(api_data=api_data)
+
+        if api_data['target'] == Targets.REQUIREMENTS and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return project_helper.create_project_requirements_auto_system_path(api_data=api_data)
+
+        if api_data['target'] == Targets.REQUIREMENTS3 and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
@@ -325,8 +355,20 @@ class API(object):
                 api_data['file'] is None:
             return set_helper.create_set_pip_auto_system_none(api_data=api_data)
 
+        if api_data['target'] == Targets.PIP3 and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is None:
+            return set_helper.create_set_pip_auto_system_none(api_data=api_data)
+
         # Create set with PIP from file {from path}
         if api_data['target'] == Targets.PIP and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return set_helper.create_set_pip_auto_system_path(api_data=api_data)
+
+        if api_data['target'] == Targets.PIP3 and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:
@@ -339,7 +381,19 @@ class API(object):
                 api_data['file'] is not None:
             return set_helper.create_set_requirements_auto_system_path(api_data=api_data)
 
+        if api_data['target'] == Targets.REQ3 and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return set_helper.create_set_requirements_auto_system_path(api_data=api_data)
+
         if api_data['target'] == Targets.REQUIREMENTS and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return set_helper.create_set_requirements_auto_system_path(api_data=api_data)
+
+        if api_data['target'] == Targets.REQUIREMENTS3 and \
                 api_data['method'] == Methods.AUTO and \
                 api_data['format'] == Formats.SYSTEM and \
                 api_data['file'] is not None:

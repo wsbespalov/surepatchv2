@@ -702,8 +702,10 @@ class ComponentsHelper(object):
         Load Python PI packages with pip.FrozenRequirement method.
         :return: result
         """
-
-        cmd = "pip list --format=legacy"
+        if api_data['target'] == 'pip':
+            cmd = "pip list --format=legacy"
+        elif api_data['target'] == 'pip3':
+            cmd = "pip3 list --format=legacy"
 
         try:
             proc = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
@@ -717,7 +719,6 @@ class ComponentsHelper(object):
                 if len(output) > 0:
                     api_data['packages'] = output.decode('utf-8')
                     return True
-
                 else:
                     return False
 
@@ -1290,6 +1291,8 @@ class ComponentsHelper(object):
         packages = packages.replace(')', '')
         packages = packages.replace(' ', '')
         packages = packages.split('\r\n')
+        if len(packages) == 1:
+            packages = packages[0].split('\n')
         components = []
         for package in packages:
             if len(package) <= 3:
