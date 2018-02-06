@@ -156,8 +156,11 @@ If you want use pip3 packages - you should define pip3 target, like this:
 ```sh
 @ surepatch --action=create_project --platform=autotest1 --project=autotest_pip3_none --target=pip3 --method=auto --format=system
 ```
-### Create Project from Python PIP Packages, pre-unloaded to an external file, for example /home/user/pip_freeze_packages.txt
-In this way, you can check security of your Python freeze files.
+### Create Project from Python PIP Packages, pre-unloaded to an external file from shell command (pip freeze > file_path), for example /home/user/pip_freeze_packages.txt
+In this way, you can check security of your Python freeze files. Please, use command 
+```sh
+@ pip freeze > file_path
+```
 Note, that CLI App use Python system format for this file.
 ```sh
 @ surepatch --action=create_project --platform=autotest1 --project=autotest_pip_path --target=pip --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
@@ -294,7 +297,7 @@ And for pip3 packages:
 ```sh
 @ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pip3_none.1 --target=pip3 --method=auto --format=system
 ```
-### Create set from Python PIP packages, collected from shell command, unloaded to file, for example /home/user/pip_freeze_packages.txt
+### Create set from Python PIP packages, collected from shell command (pip freeze > file_path), unloaded to file, for example /home/user/pip_freeze_packages.txt
 ```sh
 @ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pip_path.1 --target=pip --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
 ```

@@ -298,8 +298,8 @@ class WebAPI(object):
         """
         self.headers['token'] = api_data['token']
         self.components_payload['set_name'] = api_data['set']
-        self.components_payload['components'] = api_data['components']
         self.components_payload['project_url'] = api_data['project_url']
+        self.components_payload['components'] = api_data['components']
         try:
             response = requests.post(
                 url=self.components_url,

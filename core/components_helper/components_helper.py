@@ -52,7 +52,7 @@ class ComponentsHelper(object):
                 if self.load_windows_10_packages_from_shell(api_data=api_data):
                     api_data['packages'] = api_data['packages'].decode('utf-8').replace('\r', '').split('\n')[9:]
                     if self.parse_windows_10_packages(api_data=api_data):
-                        print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                        print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                         return True
 
                 print_line('Failed to load or parse OS components.')
@@ -70,7 +70,7 @@ class ComponentsHelper(object):
 
             if self.load_macos_packages_from_shell(api_data=api_data):
                 if self.parse_macos_packages(api_data=api_data):
-                    print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                    print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                     return True
 
             print_line('Failed load or parse MACOS components.')
@@ -83,7 +83,7 @@ class ComponentsHelper(object):
         elif api_data['os_type'] == OSs.DEBIAN:
             if self.load_ubuntu_packages_from_shell(api_data=api_data):
                 if self.parse_ubuntu_packages(api_data=api_data):
-                    print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                    print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                     return True
 
             print_line('Failed load or parse OS components.')
@@ -92,7 +92,7 @@ class ComponentsHelper(object):
         elif api_data['os_type'] == OSs.UBUNTU:
             if self.load_ubuntu_packages_from_shell(api_data=api_data):
                 if self.parse_ubuntu_packages(api_data=api_data):
-                    print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                    print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                     return True
 
             print_line('Failed load or parse OS components.')
@@ -101,7 +101,7 @@ class ComponentsHelper(object):
         elif api_data['os_type'] == OSs.FEDORA:
             if self.load_fedora_packages_from_shell(api_data=api_data):
                 if self.parse_fedora_packages(api_data=api_data):
-                    print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                    print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                     return True
                     
             print_line('Failed parse OS components.')
@@ -119,7 +119,7 @@ class ComponentsHelper(object):
             if api_data['os_version'] == '10' or api_data['os_version'] == '8':
                 if self.load_windows_10_packages_from_path(api_data=api_data):
                     if self.parse_windows_10_packages(api_data=api_data):
-                        print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                        print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                         return True
                 
                 print_line('Failed load or parse Windows 10 components.')
@@ -132,7 +132,7 @@ class ComponentsHelper(object):
         elif api_data['os_type'] == OSs.MACOS:
             if self.load_macos_packages_from_path(api_data=api_data):
                 if self.parse_macos_packages(api_data=api_data):
-                    print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                    print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                     return True
                     
             print_line('Failed load or parse MACOS components.')
@@ -145,7 +145,7 @@ class ComponentsHelper(object):
         elif api_data['os_type'] == OSs.DEBIAN or api_data['os_type'] == OSs.UBUNTU:
             if self.load_ubuntu_packages_from_path(api_data=api_data):
                 if self.parse_ubuntu_packages(api_data=api_data):
-                    print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                    print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                     return True
 
             print_line('Failed load or parse Debian OS components.')
@@ -154,7 +154,7 @@ class ComponentsHelper(object):
         elif api_data['os_type'] == OSs.FEDORA:
             if self.load_fedora_packages_from_path(api_data=api_data):
                 if self.parse_fedora_packages(api_data=api_data):
-                    print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                    print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                     return True
 
             print_line('Failed parse Fedora OS components.')
@@ -171,7 +171,7 @@ class ComponentsHelper(object):
         """
         if self.load_pip_packages_from_shell_legacy(api_data=api_data):
             if self.parse_pip_packages_legacy(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
             
         print_line('Problems with PIP components loading.')
@@ -186,7 +186,7 @@ class ComponentsHelper(object):
         """
         if self.load_pip_packages_from_path(api_data=api_data):
             if self.parse_pip_packages_from_path(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
 
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
@@ -201,7 +201,7 @@ class ComponentsHelper(object):
         """
         if self.load_pip_packages_from_path(api_data=api_data):
             if self.parse_pip_packages_from_path(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
         
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
@@ -217,7 +217,7 @@ class ComponentsHelper(object):
         if self.load_npm_packages_from_path(api_data=api_data):
             api_data['packages'] = raw_npm_components
             if self.parse_npm_packages(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
         
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
@@ -232,7 +232,7 @@ class ComponentsHelper(object):
         """
         if self.load_package_json_packages_from_path(api_data=api_data):
             if self.parse_package_json_packages_from_path(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
         
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
@@ -247,7 +247,7 @@ class ComponentsHelper(object):
         """
         if self.load_gem_packages_from_path(api_data=api_data):
             if self.parse_gem_packages_from_path(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
 
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
@@ -263,7 +263,7 @@ class ComponentsHelper(object):
         if self.load_npm_packages(api_data=api_data, local=False):
             api_data['packages'] = raw_npm_components
             if self.parse_npm_packages(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
 
         print_line('Something wrong with packages in NPM system call.')
@@ -279,7 +279,7 @@ class ComponentsHelper(object):
         if self.load_npm_packages(api_data=api_data, local=True):
             api_data['packages'] = raw_npm_components
             if self.parse_npm_packages(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
 
         print_line('Something wrong with packages in file path')
@@ -294,7 +294,7 @@ class ComponentsHelper(object):
         """
         if self.load_npm_lock_packages_from_path(api_data=api_data):
             if self.parse_npm_lock_packages(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
 
         print_line('Something wrong with packages in file path')
@@ -309,7 +309,7 @@ class ComponentsHelper(object):
         """
         if self.load_gem_packages_system(api_data=api_data, local=False):
             if self.parse_gem_packages_system(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
 
         print_line('Something wrong with packages in file path')
@@ -324,7 +324,7 @@ class ComponentsHelper(object):
         """
         if self.load_gemfile_packages_from_path(api_data=api_data):
             if self.parse_gemfile_packages(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
 
         print_line('Failed load or parse Gemfile packages.')
@@ -339,7 +339,7 @@ class ComponentsHelper(object):
         """
         if self.load_gemfile_lock_packages_from_path(api_data=api_data):
             if self.parse_gemfile_lock_packages(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
 
         print_line('Failed parse Gemfile packages.')
@@ -371,7 +371,7 @@ class ComponentsHelper(object):
                             if len(splitted_package) == 2:
                                 components.append({'name': splitted_package[0], 'version': splitted_package[1]})
                 api_data['components'] = components
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
 
         print_line('File {0} not found.'.format(filename))
@@ -393,7 +393,7 @@ class ComponentsHelper(object):
             if ask('Continue (y/n)? ') == 'n':
                 break
         api_data['components'] = components
-        print_line('Collect {0} raw components'.format(len(api_data['components'])))
+        print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
         return True
 
     def get_components_php_composer_json_system_path(self, api_data):
@@ -404,7 +404,7 @@ class ComponentsHelper(object):
         """        
         if self.load_php_composer_json_system_path(api_data=api_data):
             if self.parse_php_composer_json_system_path(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
 
         print_line('PHP Composer packages loading error.')
@@ -418,7 +418,7 @@ class ComponentsHelper(object):
         """        
         if self.load_php_composer_lock_system_path(api_data=api_data):
             if self.parse_php_composer_lock_system_path(api_data=api_data):
-                print_line('Collect {0} raw components'.format(len(api_data['components'])))
+                print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
                 
         print_line('PHP Composer.lock packages loading error.')
@@ -432,7 +432,7 @@ class ComponentsHelper(object):
         :return: result
         """
         if self.load_maven_pom_components_path(api_data=api_data):
-            print_line('Collect {0} raw components'.format(len(api_data['components'])))
+            print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
             return True
 
         print_line('Maven pom.xml file packages loading error.')
@@ -942,7 +942,7 @@ class ComponentsHelper(object):
         full_path = os.path.join(file_path, tmp_file_name)
 
         try:
-            with open(full_path, 'w', encoding='utf-8') as temp:
+            with open(full_path, 'w') as temp:
                 temp.write('')
                 temp.seek(0)
 
@@ -982,7 +982,7 @@ class ComponentsHelper(object):
                     api_data['os_type'] == OSs.FEDORA:
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
                 output, error = proc.communicate()
-                proc.kill()
+                # proc.kill()
 
                 if error:
                     print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
@@ -1351,8 +1351,8 @@ class ComponentsHelper(object):
         :return: result
         """
 
-        # number_of_line_breaks = api_data['packages'].split('\n')
-        number_of_line_breaks = api_data['packages']
+        number_of_line_breaks = api_data['packages'].split('\n')
+        # number_of_line_breaks = api_data['packages']
         new_components = []
         pattern1 = "(\d+[.]\d+[.]?\d*)"
         pattern = re.compile(pattern1)
