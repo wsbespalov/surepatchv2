@@ -501,6 +501,31 @@ class SetHelper(object):
 
         return False
 
+    def create_set_maven_pom_system_path(self, api_data):
+        # type: (dict) -> bool
+        """
+        Create Component Set with packages from Maven pom.xml file.
+        :param api_data: api data set
+        :return: result
+        """
+        if self.components_helper.get_components_maven_pom(api_data=api_data):
+            api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
+            if api_data['platform_number'] == -1:
+                print_line("No such platform: {0}".format(api_data['platform']))
+                return False
+
+            api_data['project_number'] = self.web_api.get_project_number_by_name(api_data=api_data)
+            if api_data['project_number'] == -1:
+                print_line("No such project: {0}".format(api_data['project']))
+                return False
+
+            api_data['project_url'] = \
+            api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']][
+                'url']
+
+            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+        return False
+
     @staticmethod
     def get_my_platforms(api_data):
         # type: (dict) -> list

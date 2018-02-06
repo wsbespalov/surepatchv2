@@ -70,8 +70,11 @@ This application is designed to work with the Surepatch Project without using th
 |--target|<target_type>| CLI App Targets: |
 | |os| Target is Operation system Packages |
 | |pip| Target is Python pip Packages |
+| |pip3| Target is Python3 pip3 Packages |
 | |req| Target is Python PIP Packages |
+| |req3| Target is Python3 pip3 Packages |
 | |requirements| Target is Python requirements.txt file |
+| |requirements3| Target is Python3 requirements.txt file |
 | |npm| Target is NPM Packages |
 | |npm_local| Target is NPM Packages from defined directory |
 | |package_json| Target is NPM package.json file |
@@ -81,6 +84,7 @@ This application is designed to work with the Surepatch Project without using th
 | |gemfile_lock| Target is Ruby Gemfile.lock source |
 | |php_composer_json| Target is PHP composer.json source |
 | |php_composer_lock| Target is PHP composer.lock source |
+| |pom| Target is Maven pom.xml source |
 | | | |
 |--method:|<method_type>|CLI App Methods:|
 | |auto|Collect Packages automatically |
@@ -146,17 +150,29 @@ This example shows, how you can create Python packages set from pip.FrozenRequir
 ```sh
 @ surepatch --action=create_project --platform=autotest1 --project=autotest_pip_none --target=pip --method=auto --format=system
 ```
+If you want use pip3 packages - you should define pip3 target, like this:
+```sh
+@ surepatch --action=create_project --platform=autotest1 --project=autotest_pip3_none --target=pip3 --method=auto --format=system
+```
 ### Create Project from Python PIP Packages, pre-unloaded to an external file, for example /home/user/pip_freeze_packages.txt
 In this way, you can check security of your Python freeze files.
 Note, that CLI App use Python system format for this file.
 ```sh
 @ surepatch --action=create_project --platform=autotest1 --project=autotest_pip_path --target=pip --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
 ```
+If you want use pip3 packages - you should define pip3 target, like this:
+```sh
+@ surepatch --action=create_project --platform=autotest1 --project=autotest_pip3_path --target=pip3 --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
+```
 ### Create Project from Python Packages, collected in requirements.txt, for example /home/user/requirements.txt
 Now you can check vulnerabilities for your requirements.txt files in different applications.
 Note, that CLI App use Python system format for this file.
 ```sh
 @ surepatch --action=create_project --platform=autotest1 --project=autotest_req_path --target=req --method=auto --format=system --file=/home/user/requirements.txt
+```
+If you want use pip3 packages - you should define pip3 target, like this:
+```sh
+@ surepatch --action=create_project --platform=autotest1 --project=autotest_req3_path --target=req3 --method=auto --format=system --file=/home/user/requirements.txt
 ```
 ### Create Project from NPM Packages, collected by shell command inside CLI App
 CLI App call shell globally from root path and done npm list --json command with postprocessing.
@@ -224,6 +240,12 @@ Note, that CLI App use PHP composer system format for those data.
 ```sh
 @ surepatch --action=create_project --platform=autotest2 --project=autotest_php_composer_lock --target=php_composer_lock --method=auto --format=system --file=/home/user/composer.lock
 ```
+### Create project from Maven pom.xml file, for example /home/user/pom.xml
+This way, CLI App process Maven pom.xml file with dependencies.
+Note, that CLI App use Maven pom.xml system format for those data.
+```sh
+@ surepatch --action=create_project --platform=autotest2 --project=autotest_maven_pom --target=pom --method=auto --format=system --file=/home/user/pom.xml
+```
 ### Create Project from User defined source file, for example /home/user/user_packages.txt, where packages defined as lines in <name>=<version> format
 Now, you can create some file and fill it with different packages and versions. 
 The type of package and its ownership does not matter.
@@ -260,13 +282,25 @@ In the second case, we get your current set name, and than:
 ```sh
 @ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pip_none.1 --target=pip --method=auto --format=system
 ```
+And for pip3 packages:
+```sh
+@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pip3_none.1 --target=pip3 --method=auto --format=system
+```
 ### Create set from Python PIP packages, collected from shell command, unloaded to file, for example /home/user/pip_freeze_packages.txt
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=os_path.1 --target=pip --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
+@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pip_path.1 --target=pip --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
+```
+And for pip3 packages:
+```sh
+@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pip3_path.1 --target=pip3 --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
 ```
 ### Create set from Python packages from requirements.txt, for example /home/user/requirements.txt
 ```sh
 @ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=req_path.1 --target=req --method=auto --format=system --file=/home/user/requirements.txt
+```
+And for pip3 packages:
+```sh
+@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=req3_path.1 --target=req3 --method=auto --format=system --file=/home/user/requirements.txt
 ```
 ### Create set from NPM packages, collected from shell command (npm list --json) from root dir
 ```sh
@@ -306,13 +340,16 @@ In the second case, we get your current set name, and than:
 ```
 ### Create set from PHP Composer file, for example /home/user/composer.json
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_set_test --set=php_composer_json.1 --target=php_composer_json --method=auto --format=system --file=/home/user/composer.json
+@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=php_composer_json.1 --target=php_composer_json --method=auto --format=system --file=/home/user/composer.json
 ```
 ### Create set from PHP Composer.lock file, for example /home/user/composer.lock
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_set_test --set=php_composer_lock.1 --target=php_composer_lock --method=auto --format=system --file=/home/user/composer.lock
+@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=php_composer_lock.1 --target=php_composer_lock --method=auto --format=system --file=/home/user/composer.lock
 ```
-
+### Create set from Maven pom.xml file, for example /home/user/pom.xml
+```sh
+@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pom.1 --target=pom --method=auto --format=system --file=/home/user/pom.xml
+```
 ### Create set from User packages, formatted as name=version
 ```sh
 @ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=user_path.1  --method=auto --format=user --file=c:\user_packages.txt

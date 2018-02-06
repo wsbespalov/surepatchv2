@@ -407,7 +407,7 @@ class ComponentsHelper(object):
                 print_line('Collect {0} raw components'.format(len(api_data['components'])))
                 return True
 
-        print('Gemfile packages loading error.')
+        print('PHP Composer packages loading error.')
         return False
 
     def get_components_php_composer_lock_system_path(self, api_data):
@@ -421,12 +421,65 @@ class ComponentsHelper(object):
                 print_line('Collect {0} raw components'.format(len(api_data['components'])))
                 return True
                 
-        print('Gemfile packages loading error.')
+        print('PHP Composer.lock packages loading error.')
+        return False
+
+    def get_components_maven_pom(self, api_data):
+        # type: (dict) -> bool
+        """
+        Get dependencies from Maven pom.xml file.
+        :param api_data: api data set
+        :return: result
+        """
+        if self.load_maven_pom_components_path(api_data=api_data):
+            print_line('Collect {0} raw components'.format(len(api_data['components'])))
+            return True
+
+        print('Maven pom.xml file packages loading error.')
         return False
 
     # -------------------------------------------------------------------------
     # Loaders
     # -------------------------------------------------------------------------
+
+    def load_maven_pom_components_path(self, api_data):
+        # type: (dict) -> bool
+        """
+        Load packages from Maven pom.xml file.
+        :param api_data: api data set
+        :return: result
+        """
+        filename = api_data['file']
+        components = []
+
+        if os.path.exists(filename):
+            enc = self.define_file_encoding(filename=filename)
+
+            if enc == 'undefined':
+                print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
+                return False
+
+            try:
+                with open(api_data['file'], 'r') as fd:
+                    doc = xmltodict.parse(fd.read())
+
+                if 'project' in doc:
+                    project = doc['project']
+                    if 'dependencies' in project:
+                        dependencies = project['dependencies']
+                        for dependency in dependencies['dependency']:
+                            jd = json.dumps(dependency)
+                            print(jd)
+                            components.append({"name": jd["groupId"], "version": jd["version"]})
+                api_data['components'] = components
+                return True
+
+            except Exception as e:
+                print_line('File read exception {0}.'.format(e))
+                return False
+
+        print_line('File {0} does not exists.'.format(filename))
+        return False
 
     def load_windows_10_packages_from_shell(self, api_data):
         # type: (dict) -> bool
