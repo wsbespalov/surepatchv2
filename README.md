@@ -393,4 +393,4 @@ And for pip3 packages:
 
 # License
 ...
-# (c) WebSailors, 2018.
+# (c) BrainBankers, 2018.
