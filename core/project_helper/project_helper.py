@@ -245,7 +245,7 @@ class ProjectHelper(object):
         :param api_data: api data set
         :return: result
         """
-        if self.components_helper.get_components_any_manual_user_none():
+        if self.components_helper.get_components_any_manual_user_none(api_data=api_data):
             return self.web_api.send_create_new_project_request(api_data=api_data)
 
         return False

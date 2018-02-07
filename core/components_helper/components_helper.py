@@ -377,7 +377,7 @@ class ComponentsHelper(object):
         print_line('File {0} not found.'.format(filename))
         return False
 
-    def get_components_any_manual_user_none(api_data):
+    def get_components_any_manual_user_none(self, api_data):
         # type: (dict) -> bool
         """
         Get packages from console.

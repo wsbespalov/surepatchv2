@@ -16,6 +16,7 @@ python3 surepatch.py --action=create_project --platform=autotest_mac --project=a
 
 echo "5. create project autotest_pip_none - PIP Packages, collected from shell command"
 python3 surepatch.py --action=create_project --platform=autotest_mac --project=autotest_pip_none --target=pip --method=auto --format=system
+python3 surepatch.py --action=create_project --platform=autotest_mac --project=autotest_pip3_none --target=pip3 --method=auto --format=system
 
 echo "6. create project autotest_pip_path - PIP packages, collected from shell command, unloaded to file"
 python3 surepatch.py --action=create_project --platform=autotest_mac --project=autotest_pip_path --target=pip --method=auto --format=system --file=/pip_freeze_packages.txt
@@ -62,76 +63,88 @@ python3 surepatch.py --action=create_project --platform=autotest_mac --project=a
 echo "20. create project autotest_php_composer_lock - PHP Composer.lock file"
 python3 surepatch.py --action=create_project --platform=autotest_mac --project=autotest_php_composer_lock --target=php_composer_lock --method=auto --format=system --file=/composer1.lock
 
+echo "21. create project autotest_pom_xml - Maven pom.xml file"
+python3 surepatch.py --action=create_project --platform=autotest_mac --project=autotest_pom_xml --target=pom --method=auto --format=system --file=/pom.xml
+
+echo "22. create project autotest_yarm_lock - yarn.lock file"
+python3 surepatch.py --action=create_project --platform=autotest_mac --project=autotest_yarm_lock --target=yarn --method=auto --format=system --file=/yarn.lock
+
 
 echo "--. create project for set test"
 python3 surepatch.py --action=create_project --platform=autotest_mac --project=autotest_set_test --method=auto --format=user --file=/user_packages.txt
 
 
-echo "21. create set - OS packages, collected by shell command"
+echo "23. create set - OS packages, collected by shell command"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=os_none.1 --target=os --method=auto --format=system
 
-echo "22. create set autotest_os_path - OS packages, collected from shell command, unloaded to file"
+echo "24. create set autotest_os_path - OS packages, collected from shell command, unloaded to file"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=os_path.1 --target=os --method=auto --format=system --file=/macos_packages.txt
 
-echo "23. create set autotest_pip_none - PIP Packages, collected from shell command"
+echo "25. create set autotest_pip_none - PIP Packages, collected from shell command"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=pip_none.1 --target=pip --method=auto --format=system
+python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=pip3_none.1 --target=pip3 --method=auto --format=system
 
-echo "24. create set autotest_pip_path - PIP packages, collected from shell command, unloaded to file"
+echo "26. create set autotest_pip_path - PIP packages, collected from shell command, unloaded to file"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=os_path.1 --target=pip --method=auto --format=system --file=/pip_freeze_packages.txt
 
-echo "25. create set autotest_req_path - Python packages from requirements.txt"
+echo "27. create set autotest_req_path - Python packages from requirements.txt"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=req_path.1 --target=req --method=auto --format=system --file=/requirements.txt
 
-echo "26. create set autotest_npm_none - NPM packages, collected from shell command (npm list --json) from root dir"
+echo "28. create set autotest_npm_none - NPM packages, collected from shell command (npm list --json) from root dir"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=npm_none.1 --target=npm --method=auto --format=system
 
-echo "27. create set autotest_npm_path - NPM packages, collected from shell command (npm list --json) from root dir, unloaded to file"
+echo "29. create set autotest_npm_path - NPM packages, collected from shell command (npm list --json) from root dir, unloaded to file"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=npm_path.1 --target=npm --method=auto --format=system --file=/npm.txt
 
-echo "28. create set autotest_local_none - NPM packages, collected from shell command (npm list --json) from local dir"
+echo "30. create set autotest_local_none - NPM packages, collected from shell command (npm list --json) from local dir"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=npm_local_path.1 --target=npm_local --method=auto --format=system --file=/
 
-echo "29. create set autotest_npm_package_lock_path - NPM packages, collected from package-lock.json file"
+echo "31. create set autotest_npm_package_lock_path - NPM packages, collected from package-lock.json file"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=npm_package_json_lock_path.1 --target=package_lock_json --method=auto --format=system --file=/package-lock.json
 
-echo "30. create set autotest_npm_package_json - NPM packages, collected from package.json file"
+echo "32. create set autotest_npm_package_json - NPM packages, collected from package.json file"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=npm_package_json_path.1 --target=package_json --method=auto --format=system --file=/package.json
 
-echo "31. create set autotest_gem_none - Ruby packages, collected from shell command"
+echo "33. create set autotest_gem_none - Ruby packages, collected from shell command"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test  --set=gem_none.1 --target=gem --method=auto --format=system
 
-echo "32. create set autotest_gem_path - Ruby packages, collected from shell commend, unloaded to file"
+echo "34. create set autotest_gem_path - Ruby packages, collected from shell commend, unloaded to file"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=gem_path.1 --target=gem --method=auto --format=system --file=/gem.list
 
-echo "33. create set autotest_gemfile_path - Ruby packages, collected from Gemfile"
+echo "35. create set autotest_gemfile_path - Ruby packages, collected from Gemfile"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=gem_gemfile_path.1 --target=gemfile --method=auto --format=system --file=/Gemfile
 
-echo "34. create set autotest_gemfile_path - Ruby packages, collected from Gemfile.lock"
+echo "36. create set autotest_gemfile_path - Ruby packages, collected from Gemfile.lock"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=gem_gemfile_lock_path.1 --target=gemfile_lock --method=auto --format=system --file=/Gemfile.lock
 
-echo "35. create set autotest_any_user_path - User packages formatted as name=version"
+echo "37. create set autotest_any_user_path - User packages formatted as name=version"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=user_path.1  --method=auto --format=user --file=/user_packages.txt
 
-echo "36. create set autotest_any_user_none - User packages asked from console"
+echo "38. create set autotest_any_user_none - User packages asked from console"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=user_manual.1 --method=manual --format=user
 
-echo "37. create set autotest_php_composer_json - PHP Composer file"
+echo "39. create set autotest_php_composer_json - PHP Composer file"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=php_composer_json.1 --target=php_composer_json --method=auto --format=system --file=/composer1.json
 
-echo "38. create set autotest_php_composer_lock - PHP Composer.lock file"
+echo "40. create set autotest_php_composer_lock - PHP Composer.lock file"
 python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --set=php_composer_lock.1 --target=php_composer_lock --method=auto --format=system --file=/composer1.lock
 
+echo "41. create project autotest_pom_xml - Maven pom.xml file"
+python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --target=pom --method=auto --format=system --file=/pom.xml
 
-echo "39. show platforms"
+echo "42. create project autotest_yarm_lock - yarn.lock file"
+python3 surepatch.py --action=create_set --platform=autotest_mac --project=autotest_set_test --target=yarn --method=auto --format=system --file=/yarn.lock
+
+echo "43. show platforms"
 python3 surepatch.py --action=show_platforms
 
-echo "40. show projects"
+echo "44. show projects"
 python3 surepatch.py --action=show_projects --platform=autotest_mac
 
-echo "41. show set"
+echo "45. show set"
 python3 surepatch.py --action=show_set --platform=autotest_mac --project=autotest_set_test
 
-echo "42. show issues"
+echo "46. show issues"
 python3 surepatch.py --action=show_issues --platform=autotest_mac --project=autotest_set_test
 
 echo "complete..."

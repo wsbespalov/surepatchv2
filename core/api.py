@@ -502,6 +502,13 @@ class API(object):
                 api_data['file'] is not None:
             return set_helper.create_set_php_composer_lock_system_path(api_data=api_data)
 
+        # Create set with pom.xml
+        if api_data['target'] == Targets.POM and \
+                api_data['method'] == Methods.AUTO and \
+                api_data['format'] == Formats.SYSTEM and \
+                api_data['file'] is not None:
+            return set_helper.create_set_maven_pom_system_path(api_data=api_data)
+
         # Create set with yarn.lock file {from path}
         if api_data['target'] == Targets.YARN and \
                 api_data['method'] == Methods.AUTO and \

@@ -116,7 +116,7 @@ class SetHelper(object):
         :param api_data:
         :return:
         """
-        if self.components_helper.get_components_pip_auto_system_none():
+        if self.components_helper.get_components_pip_auto_system_none(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
                 print_line("No such platform: {0}".format(api_data['platform']))
@@ -519,9 +519,7 @@ class SetHelper(object):
                 print_line("No such project: {0}".format(api_data['project']))
                 return False
 
-            api_data['project_url'] = \
-            api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']][
-                'url']
+            api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
             return self.web_api.send_create_new_component_set_request(api_data=api_data)
         return False
