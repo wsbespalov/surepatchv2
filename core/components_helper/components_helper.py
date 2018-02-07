@@ -1350,8 +1350,10 @@ class ComponentsHelper(object):
         :param _report: raw packages.
         :return: result
         """
-
-        number_of_line_breaks = api_data['packages'].split('\n')
+        if isinstance(api_data['packages'], list):
+            number_of_line_breaks = api_data['packages']
+        else:
+            number_of_line_breaks = api_data['packages'].split('\n')
         # number_of_line_breaks = api_data['packages']
         new_components = []
         pattern1 = "(\d+[.]\d+[.]?\d*)"

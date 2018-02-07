@@ -559,7 +559,7 @@ class API(object):
 
             if api_data['project'] is None or \
                     api_data['project'] == '':
-                print_line('Empty platform name.')
+                print_line('Empty project name.')
                 return False
 
             project_number = self.web_api.get_project_number_by_name(api_data=api_data)
@@ -720,7 +720,7 @@ class API(object):
         :return: result
         """
 
-        file_name = '.surepatch_mac.yaml'
+        file_name = '.surepatch.yaml'
         file_path = os.path.expanduser('~')
         full_path = os.path.join(file_path, file_name)
 
@@ -751,7 +751,7 @@ class API(object):
         :return: result
         """
 
-        file_name = '.surepatch_mac.yaml'
+        file_name = '.surepatch.yaml'
         file_path = os.path.expanduser('~')
         full_path = os.path.join(file_path, file_name)
 

@@ -10,6 +10,7 @@ import argparse
 
 from core.api import API
 from core.api import OSs
+from core.api import Actions
 from core.interface import print_line
 from core.interface import print_logo
 
@@ -221,11 +222,26 @@ def main():
         else:
             api_data['login_method'] = 'config_file'
 
-    if api.run_action(api_data=api_data):
-        print_line('Complete successfully.')
-        return 0
-    print_line('Complete with errors.')
-    return 1
+    result_run_parameters = targets = files = projects = []
+
+    # First - if we run in single mode
+    if api_data['target'] is not None:
+        targets = api_data['target'].replace(' ', '').replace('[', '').replace(']', '').split(',')
+
+    else:
+        targets = [None]
+
+    if len(result_run_parameters) != 0:
+        for run_parameter in result_run_parameters:
+            api_data['target'] = run_parameter['target']
+            api_data['file'] = run_parameter['file']
+            api_data['project'] = run_parameter['project']
+            api_data['set'] = run_parameter['set']
+            if api.run_action(api_data=api_data):
+                print_line('Complete successfully with target {0}'.format(api_data['target']))
+            else:
+                print_line('Complete with errors with target {0}'.format(api_data['target']))
+    return 0
 
 
 if __name__ == '__main__':
