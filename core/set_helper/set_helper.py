@@ -436,7 +436,7 @@ class SetHelper(object):
         :param api_data: api data set
         :return: result
         """
-        if self.components_helper.get_components_any_manual_user_none():
+        if self.components_helper.get_components_any_manual_user_none(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
                 print_line("No such platform: {0}".format(api_data['platform']))

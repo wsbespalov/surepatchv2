@@ -720,7 +720,7 @@ class API(object):
         :return: result
         """
 
-        file_name = '.surepatch.yaml'
+        file_name = '.surepatch_mac.yaml'
         file_path = os.path.expanduser('~')
         full_path = os.path.join(file_path, file_name)
 
@@ -751,7 +751,7 @@ class API(object):
         :return: result
         """
 
-        file_name = '.surepatch.yaml'
+        file_name = '.surepatch_mac.yaml'
         file_path = os.path.expanduser('~')
         full_path = os.path.join(file_path, file_name)
 
