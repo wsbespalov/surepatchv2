@@ -3,3 +3,4 @@ PyYaml
 requests
 pip
 xmltodict
+pyinstaller

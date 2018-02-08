@@ -5,4 +5,10 @@ RUN pip3 install --upgrade pip
 COPY . /surepatch
 WORKDIR /surepatch
 RUN pip3 install -r requirements.txt
+WORKDIR /surepatch/scripts
+RUN bash build_docker_ubuntu.sh
+WORKDIR /surepatch/dist
+# SUREPATCH COMMANDS
+RUN ./surepatch --team=dima --user=ws.bespalov@gmail.com --password=Test123! --action=show_platforms
+#
 CMD ["/bin/bash"]
