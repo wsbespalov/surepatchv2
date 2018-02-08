@@ -222,10 +222,29 @@ def main():
         else:
             api_data['login_method'] = 'config_file'
 
+    targets = api_data['target'].replace('[', '').replace(']', '').replace(' ', '').split(',')
+    if len(targets) == 0:
+        print_line('Wrong number of targets.')
+        return 1
+    api_data['target'] = targets
+    files = api_data['file'].replace('[', '').replace(']', '').replace(' ', '').split(',')
+    if len(targets) != len(files):
+        print_line('Number of targets not equals number of files. For targets, that do not require files - use "no".')
+        print_line('For example: ... --target[os,req] --file=no,/home/user/project/requirements.txt.')
+        return 1
+    api_data['file'] = []
+    for file in files:
+        if file == 'no':
+            api_data['file'].append(None)
+        else:
+            api_data['file'].append(file)
+    api_data['components'] = []
+
+
     if api.run_action(api_data=api_data):
-        print_line('Complete successfully with target {0}'.format(api_data['target']))
+        print_line('Complete successfully with targets {0}'.format(api_data['target']))
     else:
-        print_line('Complete with errors with target {0}'.format(api_data['target']))
+        print_line('Complete with errors with targets {0}'.format(api_data['target']))
     return 0
 
 

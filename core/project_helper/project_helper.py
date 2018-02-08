@@ -42,19 +42,24 @@ class ProjectHelper(object):
 
     # Target = OS packages
 
-    def create_project_os_auto_system_none(self, api_data):
+    def collect_data_for_project_os_auto_system_none(self, api_data):
         # type: (dict) -> bool        
         """
         Create project with OS packages, collected by shell command.
         :param api_data: api data set
         :return: result, modify api_data
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_os_auto_system_none(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
         
         return False
 
-    def create_project_os_auto_system_path(self, api_data):
+    def collect_data_for_project_os_auto_system_path(self, api_data):
         # type: (dict) -> bool        
         """
         Create project with OS packages, collected from shell command
@@ -62,27 +67,36 @@ class ProjectHelper(object):
         :param api_data: api data set
         :return: result, modify api_data
         """
-
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_os_auto_system_path(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
     # Target = Python packages
 
-    def create_project_pip_auto_system_none(self, api_data):
+    def collect_data_for_project_pip_auto_system_none(self, api_data):
         # type: (dict) -> bool        
         """
         Create project with Python PIP packages, collected from shell command.
         :param api_data: api data set
         :return: result, modify api_data
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_pip_auto_system_none(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_pip_auto_system_path(self, api_data):
+    def collect_data_for_data_for_project_pip_auto_system_path(self, api_data):
         # type: (dict) -> bool        
         """
         Create project with Python PIP packages, collected from shell command
@@ -90,26 +104,36 @@ class ProjectHelper(object):
         :param api_data: api data set
         :return: result, modify api_data
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_pip_auto_system_path(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
         
         return False
 
-    def create_project_requirements_auto_system_path(self, api_data):
+    def collect_data_for_project_requirements_auto_system_path(self, api_data):
         # type: (dict) -> bool        
         """
         Create project with Python requirements.txt file, defined in path.
         :param api_data: api data set
         :return: result, modify api_data
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_requirements_auto_system_path(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
     # Target = NodeJS NPM packages
 
-    def create_project_npm_auto_system_none(self, api_data):
+    def collect_data_for_project_npm_auto_system_none(self, api_data):
         # type: (dict) -> bool        
         """
         Create project with NPM packages, collected from shell command (nmp list --json).
@@ -117,12 +141,17 @@ class ProjectHelper(object):
         :param api_data: api data set
         :return: result, modify api_data
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_npm_auto_system_none(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_npm_auto_system_path(self, api_data):
+    def collect_data_for_project_npm_auto_system_path(self, api_data):
         # type: (dict) -> bool        
         """
         Create project with NPM packages, collected from shell command (npm list --json)
@@ -130,12 +159,17 @@ class ProjectHelper(object):
         :param api_data: api data set
         :return: result, modify api_data
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_npm_auto_system_path(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_npm_local_auto_system_none(self, api_data):
+    def collect_data_for_project_npm_local_auto_system_none(self, api_data):
         # type: (dict) -> bool                
         """
         Create project with NPM packages, collected from shell command (npm list --json).
@@ -143,50 +177,70 @@ class ProjectHelper(object):
         :param api_data: api data set
         :return: result, modify api_data
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_npm_local_auto_system_none(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_package_lock_json_auto_system_path(self, api_data):
+    def collect_data_for_project_package_lock_json_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create project with NPM packages from package-lock.json, defined by --file parameter.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_npm_lock_auto_system_path(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_package_json_auto_system_path(self, api_data):
+    def collect_data_for_project_package_json_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create project with NPM packages from package.json, defined by --file parameter.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_package_json_auto_system_path(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
     # Target = Ruby packages
 
-    def create_project_gem_auto_system_none(self, api_data):
+    def collect_data_for_project_gem_auto_system_none(self, api_data):
         # type: (dict) -> bool
         """
         Create project with Ruby packages, collected from shell command.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_gem_auto_system_none(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_gem_auto_system_path(self, api_data):
+    def collect_data_for_project_gem_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create project with Ruby packages, collected from shell command and
@@ -194,12 +248,17 @@ class ProjectHelper(object):
         :param api_data:
         :return:
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_gem_auto_system_path(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_gemfile_auto_system_path(self, api_data):
+    def collect_data_for_project_gemfile_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create project with Ruby packages, collected from Gemfile, defined
@@ -207,12 +266,17 @@ class ProjectHelper(object):
         :param api_data:
         :return:
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_gemfile_auto_system_path(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_gemfile_lock_auto_system_path(self, api_data):
+    def collect_data_for_project_gemfile_lock_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create project with Ruby packages, collected from Gemfile.lock file,
@@ -220,12 +284,17 @@ class ProjectHelper(object):
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_gemfile_lock_auto_system_path(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_any_auto_user_path(self, api_data):
+    def collect_data_for_project_any_auto_user_path(self, api_data):
         # type: (dict) -> bool
         """
         Create project with different packages, collected in file,
@@ -233,68 +302,98 @@ class ProjectHelper(object):
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_any_auto_user_path(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_any_manual_user_none(self, api_data):
+    def collect_data_for_project_any_manual_user_none(self, api_data):
         # type: (dict) -> bool
         """
         Create project with different packages, asked in interactive mode.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_any_manual_user_none(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_php_composer_json_system_path(self, api_data):
+    def collect_data_for_project_php_composer_json_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create project with PHP packages from Composer.json file.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_php_composer_json_system_path(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_php_composer_lock_system_path(self, api_data):
+    def collect_data_for_project_php_composer_lock_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create project with PHP packages from Composer.json file.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_php_composer_lock_system_path(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_maven_pom_system_path(self, api_data):
+    def collect_data_for_project_maven_pom_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create project with Maven pom.xml file
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_maven_pom(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_project_yarn_lock_system_path(self, api_data):
+    def collect_data_for_project_yarn_lock_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create project with yarn.lock file
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_yarn_lock(api_data=api_data):
-            return self.web_api.send_create_new_project_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
