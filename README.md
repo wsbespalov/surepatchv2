@@ -16,7 +16,7 @@ This application is designed to work with the Surepatch Project without using th
 - Packages Management:
     - Collect Packages from Windows, MacOS, Linux Operation Systems
     - Collect Packages from Python PIP and requirements.txt sources
-    - Collect Packages from NPM, NodeJS package.json and package-lock.json sources
+    - Collect Packages from NPM, yarn, NodeJS package.json and package-lock.json sources
     - Collect Packages from Ruby, Gemfile and Gemfile.lock sources
     - Collect Packages from PHP, composer.json and composer.lock files
     - Collect Packages from Maven pom.xml files
