@@ -58,13 +58,15 @@ class SetHelper(object):
 
     # Target = OS packages
 
-    def create_set_os_auto_system_none(self, api_data):
+    def collect_data_for_set_os_auto_system_none(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with OS packages, collected by shell command.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_os_auto_system_none(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -78,11 +80,14 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
         
         return False
 
-    def create_set_os_auto_system_path(self, api_data):
+    def collect_data_for_set_os_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with OS packages, collected from shell command
@@ -90,6 +95,8 @@ class SetHelper(object):
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_os_auto_system_path(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -103,19 +110,24 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
     # Target = Python packages
 
-    def create_set_pip_auto_system_none(self, api_data):
+    def collect_data_for_set_pip_auto_system_none(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with Python PIP packages, collected from shell command.
         :param api_data:
         :return:
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_pip_auto_system_none(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -129,11 +141,14 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_pip_auto_system_path(self, api_data):
+    def collect_data_for_set_pip_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with Python PIP packages, collected from shell command
@@ -141,6 +156,8 @@ class SetHelper(object):
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_pip_auto_system_path(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -154,17 +171,22 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_requirements_auto_system_path(self, api_data):
+    def collect_data_for_set_requirements_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with Python requirements.txt file, defined in path.
         :param api_data: spi data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_requirements_auto_system_path(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -178,11 +200,14 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_npm_auto_system_none(self, api_data):
+    def collect_data_for_set_npm_auto_system_none(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with NPM packages, collected from shell command (nmp list --json).
@@ -190,6 +215,8 @@ class SetHelper(object):
         :param api_data:
         :return:
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_npm_auto_system_none(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -203,11 +230,14 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_npm_local_auto_system_path(self, api_data):
+    def collect_data_for_set_npm_local_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with NPM packages, collected from shell command (npm list --json).
@@ -215,6 +245,8 @@ class SetHelper(object):
         :param api_data:
         :return:
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_npm_local_auto_system_none(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -228,11 +260,14 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
         
         return False
 
-    def create_set_npm_auto_system_path(self, api_data):
+    def collect_data_for_set_npm_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with NPM packages, collected from shell command (npm list --json)
@@ -240,6 +275,8 @@ class SetHelper(object):
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_npm_auto_system_path(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -253,17 +290,22 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_package_json_auto_system_path(self, api_data):
+    def collect_data_for_set_package_json_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with NPM packages from package.json, defined by --file parameter.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_package_json_auto_system_path(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -277,17 +319,22 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_package_lock_json_auto_system_path(self, api_data):
+    def collect_data_for_set_package_lock_json_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with NPM packages from package-lock.json, defined by --file parameter.
         :param api_data:
         :return:
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_npm_lock_auto_system_path(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -301,17 +348,22 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
         
         return False
 
-    def create_set_gem_auto_system_none(self, api_data):
+    def collect_data_for_set_gem_auto_system_none(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with Ruby packages, collected from shell command.
         :param api_data:
         :return:
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_gem_auto_system_none(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -325,11 +377,14 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_gem_auto_system_path(self, api_data):
+    def collect_data_for_set_gem_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with Ruby packages, collected from shell command and
@@ -337,6 +392,8 @@ class SetHelper(object):
         :param api_data:
         :return:
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_gem_auto_system_path(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -350,11 +407,14 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_gemfile_auto_system_path(self, api_data):
+    def collect_data_for_set_gemfile_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with Ruby packages, collected from Gemfile, defined
@@ -362,6 +422,8 @@ class SetHelper(object):
         :param api_data:
         :return:
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_gemfile_auto_system_path(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -375,11 +437,14 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_gemfile_lock_auto_system_path(self, api_data):
+    def collect_data_for_set_gemfile_lock_auto_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with Ruby packages, collected from Gemfile.lock file,
@@ -387,6 +452,8 @@ class SetHelper(object):
         :param api_data:
         :return:
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_gemfile_lock_auto_system_path(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -400,11 +467,14 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_any_auto_user_path(self, api_data):
+    def collect_data_for_set_any_auto_user_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with different packages, collected in file,
@@ -412,6 +482,8 @@ class SetHelper(object):
         :param api_data:
         :return:
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_any_auto_user_path(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -425,17 +497,22 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_any_manual_user_none(self, api_data):
+    def collect_data_for_set_any_manual_user_none(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with different packages, asked in interactive mode.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_any_manual_user_none(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -449,17 +526,22 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_php_composer_json_system_path(self, api_data):
+    def collect_data_for_set_php_composer_json_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with packages from PHP Composer.json file.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_php_composer_json_system_path(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -473,17 +555,22 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_php_composer_lock_system_path(self, api_data):
+    def collect_data_for_set_php_composer_lock_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with packages from PHP Composer.lock file.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_php_composer_lock_system_path(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -497,17 +584,22 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
 
         return False
 
-    def create_set_maven_pom_system_path(self, api_data):
+    def collect_data_for_set_maven_pom_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with packages from Maven pom.xml file.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_maven_pom(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -521,16 +613,21 @@ class SetHelper(object):
 
             api_data['project_url'] = api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']]['url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
         return False
 
-    def create_set_yarn_lock_system_path(self, api_data):
+    def collect_data_for_set_yarn_lock_system_path(self, api_data):
         # type: (dict) -> bool
         """
         Create Component Set with packages from yarn.lock file.
         :param api_data: api data set
         :return: result
         """
+        components = api_data['components']
+        api_data['components'] = []
         if self.components_helper.get_components_yarn_lock(api_data=api_data):
             api_data['platform_number'] = self.web_api.get_platform_number_by_name(api_data=api_data)
             if api_data['platform_number'] == -1:
@@ -546,7 +643,10 @@ class SetHelper(object):
             api_data['organization']['platforms'][api_data['platform_number']]['projects'][api_data['project_number']][
                 'url']
 
-            return self.web_api.send_create_new_component_set_request(api_data=api_data)
+            for component in api_data['components']:
+                components.append(component)
+            api_data['components'] = components
+            return True
         return False
 
     @staticmethod
