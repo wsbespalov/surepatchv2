@@ -263,6 +263,7 @@ class ComponentsHelper(object):
         if self.load_npm_packages(api_data=api_data, local=False):
             api_data['packages'] = raw_npm_components
             if self.parse_npm_packages(api_data=api_data):
+            # if self.parse_npm_lock_packages(api_data=api_data):
                 print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
 
@@ -279,6 +280,7 @@ class ComponentsHelper(object):
         if self.load_npm_packages(api_data=api_data, local=True):
             api_data['packages'] = raw_npm_components
             if self.parse_npm_packages(api_data=api_data):
+            # if self.parse_npm_lock_packages(api_data=api_data):
                 print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
 
@@ -950,7 +952,7 @@ class ComponentsHelper(object):
             print_line('Cant create temp file, get an exception: {0}.'.format(e))
             return False
 
-        cmd = "npm list --json > {0}".format(full_path)
+
 
         if local:
             try:
@@ -968,44 +970,51 @@ class ComponentsHelper(object):
 
         try:
             if api_data['os_type'] == OSs.WINDOWS:
+                cmd = "npm list --json > {0}".format(full_path)
                 proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
                 output, error = proc.communicate()
-                proc.kill()
-        
+
                 if error:
                     print_line('Powershell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return False
+
+                try:
+                    enc = self.define_file_encoding(full_path)
+                    if enc == 'undefined':
+                        print_line('An error with encoding occured in temp file.')
+                        return False
+
+                    with open(full_path, 'r') as cf:
+                        data = json.load(cf)
+                        walkdict(data)
+                        return True
+
+                except Exception as e:
+                    print_line('File read exception: {0}'.format(e))
+                    return False
+
+                finally:
+                    if os.path.isfile(full_path):
+                        os.remove(full_path)
 
             elif api_data['os_type'] == OSs.MACOS or \
                     api_data['os_type'] == OSs.UBUNTU or \
                     api_data['os_type'] == OSs.DEBIAN or \
                     api_data['os_type'] == OSs.FEDORA:
-                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                cmd = "npm list --json"
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output, error = proc.communicate()
-                # proc.kill()
 
-                if error:
-                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return False
+                if output:
+                    if output == '{}\n':
+                        raw_npm_components = []
+                        return True
+                    else:
+                        data = json.loads(output)
+                        walkdict(data)
+                        return True
 
-            try:
-                enc = self.define_file_encoding(full_path)
-                if enc == 'undefined':
-                    print_line('An error with encoding occured in temp file.')
-                    return False
-
-                with open(full_path, 'r') as cf:
-                    data = json.load(cf)
-                    walkdict(data)
-                    return True
-
-            except Exception as e:
-                print_line('File read exception: {0}'.format(e))
                 return False
-
-            finally:
-                if os.path.isfile(full_path):
-                    os.remove(full_path)
 
         except OSError as os_error:
             print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
@@ -1491,80 +1500,32 @@ class ComponentsHelper(object):
         :param comp: raw packages.
         :return: result
         """
-        comp = api_data['packages']
-        components2 = []
-        for c in comp:
-            if c["name"] == "from":
-                if '@' in c['version']:
-                    p = c["version"].split('@')
-                    p[1] = p[1].replace('~', '')
-                    components2.append({"name": p[0], "version": p[1]})
-                else:
-                    name = c["version"]
-                    cmd = "npm view {0} version".format(name)
-                    try:
-                        if api_data['os_type'] == OSs.WINDOWS:
-                            proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
-                            version, error = proc.communicate()
-                            version = version.decode("utf-8").replace('\n', '')
-                            if error:
-                                print_line('Shell command throw {0} code and {1} error message.'
-                                           .format(proc.returncode, error.strip()))
+        npm_components = api_data['packages']
+        components = []
+
+        for comp in npm_components:
+            if 'from' in comp['name']:
+                if '@' in comp['version']:
+                    name = comp['version'].split('@')[0]
+                    version = comp['version'].split('@')[1]
+                    myversion = version
+                    if version == 'latest':
+                        cmd = 'npm view {0} version'.format(name)
+                        try:
+                            if api_data['os_type'] == OSs.WINDOWS:
+                                proc = subprocess.Popen(["powershell", cmd], shell=True, stdout=subprocess.PIPE)
+                                version, error = proc.communicate()
                             else:
-                                components2.append({"name": name, "version": version})
-                        elif api_data['os_type'] == OSs.MACOS:
-                            proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                            version, error = proc.communicate()
-                            version = version.decode("utf-8").replace('\n', '')
-                            if error:
-                                print_line('Shell command throw {0} code and {1} error message.'
-                                           .format(proc.returncode, error.strip()))
-                            else:
-                                components2.append({"name": name, "version": version})
-                        elif api_data['os_type'] == OSs.DEBIAN:
-                            proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                            version, error = proc.communicate()
-                            version = version.decode("utf-8").replace('\n', '')
-                            if error:
-                                print_line('Shell command throw {0} code and {1} error message.'
-                                           .format(proc.returncode, error.strip()))
-                            else:
-                                components2.append({"name": name, "version": version})
-                        elif api_data['os_type'] == OSs.UBUNTU:
-                            proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                            version, error = proc.communicate()
-                            version = version.decode("utf-8").replace('\n', '')
-                            if error:
-                                print_line('Shell command throw {0} code and {1} error message.'
-                                           .format(proc.returncode, error.strip()))
-                            else:
-                                components2.append({"name": name, "version": version})
-                        elif api_data['os_type'] == OSs.FEDORA:
-                            proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                            version, error = proc.communicate()
-                            version = version.decode("utf-8").replace('\n', '')
-                            if error:
-                                print_line('Shell command throw {0} code and {1} error message.'
-                                           .format(proc.returncode, error.strip()))
-                            else:
-                                components2.append({"name": name, "version": version})
-                        elif api_data['os_type'] == OSs.CENTOS:
-                            proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                            version, error = proc.communicate()
-                            version = version.decode("utf-8").replace('\n', '')
-                            if error:
-                                print_line('Shell command throw {0} code and {1} error message.'
-                                           .format(proc.returncode, error.strip()))
-                            else:
-                                components2.append({"name": name, "version": version})
-                    except OSError as os_error:
-                        print_line('Shell command throw errno: {0}, strerror: {1}.'
-                                   .format(os_error.errno, os_error.strerror))
-                        print_line('and filename: {0}.'.format(os_error.filename))
-                        continue
-                    except:
-                        continue
-        api_data['components'] = components2
+                                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
+                                version, error = proc.communicate()
+                            if version:
+                                myversion = version.decode('utf-8').replace('\n', '')
+                        except Exception as e:
+                            print_line('Get an exception {0} for npm component {1} version info.'.format(e, name))
+                            myversion = 'latest'
+                    components.append({'name': name, 'version': myversion})
+
+        api_data['components'] = components
         return True
 
     @staticmethod

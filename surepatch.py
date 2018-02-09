@@ -10,7 +10,8 @@ import argparse
 
 from core.api import API
 from core.api import OSs
-from core.api import Actions
+from core.api import Methods
+from core.api import Formats
 from core.interface import print_line
 from core.interface import print_logo
 
@@ -222,6 +223,18 @@ def main():
         else:
             api_data['login_method'] = 'config_file'
 
+    if api_data['target'] is None:
+        api_data['target'] = ''
+
+    if api_data['file'] is None:
+        api_data['file'] = 'no'
+
+    if api_data['method'] is None:
+        api_data['method'] = Methods.AUTO
+
+    if api_data['format'] is None:
+        api_data['format'] = Formats.SYSTEM
+
     targets = api_data['target'].replace('[', '').replace(']', '').replace(' ', '').split(',')
     if len(targets) == 0:
         print_line('Wrong number of targets.')
@@ -240,11 +253,11 @@ def main():
             api_data['file'].append(file)
     api_data['components'] = []
 
-
     if api.run_action(api_data=api_data):
-        print_line('Complete successfully with targets {0}'.format(api_data['target']))
+        print_line('Complete successfully with targets {0}'.format(targets))
+        print_line('Process {0} components'.format(len(api_data['components'])))
     else:
-        print_line('Complete with errors with targets {0}'.format(api_data['target']))
+        print_line('Complete with errors with targets {0}'.format(targets))
     return 0
 
 

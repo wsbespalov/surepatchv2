@@ -161,207 +161,213 @@ class API(object):
 
         # For loop -> for targets. and than, send web request
 
-        for i in range(0, len(api_data['target'])):
+        targets = api_data['target']
+        files = api_data['file']
+
+        for i in range(0, len(targets)):
             # Select variant of CREATE Project action
 
+            api_data['target'] = targets[i]
+            api_data['file'] = files[i]
+
             # Create new project with OS packages {from shell request}
-            if api_data['target'][i] == Targets.OS and \
+            if api_data['target'] == Targets.OS and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is None:
+                    api_data['file'] is None:
                 if not project_helper.collect_data_for_project_os_auto_system_none(api_data=api_data):
                     return False
 
             # Create new project with OS packages from shell request unloading file {from path}
-            if api_data['target'][i] == Targets.OS and \
+            if api_data['target'] == Targets.OS and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_os_auto_system_path(api_data=api_data):
                     return False
 
             # Create new project with PIP packages {from shell request}
-            if api_data['target'][i] == Targets.PIP and \
+            if api_data['target'] == Targets.PIP and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is None:
+                    api_data['file'] is None:
                 if not project_helper.collect_data_for_project_pip_auto_system_none(api_data=api_data):
                     return False
 
-            if api_data['target'][i] == Targets.PIP3 and \
+            if api_data['target'] == Targets.PIP3 and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is None:
+                    api_data['file'] is None:
                 if not project_helper.collect_data_for_project_pip_auto_system_none(api_data=api_data):
                     return False
 
             # Create new project with PIP from file {from path}
-            if api_data['target'][i] == Targets.PIP and \
+            if api_data['target'] == Targets.PIP and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_data_for_project_pip_auto_system_path(api_data=api_data):
                     return False
 
-            if api_data['target'][i] == Targets.PIP3 and \
+            if api_data['target'] == Targets.PIP3 and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_data_for_project_pip_auto_system_path(api_data=api_data):
                     return False
 
             # Create new project with PIP requirements.txt {from path}
-            if api_data['target'][i] == Targets.REQ and \
+            if api_data['target'] == Targets.REQ and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_requirements_auto_system_path(api_data=api_data):
                     return False
 
-            if api_data['target'][i] == Targets.REQ3 and \
+            if api_data['target'] == Targets.REQ3 and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_requirements_auto_system_path(api_data=api_data):
                     return False
 
-            if api_data['target'][i] == Targets.REQUIREMENTS and \
+            if api_data['target'] == Targets.REQUIREMENTS and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_requirements_auto_system_path(api_data=api_data):
                     return False
 
-            if api_data['target'][i] == Targets.REQUIREMENTS3 and \
+            if api_data['target'] == Targets.REQUIREMENTS3 and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_requirements_auto_system_path(api_data=api_data):
                     return False
 
             # Create new project with NPM packages {from shell request} - global
-            if api_data['target'][i] == Targets.NPM and \
+            if api_data['target'] == Targets.NPM and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is None:
+                    api_data['file'] is None:
                 if not project_helper.collect_data_for_project_npm_auto_system_none(api_data=api_data):
                     return False
 
             # Create new project with NPM packages {from shell request} - local
-            if api_data['target'][i] == Targets.NPM_LOCAL and \
+            if api_data['target'] == Targets.NPM_LOCAL and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_npm_local_auto_system_none(api_data=api_data):
                     return False
 
             # Create new project with NPM packages {from file}
-            if api_data['target'][i] == Targets.NPM and \
+            if api_data['target'] == Targets.NPM and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_npm_auto_system_path(api_data=api_data):
                     return False
 
             # Create new project with NPM package.json file {from path}
-            if api_data['target'][i] == Targets.PACKAGE_JSON and \
+            if api_data['target'] == Targets.PACKAGE_JSON and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_package_json_auto_system_path(api_data=api_data):
                     return False
 
             # Create new project with NPM package_lock.json file {from path}
-            if api_data['target'][i] == Targets.PACKAGE_LOCK_JSON and \
+            if api_data['target'] == Targets.PACKAGE_LOCK_JSON and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_package_lock_json_auto_system_path(api_data=api_data):
                     return False
 
             # Create new project with GEM packages {from shell request}
-            if api_data['target'][i] == Targets.GEM and \
+            if api_data['target'] == Targets.GEM and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is None:
+                    api_data['file'] is None:
                 if not project_helper.collect_data_for_project_gem_auto_system_none(api_data=api_data):
                     return False
 
             # Create new project with GEM packages from shell request unloading file {from path}
-            if api_data['target'][i] == Targets.GEM and \
+            if api_data['target'] == Targets.GEM and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_gem_auto_system_path(api_data=api_data):
                     return False
 
             # Create new project with GEMFILE file {from path}
-            if api_data['target'][i] == Targets.GEMFILE and \
+            if api_data['target'] == Targets.GEMFILE and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_gemfile_auto_system_path(api_data=api_data):
                     return False
 
             # Create new project with GEMFILE.lock file {from path}
-            if api_data['target'][i] == Targets.GEMFILE_LOCK and \
+            if api_data['target'] == Targets.GEMFILE_LOCK and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_gemfile_lock_auto_system_path(api_data=api_data):
                     return False
 
             # Create new project from user format file {from path}
             if api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.USER and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_any_auto_user_path(api_data=api_data):
                     return False
 
             # Create new project from interactive mode
             if api_data['method'] == Methods.MANUAL and \
                     api_data['format'] == Formats.USER and \
-                    api_data['file'][i] is None:
+                    api_data['file'] is None:
                 if not project_helper.collect_data_for_project_any_manual_user_none(api_data=api_data):
                     return False
 
             # Create project with PHP Composer.json file {from path}
-            if api_data['target'][i] == Targets.PHP_COMPOSER_JSON and \
+            if api_data['target'] == Targets.PHP_COMPOSER_JSON and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_php_composer_json_system_path(api_data=api_data):
                     return False
 
             # Create project with PHP Composer.lock file {from path}
-            if api_data['target'][i] == Targets.PHP_COMPOSER_LOCK and \
+            if api_data['target'] == Targets.PHP_COMPOSER_LOCK and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_php_composer_lock_system_path(api_data=api_data):
                     return False
 
             # Create project with Maven pom.xml file {from path}
-            if api_data['target'][i] == Targets.POM and \
+            if api_data['target'] == Targets.POM and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_maven_pom_system_path(api_data=api_data):
                     return False
 
             # Create project with yarn.lock file {from path}
-            if api_data['target'][i] == Targets.YARN and \
+            if api_data['target'] == Targets.YARN and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not project_helper.collect_data_for_project_yarn_lock_system_path(api_data=api_data):
                     return False
 
         if len(api_data['components']) > 0:
             return self.web_api.send_create_new_project_request(api_data=api_data)
 
-        print_line('Something wrong with app parameters. Please, look through README.md')
-        return False
+        print_line('Something wrong with app parameters or components list is empty. Please, look through README.md')
+        return True
 
     # -------------------------------------------------------------------------
     # SET
@@ -379,200 +385,206 @@ class API(object):
         if not set_helper.create_set_validate(api_data=api_data):
             return False
 
-        for i in range(0, len(api_data['target'])):
+        targets = api_data['target']
+        files = api_data['file']
+
+        for i in range(0, len(targets)):
+
+            api_data['target'] = targets[i]
+            api_data['file'] = files[i]
 
             # Create new set with OS packages {from shell request}
-            if api_data['target'][i] == Targets.OS and \
+            if api_data['target'] == Targets.OS and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is None:
+                    api_data['file'] is None:
                 if not set_helper.collect_data_for_set_os_auto_system_none(api_data=api_data):
                     return False
 
             # Create set with OS packages from shell request unloading file {from path}
-            if api_data['target'][i] == Targets.OS and \
+            if api_data['target'] == Targets.OS and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_os_auto_system_path(api_data=api_data):
                     return False
 
             # Create set with PIP packages {from shell request}
-            if api_data['target'][i] == Targets.PIP and \
+            if api_data['target'] == Targets.PIP and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is None:
+                    api_data['file'] is None:
                 if not set_helper.collect_data_for_set_pip_auto_system_none(api_data=api_data):
                     return False
 
-            if api_data['target'][i] == Targets.PIP3 and \
+            if api_data['target'] == Targets.PIP3 and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is None:
+                    api_data['file'] is None:
                 if not set_helper.collect_data_for_set_pip_auto_system_none(api_data=api_data):
                     return False
 
             # Create set with PIP from file {from path}
-            if api_data['target'][i] == Targets.PIP and \
+            if api_data['target'] == Targets.PIP and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_pip_auto_system_path(api_data=api_data):
                     return False
 
-            if api_data['target'][i] == Targets.PIP3 and \
+            if api_data['target'] == Targets.PIP3 and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_pip_auto_system_path(api_data=api_data):
                     return False
 
             # Create set with PIP requirements.txt {from path}
-            if api_data['target'][i] == Targets.REQ and \
+            if api_data['target'] == Targets.REQ and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_requirements_auto_system_path(api_data=api_data):
                     return False
 
             # Create set with requirements pip3
-            if api_data['target'][i] == Targets.REQ3 and \
+            if api_data['target'] == Targets.REQ3 and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_requirements_auto_system_path(api_data=api_data):
                     return False
 
             # Create set from requirements file
-            if api_data['target'][i] == Targets.REQUIREMENTS and \
+            if api_data['target'] == Targets.REQUIREMENTS and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_requirements_auto_system_path(api_data=api_data):
                     return False
 
             # Create set from requirements pip3 file
-            if api_data['target'][i] == Targets.REQUIREMENTS3 and \
+            if api_data['target'] == Targets.REQUIREMENTS3 and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_requirements_auto_system_path(api_data=api_data):
                     return False
 
             # Create set with NPM packages {from shell request} - global
-            if api_data['target'][i] == Targets.NPM and \
+            if api_data['target'] == Targets.NPM and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is None:
+                    api_data['file'] is None:
                 if not set_helper.collect_data_for_set_npm_auto_system_none(api_data=api_data):
                     return False
 
             # Create set with NPM packages {from shell request} - local
-            if api_data['target'][i] == Targets.NPM_LOCAL and \
+            if api_data['target'] == Targets.NPM_LOCAL and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_npm_local_auto_system_path(api_data=api_data):
                     return False
 
             # Create set with NPM packages {from file}
-            if api_data['target'][i] == Targets.NPM and \
+            if api_data['target'] == Targets.NPM and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_npm_auto_system_path(api_data=api_data):
                     return False
 
             # Create set with NPM package.json file {from path}
-            if api_data['target'][i] == Targets.PACKAGE_JSON and \
+            if api_data['target'] == Targets.PACKAGE_JSON and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_package_json_auto_system_path(api_data=api_data):
                     return False
 
             # Create set with NPM package_lock.json file {from path}
-            if api_data['target'][i] == Targets.PACKAGE_LOCK_JSON and \
+            if api_data['target'] == Targets.PACKAGE_LOCK_JSON and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_package_lock_json_auto_system_path(api_data=api_data):
                     return False
 
             # Create set with GEM packages {from shell request}
-            if api_data['target'][i] == Targets.GEM and \
+            if api_data['target'] == Targets.GEM and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is None:
+                    api_data['file'] is None:
                 if not set_helper.collect_data_for_set_gem_auto_system_none(api_data=api_data):
                     return False
 
             # Create set with GEM packages from shell request unloading file {from path}
-            if api_data['target'][i] == Targets.GEM and \
+            if api_data['target'] == Targets.GEM and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_gem_auto_system_path(api_data=api_data):
                     return False
 
             # Create set with GEMLIST file {from path}
-            if api_data['target'][i] == Targets.GEMFILE and \
+            if api_data['target'] == Targets.GEMFILE and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_gemfile_auto_system_path(api_data=api_data):
                     return False
 
             # Create set with GEMLIST file {from path}
-            if api_data['target'][i] == Targets.GEMFILE_LOCK and \
+            if api_data['target'] == Targets.GEMFILE_LOCK and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_gemfile_lock_auto_system_path(api_data=api_data):
                     return False
 
             # Create set with User defined packages in file (from path{
             if api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.USER and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_any_auto_user_path(api_data=api_data):
                     return False
 
             # Create set with User defined packages in interactive mode
             if api_data['method'] == Methods.MANUAL and \
                     api_data['format'] == Formats.USER and \
-                    api_data['file'][i] is None:
+                    api_data['file'] is None:
                 if not set_helper.collect_data_for_set_any_manual_user_none(api_data=api_data):
                     return False
 
             # Create set with PHP Composer.json file {from path}
-            if api_data['target'][i] == Targets.PHP_COMPOSER_JSON and \
+            if api_data['target'] == Targets.PHP_COMPOSER_JSON and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 return set_helper.collect_data_for_set_php_composer_json_system_path(api_data=api_data)
 
             # Create set with PHP Composer.lock file {from path}
-            if api_data['target'][i] == Targets.PHP_COMPOSER_LOCK and \
+            if api_data['target'] == Targets.PHP_COMPOSER_LOCK and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_php_composer_lock_system_path(api_data=api_data):
                     return False
 
             # Create set with pom.xml
-            if api_data['target'][i] == Targets.POM and \
+            if api_data['target'] == Targets.POM and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_maven_pom_system_path(api_data=api_data):
                     return False
 
             # Create set with yarn.lock file {from path}
-            if api_data['target'][i] == Targets.YARN and \
+            if api_data['target'] == Targets.YARN and \
                     api_data['method'] == Methods.AUTO and \
                     api_data['format'] == Formats.SYSTEM and \
-                    api_data['file'][i] is not None:
+                    api_data['file'] is not None:
                 if not set_helper.collect_data_for_set_yarn_lock_system_path(api_data=api_data):
                     return False
         
