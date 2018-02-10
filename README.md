@@ -5,8 +5,9 @@ This application is designed to work with the Surepatch Project without using th
 - Main Features:
     - Create, delete, archive and restore Platforms
     - Create, delete, archive and restore Projects
-    - Create Component Sets
+    - Create Component Sets with defined names and with autoincrement set numbers
     - Print and export to files Platforms, Projects, Components and Issues
+    - Use more than one target to collect packages
 - Operating modes:
     - Automatic
     - Manual
@@ -127,34 +128,51 @@ For example there are two accounts, and the first organization "org1" login para
 ```
 ### 4. With username/password from CLI App config file
 This is simple way to use CLI App - you save config file with team, username and password and than use those parameters without token automatically.
+
+# Inportant nots:
+- If you do not explicitly specify the parameters, they will be set to the default values: --format=system and --method=auto, so you can use short command line notations.
+- You can use group definitions for targets and files to call one operation for different targets. For example:
+This command will create project for OS, PIP, POM, GEM and Gemfile packages
+```sh
+@ surepatch --action=create_project --platform=newtest --project=multitest2 --target=[os,pip,pom,gem,gemfile] --file=[no,no,/home/user/pom2.xml,no,/home/user/Gemfile]
+```
+And this command will create set for YARN, PIP3 and Gemfile.lock
+```sh
+@ surepatch --action=create_set --platform=newtest --project=settest --target=[yarn,pip3,gemfile_lock] --file=[/home/user/yarn.lock,no,/home/user/Gemfile.lock]
+```
+- With actions like show platforms, show projects, show cset and show issues you can use --file=<path> parameter to save the results into defined file. For example:
+```sh
+@ surepatch --action=show_issues --platform=newtest --project=settest --file=/home/user/issues_report.txt
+```
+
 # Platforms:
 ### Create your first Platform
 Note, thad Platform description should be wrote like "My Description".
 If --description is empty, Platform will be named as "default platform".
 ```sh
-@ surepatch --action=create_platform --platform=autotest1 --description="New Platform for Autotest"
+@ surepatch --action=create_platform --platform=newtest --description="New Platform for Autotest"
 ```
 # Projects:
 ### Create Project from OS Packages, collected by shell command inside CLI App.
 CLI App call shell command inside and process its output depending on the type of operating system.
 Note, that this operation require root privileges.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_os_none --target=os --method=auto --format=system
+@ surepatch --action=create_project --platform=newtest --project=autotest_os_none --target=os --method=auto --format=system
 ```
 ### Create Project from OS Packages, pre-uploaded to an external file, for example /home/user/os_packages.txt
 This way use already created file with OS Packages and pre-unloaded into some directory.
 Note, that CLI App use OS format for this file, depending on OS type.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_os_path --target=os --method=auto --format=system --file=/home/user/os_packages.txt
+@ surepatch --action=create_project --platform=newtest --project=autotest_os_path --target=os --method=auto --format=system --file=/home/user/os_packages.txt
 ```
 ### Create Project from Python PIP Packages, collected by shell command inside CLI App.
 This example shows, how you can create Python packages set from pip.FrozenRequirement call.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_pip_none --target=pip --method=auto --format=system
+@ surepatch --action=create_project --platform=newtest --project=autotest_pip_none --target=pip --method=auto --format=system
 ```
 If you want use pip3 packages - you should define pip3 target, like this:
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_pip3_none --target=pip3 --method=auto --format=system
+@ surepatch --action=create_project --platform=newtest --project=autotest_pip3_none --target=pip3 --method=auto --format=system
 ```
 ### Create Project from Python PIP Packages, pre-unloaded to an external file from shell command (pip freeze > file_path), for example /home/user/pip_freeze_packages.txt
 In this way, you can check security of your Python freeze files. Please, use command 
@@ -163,75 +181,75 @@ In this way, you can check security of your Python freeze files. Please, use com
 ```
 Note, that CLI App use Python system format for this file.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_pip_path --target=pip --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
+@ surepatch --action=create_project --platform=newtest --project=autotest_pip_path --target=pip --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
 ```
 If you want use pip3 packages - you should define pip3 target, like this:
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_pip3_path --target=pip3 --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
+@ surepatch --action=create_project --platform=newtest --project=autotest_pip3_path --target=pip3 --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
 ```
 ### Create Project from Python Packages, collected in requirements.txt, for example /home/user/requirements.txt
 Now you can check vulnerabilities for your requirements.txt files in different applications.
 Note, that CLI App use Python system format for this file.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_req_path --target=req --method=auto --format=system --file=/home/user/requirements.txt
+@ surepatch --action=create_project --platform=newtest --project=autotest_req_path --target=req --method=auto --format=system --file=/home/user/requirements.txt
 ```
 If you want use pip3 packages - you should define pip3 target, like this:
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_req3_path --target=req3 --method=auto --format=system --file=/home/user/requirements.txt
+@ surepatch --action=create_project --platform=newtest --project=autotest_req3_path --target=req3 --method=auto --format=system --file=/home/user/requirements.txt
 ```
 ### Create Project from NPM Packages, collected by shell command inside CLI App
 CLI App call shell globally from root path and done npm list --json command with postprocessing.
 Note, that CLI App use NPM system format for those data.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_npm_none --target=npm --method=auto --format=system
+@ surepatch --action=create_project --platform=newtest --project=autotest_npm_none --target=npm --method=auto --format=system
 ```
 ### Create Project from NPM Packages, collected by shell command inside ALI App, for example /home/user/workspace/node_project
 CLI App call shell locally from defined directory and done npm list --json command with postprocessing.
 Note, that CLI App use NPM system format for those data.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_local_none --target=npm_local --method=auto --format=system --file=/home/user/workspace/node_project
+@ surepatch --action=create_project --platform=newtest --project=autotest_local_none --target=npm_local --method=auto --format=system --file=/home/user/workspace/node_project
 ```
 ### Create Project from NPM Packages, collected by shell command before and pre-unloaded to an external file, for example /home/user/npm.txt
 Now CLI App process file, which was created by calling npm list --json command from root path or defined project directory.
 Note, that CLI App use NPM system format for those data.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_npm_path --target=npm --method=auto --format=system --file=/home/user/npm.txt
+@ surepatch --action=create_project --platform=newtest --project=autotest_npm_path --target=npm --method=auto --format=system --file=/home/user/npm.txt
 ```
 ### Create Project from NPM Packages, collected in package.json file, for example /home/user/package.json
 This way, you can create project from packages, collected in package.json file.
 Note, that CLI App use NPM system format for those data.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_npm_package_json --target=package_json --method=auto --format=system --file=/home/user/package.json
+@ surepatch --action=create_project --platform=newtest --project=autotest_npm_package_json --target=package_json --method=auto --format=system --file=/home/user/package.json
 ```
 ### Create Project from NPM Packages, collected in package-lock.json file, for example /home/user/package-lock.json
 This way, you can create project from packages, collected in package-lock.json file.
 Note, that CLI App use NPM system format for those data.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_npm_package_lock_path --target=package_lock_json --method=auto --format=system --file=/home/user/package-lock.json
+@ surepatch --action=create_project --platform=newtest --project=autotest_npm_package_lock_path --target=package_lock_json --method=auto --format=system --file=/home/user/package-lock.json
 ```
 ### Create Project from Ruby Packages, collected by shell command
 CLI App call gem list command from shell globally and process system result.
 Note, that CLI App use Ruby gem system format for those data.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_gem_none --target=gem --method=auto --format=system
+@ surepatch --action=create_project --platform=newtest --project=autotest_gem_none --target=gem --method=auto --format=system
 ```
 ### Create Project from Ruby Packages, collected by shell command before and pre-unloaded to an external file, for example /home/user/gem.list
 This way, CLI App process gem.list file, created by shell call of gem list command.
 Note, that CLI App use Ruby gem system format for those data.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_gem_path --target=gem --method=auto --format=system --file=/home/user/gem.list
+@ surepatch --action=create_project --platform=newtest --project=autotest_gem_path --target=gem --method=auto --format=system --file=/home/user/gem.list
 ```
 ### Create Project from Ruby Packages, collected in Gemfile, for example /home/user/Gemfile
 This way, CLI App process Gemfile file.
 Note, that CLI App use Ruby gem system format for those data.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_gemfile_path --target=gemfile --method=auto --format=system --file=/home/user/Gemfile
+@ surepatch --action=create_project --platform=newtest --project=autotest_gemfile_path --target=gemfile --method=auto --format=system --file=/home/user/Gemfile
 ```
 ### Create Project from Ruby Packages, collected in Gemfile.lock, for example /home/user/Gemfile.lock
 This way, CLI App process Gemfile.lock file.
 Note, that CLI App use Ruby gem system format for those data.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_gemfile_lock_path --target=gemfile_lock --method=auto --format=system --file=/home/user/Gemfile.lock
+@ surepatch --action=create_project --platform=newtest --project=autotest_gemfile_lock_path --target=gemfile_lock --method=auto --format=system --file=/home/user/Gemfile.lock
 ```
 ### Create project from PHP Composer file, for example /home/user/composer.json
 This way, CLI App process PHP composer.json file.
@@ -266,13 +284,13 @@ name2=version2
 name3=version3
 ...
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_any_user_path  --method=auto --format=user --file=c:\user_packages.txt
+@ surepatch --action=create_project --platform=newtest --project=autotest_any_user_path  --method=auto --format=user --file=c:\user_packages.txt
 ```
 ### Create Project from User defined format in interactive mode
 In this user mode, you have interactive console, when you can enter names and version of your components consistently,
 component by component.
 ```sh
-@ surepatch --action=create_project --platform=autotest1 --project=autotest_any_user_none --method=manual --format=user
+@ surepatch --action=create_project --platform=newtest --project=autotest_any_user_none --method=manual --format=user
 ```
 # Components:
 Now, you can create Component Sets for existing Platforms/Projects.
@@ -283,114 +301,129 @@ In the second case, we get your current set name, and than:
 - if name like branch_version_set - we call it branch_version_set.1 and than increase last digit automatically
 ### Create set from OS packages, collected by shell command inside CLI App
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=os_none.1 --target=os --method=auto --format=system
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=os_none.1 --target=os --method=auto --format=system
 ```
 ### Create set from OS packages, collected from shell command, unloaded to file, for example /home/user/os_packages.txt
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=os_path.1 --target=os --method=auto --format=system --file=/home/user/os_packages.txt
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=os_path.1 --target=os --method=auto --format=system --file=/home/user/os_packages.txt
 ```
 ### Create set from PIP Packages, collected from shell command inside CLI App
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pip_none.1 --target=pip --method=auto --format=system
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=pip_none.1 --target=pip --method=auto --format=system
 ```
 And for pip3 packages:
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pip3_none.1 --target=pip3 --method=auto --format=system
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=pip3_none.1 --target=pip3 --method=auto --format=system
 ```
 ### Create set from Python PIP packages, collected from shell command (pip freeze > file_path), unloaded to file, for example /home/user/pip_freeze_packages.txt
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pip_path.1 --target=pip --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=pip_path.1 --target=pip --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
 ```
 And for pip3 packages:
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pip3_path.1 --target=pip3 --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=pip3_path.1 --target=pip3 --method=auto --format=system --file=/home/user/pip_freeze_packages.txt
 ```
 ### Create set from Python packages from requirements.txt, for example /home/user/requirements.txt
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=req_path.1 --target=req --method=auto --format=system --file=/home/user/requirements.txt
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=req_path.1 --target=req --method=auto --format=system --file=/home/user/requirements.txt
 ```
 And for pip3 packages:
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=req3_path.1 --target=req3 --method=auto --format=system --file=/home/user/requirements.txt
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=req3_path.1 --target=req3 --method=auto --format=system --file=/home/user/requirements.txt
 ```
 ### Create set from NPM packages, collected from shell command (npm list --json) from root dir
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=npm_none.1 --target=npm --method=auto --format=system
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=npm_none.1 --target=npm --method=auto --format=system
 ```
 ### Create set from NPM packages, collected from shell command (npm list --json) from root dir, unloaded to file, for example /home/user/npm.txt
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=npm_path.1 --target=npm --method=auto --format=system --file=/home/user/npm.txt
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=npm_path.1 --target=npm --method=auto --format=system --file=/home/user/npm.txt
 ```
 ### Create set from NPM packages, collected from shell command (npm list --json) from local dir, for example /home/user/workspace/node
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=npm_local_path.1 --target=npm_local --method=auto --format=system --file=/home/user/workspace/node
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=npm_local_path.1 --target=npm_local --method=auto --format=system --file=/home/user/workspace/node
 ```
 ### Create set from NPM packages, collected from package-lock.json file, for example /home/user/package-lock.json
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=npm_package_json_lock_path.1 --target=package_lock_json --method=auto --format=system --file=/home/user/package-lock.json
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=npm_package_json_lock_path.1 --target=package_lock_json --method=auto --format=system --file=/home/user/package-lock.json
 ```
 ### Create set from NPM packages, collected from package.json file, for example /home/user/package.json
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=npm_package_json_path.1 --target=package_json --method=auto --format=system --file=/home/user/package.json
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=npm_package_json_path.1 --target=package_json --method=auto --format=system --file=/home/user/package.json
 ```
 ### Create set from Ruby packages, collected from shell command inside CLI App
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test  --set=gem_none.1 --target=gem --method=auto --format=system
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test  --set=gem_none.1 --target=gem --method=auto --format=system
 ```
 ### Create set from Ruby packages, collected from shell commend, unloaded to file before, for example /home/user/gem.list
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=gem_path.1 --target=gem --method=auto --format=system --file=/home/user/gem.list
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=gem_path.1 --target=gem --method=auto --format=system --file=/home/user/gem.list
 ```
 ### Create set from Ruby packages, collected from Gemfile, for example /home/user/Gemfile
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=gem_gemfile_path.1 --target=gemfile --method=auto --format=system --file=/user/home/Gemfile
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=gem_gemfile_path.1 --target=gemfile --method=auto --format=system --file=/user/home/Gemfile
 ```
 ### Create set from Ruby packages, collected from Gemfile.lock file, for example /home/user/Gemfile.lock 
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=gem_gemfile_lock_path.1 --target=gemfile_lock --method=auto --format=system --file=/home/user/Gemfile.lock
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=gem_gemfile_lock_path.1 --target=gemfile_lock --method=auto --format=system --file=/home/user/Gemfile.lock
 ```
 ### Create set from PHP Composer file, for example /home/user/composer.json
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=php_composer_json.1 --target=php_composer_json --method=auto --format=system --file=/home/user/composer.json
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=php_composer_json.1 --target=php_composer_json --method=auto --format=system --file=/home/user/composer.json
 ```
 ### Create set from PHP Composer.lock file, for example /home/user/composer.lock
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=php_composer_lock.1 --target=php_composer_lock --method=auto --format=system --file=/home/user/composer.lock
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=php_composer_lock.1 --target=php_composer_lock --method=auto --format=system --file=/home/user/composer.lock
 ```
 ### Create set from Maven pom.xml file, for example /home/user/pom.xml
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=pom.1 --target=pom --method=auto --format=system --file=/home/user/pom.xml
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=pom.1 --target=pom --method=auto --format=system --file=/home/user/pom.xml
 ```
 ### Create set from yarn.lock file, for example /home/user/yarn.lock
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=yarn.1 --target=yarn --method=auto --format=system --file=/home/user/yarn.lock
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=yarn.1 --target=yarn --method=auto --format=system --file=/home/user/yarn.lock
 ```
 ### Create set from User packages, formatted as name=version
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=user_path.1  --method=auto --format=user --file=c:\user_packages.txt
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=user_path.1  --method=auto --format=user --file=c:\user_packages.txt
 ```
 ### Create set from User packages, asked via console
 ```sh
-@ surepatch --action=create_set --platform=autotest1 --project=autotest_set_test --set=user_manual.1 --method=manual --format=user
+@ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=user_manual.1 --method=manual --format=user
 ```
 # Show:
 ### Show platforms
 ```sh
 @ surepatch --action=show_platforms
 ```
+or 
+```sh
+@ surepatch --action=show_platforms --file=/home/user/platforms_report.txt
+```
 ### Show projects
 ```sh
-@ surepatch --action=show_projects --platform=autotest1
+@ surepatch --action=show_projects --platform=newtest
+```
+or
+```sh
+@ surepatch --action=show_projects --platform=newtest --file=/home/user/projects_report.txt
 ```
 ### Show set
 ```sh
-@ surepatch --action=show_set --platform=autotest1 --project=autotest_set_test
+@ surepatch --action=show_set --platform=newtest --project=autotest_set_test
+```
+or
+```sh
+@ surepatch --action=show_set --platform=newtest --project=autotest_set_test --file=/home/user/set_report.txt
 ```
 ### Show issues
 ```sh
-@ surepatch --action=show_issues --platform=autotest1 --project=autotest_set_test
+@ surepatch --action=show_issues --platform=newtest --project=autotest_set_test
 ```
-
+or
+```sh
+@ surepatch --action=show_issues --platform=newtest --project=autotest_set_test --file=/home/user/issues_report.txt
+```
 # License
 ...
 # (c) BrainBankers, 2018.

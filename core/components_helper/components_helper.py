@@ -1006,11 +1006,14 @@ class ComponentsHelper(object):
                 output, error = proc.communicate()
 
                 if output:
-                    if output == '{}\n':
+                    if output == '{}\n' or output == '{}':
                         raw_npm_components = []
                         return True
                     else:
-                        data = json.loads(output)
+                        if isinstance(output, bytes):
+                            data = json.loads(output.decode("utf-8"))
+                        elif isinstance(output, str):
+                            data = json.loads(output)
                         walkdict(data)
                         return True
 

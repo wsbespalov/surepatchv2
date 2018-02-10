@@ -48,6 +48,8 @@ def print_table(elements, title = None, filename = None):
                      '\n'.join(wrap(element['version'], max_width))]
                 )
             print(table.table)
+            if isinstance(filename, list):
+                filename = filename[0]
             if filename is not None:
                 try:
                     with open(filename, 'w') as fp:
@@ -70,6 +72,8 @@ def print_table(elements, title = None, filename = None):
                     '\n'.join(wrap(element['description'], max_width))]
                 )
             print(table.table)
+            if isinstance(filename, list):
+                filename = filename[0]            
             if filename is not None:
                 try:
                     with open(filename, 'w') as fp:

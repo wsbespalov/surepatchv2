@@ -43,7 +43,7 @@ class ShowHelper(object):
         for platform in api_data['organization']['platforms']:
             platforms.append({'name': platform['name'], 'description': platform['description']})
 
-        print_platforms(platforms=platforms)
+        print_platforms(platforms=platforms, title="Platforms", filename=api_data['file'])
 
         return True
 
