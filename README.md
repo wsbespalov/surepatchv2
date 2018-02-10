@@ -131,16 +131,22 @@ This is simple way to use CLI App - you save config file with team, username and
 
 # Inportant nots:
 - If you do not explicitly specify the parameters, they will be set to the default values: --format=system and --method=auto, so you can use short command line notations.
-- You can use group definitions for targets and files to call one operation for different targets. For example:
+- You can use group definitions for targets and files to call one operation for different targets. 
+
+For example:
 This command will create project for OS, PIP, POM, GEM and Gemfile packages
 ```sh
 @ surepatch --action=create_project --platform=newtest --project=multitest2 --target=[os,pip,pom,gem,gemfile] --file=[no,no,/home/user/pom2.xml,no,/home/user/Gemfile]
 ```
+
 And this command will create set for YARN, PIP3 and Gemfile.lock
 ```sh
 @ surepatch --action=create_set --platform=newtest --project=settest --target=[yarn,pip3,gemfile_lock] --file=[/home/user/yarn.lock,no,/home/user/Gemfile.lock]
 ```
-- With actions like show platforms, show projects, show cset and show issues you can use --file=<path> parameter to save the results into defined file. For example:
+
+- With actions like show platforms, show projects, show cset and show issues you can use --file=<path> parameter to save the results into defined file.
+    
+For example:
 ```sh
 @ surepatch --action=show_issues --platform=newtest --project=settest --file=/home/user/issues_report.txt
 ```
