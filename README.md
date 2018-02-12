@@ -49,7 +49,7 @@ This application is designed to work with the Surepatch Project without using th
 You can build your own executable "surepatch" file with pyinstaller. This module already included into project requirements.txt file,
 so, you should install python3, download source code and execute "build" script from build_scripts folder or use the next command from project folder:
 ```sh
-pip3 install -r requirements.txt
+@ pip3 install -r requirements.txt
 ```
 and than
 ```sh
@@ -143,15 +143,34 @@ For example we want look through our issues:
 ```
 ### 2. With auth token from CLI App config file
 This variand has second priority and usefull for more than one account. In this case, token will be take from config file, and no matter what is specified in the interface.
+```sh
+@ surepatch  --action=save_config --auth_token=3a4953e5sdf1235df598b34e434fd0754e3 --team=my_team
+```
 ### 3. With username/password from CLI App parameters
 For example there are two accounts, and the first organization "org1" login parameters store in config file, but you want look through projects from "org2" account. So, actual login parameters will be take from console parameters, not from config file.
+
+For account # 1:
+
 ```sh
-@ surepatch.py --action=save_config --team=org1 --user=user@gmail.com --password=test_password --logo=off
-...
-@ surepatch  --action=show_projects --platform=platform2 --team=org2 --user=user2@gmail.com --password=test_password_2
+@ surepatch --action=save_config --team=org1 --user=user1@gmail.com --password=test_password --logo=off
+```
+
+And for account # 2:
+
+```sh
+@ surepatch --action=show_projects --platform=platform2 --team=org2 --user=user2@gmail.com --password=test_password_2
 ```
 ### 4. With username/password from CLI App config file
 This is simple way to use CLI App - you save config file with team, username and password and than use those parameters without token automatically.
+```sh
+@ surepatch --action=save_config --team=org1 --user=user1@gmail.com --password=test_password --logo=off
+```
+
+And than:
+
+```sh
+@ surepatch --action=show_projects --platform=myplatform
+```
 
 # Inportant notes:
 - If you do not explicitly specify the parameters, they will be set to the default values: 
@@ -178,7 +197,7 @@ For example:
 @ surepatch --action=show_issues --platform=newtest --project=settest --file=/home/user/issues_report.txt
 ```
 
-- You can find complete set of examples of surepatch 
+- You can find complete set of examples of surepatch: demo_mac, demo_win, demo_ubuntu...
 
 # Operations with Platforms
 ### Create your first Platform
@@ -363,7 +382,7 @@ You can define set name by parameter --set=<set_name> of leave this field blank.
 In the first case, we check uniqueness of set name and create one.
 In the second case, we get your current set name, and than:
 - if name like 0.0.1 - we increase number automatically like 0.0.2, 0.0.3, ...
-- if name like branch_version_set - we call it branch_version_set.1 and than increase last digit automatically
+- if name like branch_version_set - we call it testing_back_set.1 and than increase last digit automatically
 ### Create set from OS packages, collected by shell command inside CLI App
 ```sh
 @ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=os_none.1 --target=os --method=auto --format=system
@@ -505,7 +524,7 @@ Fix vulnerabilities and than check changes like this
 ```sh
 @ surepatch --platform=newtest --action=create_set --project=pyproject --target=[os,pip,req] --file=[no,no,/home/user/workspace/pythonproject/requirements.txt]
 ```
-###Use with docker
+### Use CLI App with docker
 #### Example 1.
 Doing action via ./surepatch command
 1. Choose or create directory where will placed surepatch project
@@ -514,29 +533,21 @@ Doing action via ./surepatch command
 3. Go to surepatch directory:
 	cd surepatchv2
 4. Here we will use Dockerfile next format:
-
+```sh
 FROM ubuntu
-
 RUN apt-get update
-
 RUN apt-get install -y python3 python3-pip
-
 RUN pip3 install --upgrade pip
-
 COPY . /surepatch
-
 WORKDIR /surepatch
-
 RUN pip3 install -r requirements.txt
-
 WORKDIR /surepatch/scripts
-
 RUN bash build_docker_ubuntu.sh
-
 WORKDIR /surepatch/dist
 
 RUN ./surepatch --team=myteam --user=iam.user@mail.com --password=test123 --action=show_platforms
 CMD ["/bin/bash"]
+```
 
 If you do not have a dockerfile, then create it and write in it the commands written above.
 
@@ -552,22 +563,16 @@ Doing action via python3 inside docker container
 3. Go to surepatch directory:
 	cd surepatchv2
 4. In this example we will use Dockerfile next format:
-
-   FROM ubuntu
-   
-   RUN apt-get update
-
-   RUN apt-get install -y python3 python3-pip
-
-   RUN pip3 install --upgrade pip
-
-   COPY . /surepatch
-
-   WORKDIR /surepatch
-
-   RUN pip3 install -r requirements.txt
-
-   CMD ["/bin/bash"]
+```sh
+FROM ubuntu
+RUN apt-get update
+RUN apt-get install -y python3 python3-pip
+RUN pip3 install --upgrade pip
+COPY . /surepatch
+WORKDIR /surepatch
+RUN pip3 install -r requirements.txt
+CMD ["/bin/bash"]
+```
 
 If you do not have a dockerfile, then create it and write in it the commands written above.
 
@@ -576,21 +581,21 @@ If your Dockerfile is different, write in it the commands written above.
 Save changes, if it needs.
 
 5. Create docker image via docker build command:
-   
+   ```sh
    docker build -t <image name> .
-   
+   ```
 6. Run docker container:
-   
+   ```sh
    docker run -it <image name>
-   
+   ```
 7. Run surepatch.py via python3:
-   
+   ```sh
    ./surepatch.py --team=myteam iam.user@mail.com --password=test123 --action=show_platforms
-   
+   ```
 8. Exit from container:
-   
+   ```sh
    exit
-
+   ```
 # License
 ...
 # (c) BrainBankers, 2018.
