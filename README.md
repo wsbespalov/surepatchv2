@@ -24,6 +24,18 @@ This application is designed to work with the Surepatch Project without using th
     - Collect Packages from user format file resources
     - Collect Packages in interactive dialog mode
 
+# Table of contents
+- Installation
+- CLI App arguments
+- CLI App config
+- Login variants
+- Important notes
+- Operations with Platforms
+- Operations with Projects
+- Operations with Component Sets
+- Show information
+- Sample scenarios
+
 # Installation
 ## From pip install
 ...
@@ -32,8 +44,7 @@ This application is designed to work with the Surepatch Project without using th
 ## From Gihtub
 [Package](http://surepatch.com)
 
-# Usage examples
-## CLI App arguments
+# CLI App arguments
 
 |Argument|Value|Description|
 |---|---|---|
@@ -100,7 +111,7 @@ This application is designed to work with the Surepatch Project without using th
 |--file|<path_to_file_or_dir>| Path to file with Packages or Directory |
 |--logo|<on_off>| Show logo when started or not |
 
-# CLI App Config:
+# CLI App Config
 ### Create local config file
 A local configuration file will be created in home directory (~/.surepatch.yaml).
 After that, the authorization information will be read from this file each time the action is started.
@@ -108,7 +119,7 @@ You can change directly in file or with the help of save_config command.
 ```sh
 @ surepatch.py --action=save_config --team=testers --user=user@gmail.com --password=test_password --logo=off
 ```
-# Login variants:
+# Login variants
 Note, that login operation call before every CLI App run to make your server information in actial state, so authirization parameters should be define in command line interface in CLI App or in config file.
 ### 1. With auth token from CLI App parameters
 This variant usefull for quick authirization with auth token from surepatch server. This is first priority login way.
@@ -129,12 +140,15 @@ For example there are two accounts, and the first organization "org1" login para
 ### 4. With username/password from CLI App config file
 This is simple way to use CLI App - you save config file with team, username and password and than use those parameters without token automatically.
 
-# Inportant nots:
-- If you do not explicitly specify the parameters, they will be set to the default values: --format=system and --method=auto, so you can use short command line notations.
+# Inportant notes:
+- If you do not explicitly specify the parameters, they will be set to the default values: 
+
+  --format=system and --method=auto, so you can use short command line notations.
 - You can use group definitions for targets and files to call one operation for different targets. 
 
-For example:
-This command will create project for OS, PIP, POM, GEM and Gemfile packages
+  For example:
+  
+  This command will create project for OS, PIP, POM, GEM and Gemfile packages
 ```sh
 @ surepatch --action=create_project --platform=newtest --project=multitest2 --target=[os,pip,pom,gem,gemfile] --file=[no,no,/home/user/pom2.xml,no,/home/user/Gemfile]
 ```
@@ -151,14 +165,29 @@ For example:
 @ surepatch --action=show_issues --platform=newtest --project=settest --file=/home/user/issues_report.txt
 ```
 
-# Platforms:
+# Operations with Platforms
 ### Create your first Platform
 Note, thad Platform description should be wrote like "My Description".
 If --description is empty, Platform will be named as "default platform".
 ```sh
 @ surepatch --action=create_platform --platform=newtest --description="New Platform for Autotest"
 ```
-# Projects:
+### Archive Platform
+If you want archive Platform, you may use web interface or CLI App command
+```sh
+@ surepatch --action=archive_platform --platform=newtest
+```
+### Restore Platform
+If you want restore archived Platform, you may use web interface or CLI App command
+```sh
+@ surepatch --action=restore_platform --platform=newtest
+```
+### Delete Platform
+If you want delete Platform, you may use web interface or CLI App command
+```sh
+@ surepatch --action=delete_platform --platform=newtest
+```
+# Operations with Projects
 ### Create Project from OS Packages, collected by shell command inside CLI App.
 CLI App call shell command inside and process its output depending on the type of operating system.
 Note, that this operation require root privileges.
@@ -298,7 +327,22 @@ component by component.
 ```sh
 @ surepatch --action=create_project --platform=newtest --project=autotest_any_user_none --method=manual --format=user
 ```
-# Components:
+### Archive Project
+If you want archive Project in defined Platform, you may use web interface or CLI App command
+```sh
+@ surepatch --action=archive_project --platform=newtest --project=testproject
+```
+### Restore Project
+If you want restore archived Project in defined Platform, you may use web interface or CLI App command
+```sh
+@ surepatch --action=restore_project --platform=newtest --project=testproject
+```
+### Delete Project
+If you want delete Project in defined Platform, you may use web interface or CLI App command
+```sh
+@ surepatch --action=delete_project --platform=newtest --project=testproject
+```
+# Operations with Components sets
 Now, you can create Component Sets for existing Platforms/Projects.
 You can define set name by parameter --set=<set_name> of leave this field blank.
 In the first case, we check uniqueness of set name and create one.
@@ -397,7 +441,7 @@ And for pip3 packages:
 ```sh
 @ surepatch --action=create_set --platform=newtest --project=autotest_set_test --set=user_manual.1 --method=manual --format=user
 ```
-# Show:
+# Show information
 ### Show platforms
 ```sh
 @ surepatch --action=show_platforms
@@ -430,6 +474,108 @@ or
 ```sh
 @ surepatch --action=show_issues --platform=newtest --project=autotest_set_test --file=/home/user/issues_report.txt
 ```
+# Sample scenarios
+### Simple sequence
+```sh
+@ surepatch --action=create_platform --platform=newtest --description=NewTestPlatform
+```
+```sh
+@ surepatch --platform=newtest --action=create_project --project=pyproject --target=[os,pip,req] --file=[no,no,/home/user/workspace/pythonproject/requirements.txt]
+```
+Now work with project and save project state like this
+```sh
+@ surepatch --platform=newtest --action=create_set --project=pyproject --target=[os,pip,req] --file=[no,no,/home/user/workspace/pythonproject/requirements.txt]
+```
+Fix vulnerabilities and than check changes like this
+```sh
+@ surepatch --platform=newtest --action=create_set --project=pyproject --target=[os,pip,req] --file=[no,no,/home/user/workspace/pythonproject/requirements.txt]
+```
+###Use with docker
+#### Example 1.
+Doing action via ./surepatch command
+1. Choose or create directory where will placed surepatch project
+2. Download surepatch into directory (from point 1) from github:
+	git clone https://github.com/wsbespalov/surepatchv2.git
+3. Go to surepatch directory:
+	cd surepatchv2
+4. Here we will use Dockerfile next format:
+
+FROM ubuntu
+
+RUN apt-get update
+
+RUN apt-get install -y python3 python3-pip
+
+RUN pip3 install --upgrade pip
+
+COPY . /surepatch
+
+WORKDIR /surepatch
+
+RUN pip3 install -r requirements.txt
+
+WORKDIR /surepatch/scripts
+
+RUN bash build_docker_ubuntu.sh
+
+WORKDIR /surepatch/dist
+
+RUN ./surepatch --team=myteam --user=iam.user@mail.com --password=test123 --action=show_platforms
+CMD ["/bin/bash"]
+
+If you do not have a dockerfile, then create it and write in it the commands written above.
+
+If your Dockerfile is different, write in it the commands written above.
+
+Save changes, if it needs.
+
+#### Example 2.
+Doing action via python3 inside docker container
+1. Choose or create directory where will placed surepatch project
+2. Download surepatch into directory (from point 1) from github:
+	git clone <REPOSITORY_GIT>
+3. Go to surepatch directory:
+	cd surepatchv2
+4. In this example we will use Dockerfile next format:
+
+   FROM ubuntu
+   
+   RUN apt-get update
+
+   RUN apt-get install -y python3 python3-pip
+
+   RUN pip3 install --upgrade pip
+
+   COPY . /surepatch
+
+   WORKDIR /surepatch
+
+   RUN pip3 install -r requirements.txt
+
+   CMD ["/bin/bash"]
+
+If you do not have a dockerfile, then create it and write in it the commands written above.
+
+If your Dockerfile is different, write in it the commands written above.
+
+Save changes, if it needs.
+
+5. Create docker image via docker build command:
+   
+   docker build -t <image name> .
+   
+6. Run docker container:
+   
+   docker run -it <image name>
+   
+7. Run surepatch.py via python3:
+   
+   ./surepatch.py --team=myteam iam.user@mail.com --password=test123 --action=show_platforms
+   
+8. Exit from container:
+   
+   exit
+
 # License
 ...
 # (c) BrainBankers, 2018.

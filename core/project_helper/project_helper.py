@@ -435,7 +435,15 @@ class ProjectHelper(object):
             print_line("Project {0} does not exist.".format(api_data['project']))
             return False
 
-        api_data['project_id'] = api_data['platforms'][api_data['platform_number']]['projects'][api_data['project_number'] ]['id']
+        organization = api_data['organization']
+        platforms = organization['platforms']
+        platform = platforms[api_data['platform_number']]
+        projects = platform['projects']
+        project = projects[api_data['project_number']]
+        project_id = project['id']
+        project_url = project['url']
+        api_data['project_id'] = project_id
+        api_data['project_url'] = project_url
 
         return self.web_api.send_archive_project_request(api_data=api_data)
 

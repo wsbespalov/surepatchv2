@@ -58,6 +58,13 @@ class PlatformHelper(object):
             print_line("Platform {0} does not exist.".format(api_data['platform']))
             return False
 
+        organization = api_data['organization']
+        platforms = organization['platforms']
+        platform_number = self.web_api.get_platform_number_by_name(api_data=api_data)
+        platform = platforms[platform_number]
+        platform_url = platform['url']
+        api_data['platform_url'] = platform_url
+
         return self.web_api.send_archive_platform_request(api_data=api_data)
 
     def restore_platform(self, api_data):

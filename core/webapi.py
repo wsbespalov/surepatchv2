@@ -390,16 +390,23 @@ class WebAPI(object):
         :return: result
         """
         self.headers['token'] = api_data['token']
-        self.platform_payload['id'] = api_data['platform_id']
-        self.platform_payload['options'] = dict(
-            state='archive',
-            archivedBy=api_data['user']
+        self.platform_payload = dict(
+            newPlatform=dict(
+                id=api_data['platform_id'],
+                url=api_data['platform_url'],
+                options=dict(
+                    updated=datetime.datetime.now().isoformat() + 'Z',
+                    state='archive',
+                    archivedBy=api_data['user']
+                )
+            )
         )
         try:
             response = requests.put(
                 url=self.platform_url,
                 headers=self.headers,
-                json=self.platform_payload)
+                json=self.platform_payload
+            )
             if response.status_code == 200:
                 return True
             print_line('Archive Platform failed. Status code: {0}'.format(response.status_code))
@@ -425,10 +432,16 @@ class WebAPI(object):
         :return: result
         """
         self.headers['token'] = api_data['token']
-        self.project_payload['id'] = api_data['project_id']
         self.project_payload['options'] = dict(
-            state='archive',
-            archivedBy=api_data['user']
+            newProject=dict(
+                id=api_data['project_id'],
+                url=api_data['project_url'],
+                options = dict(
+                    updated=datetime.datetime.now().isoformat() + 'Z',
+                    state='archive',
+                    archivedBy=api_data['user']
+                )
+            )
         )
         try:
             response = requests.put(
