@@ -47,7 +47,7 @@ This application is designed to work with the Surepatch Project without using th
 
 # Build
 You can build your own executable "surepatch" file with pyinstaller. This module already included into project requirements.txt file,
-so, just download source code and execute "build" script from build_scripts folder or use the next command from project folder:
+so, you should install python3, download source code and execute "build" script from build_scripts folder or use the next command from project folder:
 ```sh
 pip3 install -r requirements.txt
 ```
