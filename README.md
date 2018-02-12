@@ -26,6 +26,7 @@ This application is designed to work with the Surepatch Project without using th
 
 # Table of contents
 - Installation
+- Build
 - CLI App arguments
 - CLI App config
 - Login variants
@@ -43,6 +44,18 @@ This application is designed to work with the Surepatch Project without using th
 ...
 ## From Gihtub
 [Package](http://surepatch.com)
+
+# Build
+You can build your own executable "surepatch" file with pyinstaller. This module already included into project requirements.txt file,
+so, just download source code and execute "build" script from build_scripts folder or use the next command from project folder:
+```sh
+pip3 install -r requirements.txt
+```
+and than
+```sh
+@ pyinstaller --onefile surepatch.py
+```
+The executable file will be in /dist folder.
 
 # CLI App arguments
 
@@ -164,6 +177,8 @@ For example:
 ```sh
 @ surepatch --action=show_issues --platform=newtest --project=settest --file=/home/user/issues_report.txt
 ```
+
+- You can find complete set of examples of surepatch 
 
 # Operations with Platforms
 ### Create your first Platform
