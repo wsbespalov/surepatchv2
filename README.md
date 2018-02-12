@@ -529,9 +529,13 @@ Fix vulnerabilities and than check changes like this
 Doing action via ./surepatch command
 1. Choose or create directory where will placed surepatch project
 2. Download surepatch into directory (from point 1) from github:
-	git clone https://github.com/wsbespalov/surepatchv2.git
+   ```sh
+   git clone https://github.com/wsbespalov/surepatchv2.git
+   ```
 3. Go to surepatch directory:
-	cd surepatchv2
+   ```sh
+   cd surepatchv2
+   ```
 4. Here we will use Dockerfile next format:
 ```sh
 FROM ubuntu
@@ -559,9 +563,13 @@ Save changes, if it needs.
 Doing action via python3 inside docker container
 1. Choose or create directory where will placed surepatch project
 2. Download surepatch into directory (from point 1) from github:
-	git clone <REPOSITORY_GIT>
+   ```sh
+   git clone <REPOSITORY_GIT>
+   ```
 3. Go to surepatch directory:
-	cd surepatchv2
+   ```sh
+   cd surepatchv2
+   ```
 4. In this example we will use Dockerfile next format:
 ```sh
 FROM ubuntu
