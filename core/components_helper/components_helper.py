@@ -929,107 +929,44 @@ class ComponentsHelper(object):
         return False
 
     def load_npm_packages(self, api_data, local):
-        # type: (dict, bool) -> bool
-        """
-        Load NPM packages from shell command through temporary file.
-        :param path: path to directory, if method call locally
-        :param local: run local or global
-        :return: result
-        """
-
         path = api_data['file']
-
-        tmp_file_name = 'tmp_npm_list_json.txt'
-        file_path = os.path.expanduser('~')
-        full_path = os.path.join(file_path, tmp_file_name)
-
-        try:
-            with open(full_path, 'w') as temp:
-                temp.write('')
-                temp.seek(0)
-
-        except Exception as e:
-            print_line('Cant create temp file, get an exception: {0}.'.format(e))
-            return False
-
-
-
         if local:
-            try:
-                os.chdir(path)
-            except Exception as common_exception:
-                print_line('Get an exception {0}'.format(common_exception))
-                return False
+            os.chdir(path)
         else:
             if api_data['os_type'] == OSs.WINDOWS:
-                os.chdir("c:\\")
+                os.chdir('c:\\')
             else:
-                os.chdir("/")
+                os.chdir('/')
 
-        output = error = None
+        cmd = "npm list --json"
 
-        try:
-            if api_data['os_type'] == OSs.WINDOWS:
-                cmd = "npm list --json > {0}".format(full_path)
-                proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
-                output, error = proc.communicate()
+        if api_data['os_type'] == OSs.WINDOWS:
+            proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE, shell=True)
+            output, error = proc.communicate()
+        elif api_data['os_type'] == OSs.MACOS or \
+                api_data['os_type'] == OSs.UBUNTU or \
+                api_data['os_type'] == OSs.DEBIAN or \
+                api_data['os_type'] == OSs.FEDORA:
+            proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            output, error = proc.communicate()
 
-                if error:
-                    print_line('Powershell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                    return False
-
-                try:
-                    enc = self.define_file_encoding(full_path)
-                    if enc == 'undefined':
-                        print_line('An error with encoding occured in temp file.')
-                        return False
-
-                    with open(full_path, 'r') as cf:
-                        data = json.load(cf)
-                        walkdict(data)
-                        return True
-
-                except Exception as e:
-                    print_line('File read exception: {0}'.format(e))
-                    return False
-
-                finally:
-                    if os.path.isfile(full_path):
-                        os.remove(full_path)
-
-            elif api_data['os_type'] == OSs.MACOS or \
-                    api_data['os_type'] == OSs.UBUNTU or \
-                    api_data['os_type'] == OSs.DEBIAN or \
-                    api_data['os_type'] == OSs.FEDORA:
-                cmd = "npm list --json"
-                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-                output, error = proc.communicate()
-
-                if output:
-                    if output == '{}\n' or output == '{}':
-                        raw_npm_components = []
-                        return True
-                    else:
-                        if isinstance(output, bytes):
-                            data = json.loads(output.decode("utf-8"))
-                        elif isinstance(output, str):
-                            data = json.loads(output)
-                        walkdict(data)
-                        return True
-
-                return False
-
-        except OSError as os_error:
-            print_line('Shell command throw errno: {0}, strerror: {1} and filename: {2}.'.format(os_error.errno, os_error.strerror, os_error.filename))
-        
-            if os.path.isfile(full_path):
-                os.remove(full_path)
-
+        if error:
+            print_line('Powershell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
             return False
-        
-        finally:
-            if os.path.isfile(full_path):
-                os.remove(full_path)
+
+        if output:
+            if output == '{}\n' or output == '{}':
+                raw_npm_components = []
+                return True
+            else:
+                if isinstance(output, bytes):
+                    data = json.loads(output.decode("utf-8"))
+                elif isinstance(output, str):
+                    data = json.loads(output)
+                walkdict(data)
+                return True
+
+        return False
 
     def load_package_json_packages_from_path(self, api_data):
         # type: (dict) -> bool
@@ -1582,8 +1519,14 @@ class ComponentsHelper(object):
         """
         packages = api_data['packages']
         components = []
-        dependencies = packages['dependencies']
-        dev_dependencies = packages['devDependencies']
+        if 'dependencies' in packages:
+            dependencies = packages['dependencies']
+        else:
+            dependencies = {}
+        if 'devDependencies' in packages:
+            dev_dependencies = packages['devDependencies']
+        else:
+            dev_dependencies = {}
         if dev_dependencies != {}:
             for key in dev_dependencies.keys():
                 components.append({'name': key, 'version': str(dev_dependencies[key]).replace('^', '')})
