@@ -771,7 +771,7 @@ class ComponentsHelper(object):
         :return: result
         """
 
-        cmd = "cat /Library/Receipts/InstallHistory.plist"
+        cmd = 'system_profiler -detailLevel full SPApplicationsDataType | grep "Location: /\| Version: "'
 
         try:
             if platform.system() == 'darwin' or platform.system() == 'Darwin':
@@ -784,7 +784,7 @@ class ComponentsHelper(object):
                     return False
 
                 if output:
-                    api_data['packages'] = output
+                    api_data['packages'] = output.decode("utf-8").replace(' ', '').replace(',', '.').split('\n')
                     return True
 
                 return False
@@ -816,7 +816,7 @@ class ComponentsHelper(object):
 
             try:
                 with open(filename, 'r') as cf:
-                    os_packages = cf.read()
+                    os_packages = cf.read().replace(' ', '').replace(',', '.').split('\n')
 
                     if os_packages is None:
                         print_line('Cant read file: {0}.'.format(filename))
@@ -1346,17 +1346,48 @@ class ComponentsHelper(object):
         :param _report: raw packages
         :return: result
         """
+        output = api_data['packages']
 
-        _report = api_data['packages']
-        new_components = []
-        packages = xmltodict.parse(_report, xml_attribs=True)
-        pdict = packages['plist']['array']['dict']
-        for pd in pdict:
-            name = pd['string'][0]
-            version = pd['string'][1]
-            if version is not None:
-                new_components.append({'name': name, 'version': version})
-        api_data['components'] = new_components
+        templ = {'name': '', 'version': ''}
+        packages = []
+
+        ver_or_loc = 1
+
+        if len(output) == 0:
+            exit(1)
+
+        # check first string
+        if 'Version:' in output[0].upper():
+            ver_or_loc = 1
+        elif 'Location:' in output[0].upper():
+            ver_or_loc = 2
+
+        for out in output:
+            if 'Version:' in out:
+                templ['version'] = out.replace('Version:', '')
+                templ['name'] = None
+
+            elif 'Location:' in out:
+                templ['name'] = out.replace('Location:', '')
+                if templ['version'] is None:
+                    i = templ['name'].rfind('/')
+                    templ['version'] = templ['name'][i:].replace('.app', '').replace('/', '')
+                package = {"name": None, "version": None}
+                i = templ['name'].rfind('/')
+                package["name"] = templ["name"][i:].replace('.app', '').replace('/', '')
+                package["version"] = templ["version"]
+
+                # delete all except digits and .
+                package["version"] = re.sub(r'[^0123456789\.]', '', package["version"])
+
+                # delete all digits
+                package["name"] = re.sub(r'[^\w\s]+|[\d]+', r'', package["name"])
+
+                if package["version"] != '':
+                    packages.append(package)
+                del package
+                templ['version'] = None
+        api_data['components'] = packages
         return True
 
     @staticmethod
