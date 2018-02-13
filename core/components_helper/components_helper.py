@@ -649,15 +649,11 @@ class ComponentsHelper(object):
                     platform.system() == "linux" or \
                     platform.linux_distribution()[0] == 'debian':
                 
-                # proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE)
-                # output, error = proc.communicate()
-                # proc.kill()
-
                 output = os.popen(cmd).readlines()
         
-                # if error:
-                #     print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-                #     return False
+                if error:
+                    print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
+                    return False
         
                 if output:
                     api_data['packages'] = output
@@ -949,10 +945,6 @@ class ComponentsHelper(object):
                 api_data['os_type'] == OSs.FEDORA:
             proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
             output, error = proc.communicate()
-
-        if error:
-            print_line('Powershell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
-            return False
 
         if output:
             if output == '{}\n' or output == '{}':
