@@ -172,7 +172,7 @@ And than:
 @ surepatch --action=show_projects --platform=myplatform
 ```
 
-# Inportant notes:
+# Important notes:
 - If you do not explicitly specify the parameters, they will be set to the default values: 
 
   --format=system and --method=auto, so you can use short command line notations.
@@ -198,6 +198,8 @@ For example:
 ```
 
 - You can find complete set of examples of surepatch: demo_mac, demo_win, demo_ubuntu...
+- Note, that some operation required root privileges, so use Administrator rights console or 'sudo' mode in your system.
+- You can enable Two-factor authentication in SurePatch profile, but CLI App work without MFA in automatic mode.
 
 # Operations with Platforms
 ### Create your first Platform

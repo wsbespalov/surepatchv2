@@ -9,7 +9,7 @@ def read(fname):
 setup(
     name="SurePatch",
     version="0.2.1",
-    author="Brainbankers",
+    author="BrainBankers",
     author_email="ws.bespalov@gmail.com",
     description=("CLI App - Console client for SurePatch project"),
     packages=["surepatch", ],

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*- 
+# -*- coding: utf-8 -*-
 
 import re
 import os
@@ -57,7 +57,7 @@ class ComponentsHelper(object):
 
                 print_line('Failed to load or parse OS components.')
                 return False
-                
+
             elif api_data['os_version'] == '7':
                 print_line('Windows 7 does not support yet.')
                 return False
@@ -103,7 +103,7 @@ class ComponentsHelper(object):
                 if self.parse_fedora_packages(api_data=api_data):
                     print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                     return True
-                    
+
             print_line('Failed parse OS components.')
             return False
         return False
@@ -121,7 +121,7 @@ class ComponentsHelper(object):
                     if self.parse_windows_10_packages(api_data=api_data):
                         print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                         return True
-                
+
                 print_line('Failed load or parse Windows 10 components.')
                 return False
 
@@ -134,7 +134,7 @@ class ComponentsHelper(object):
                 if self.parse_macos_packages(api_data=api_data):
                     print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                     return True
-                    
+
             print_line('Failed load or parse MACOS components.')
             return False
 
@@ -150,7 +150,7 @@ class ComponentsHelper(object):
 
             print_line('Failed load or parse Debian OS components.')
             return False
-    
+
         elif api_data['os_type'] == OSs.FEDORA:
             if self.load_fedora_packages_from_path(api_data=api_data):
                 if self.parse_fedora_packages(api_data=api_data):
@@ -173,7 +173,7 @@ class ComponentsHelper(object):
             if self.parse_pip_packages_legacy(api_data=api_data):
                 print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
-            
+
         print_line('Problems with PIP components loading.')
         return False
 
@@ -203,7 +203,7 @@ class ComponentsHelper(object):
             if self.parse_pip_packages_from_path(api_data=api_data):
                 print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
-        
+
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return False
 
@@ -219,7 +219,7 @@ class ComponentsHelper(object):
             if self.parse_npm_packages(api_data=api_data):
                 print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
-        
+
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return False
 
@@ -234,7 +234,7 @@ class ComponentsHelper(object):
             if self.parse_package_json_packages_from_path(api_data=api_data):
                 print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
-        
+
         print_line('Something wrong with packages in file path {0}.'.format(api_data['file']))
         return False
 
@@ -403,7 +403,7 @@ class ComponentsHelper(object):
         """
         Get packages from PHP Composer.json file.
         :return: result
-        """        
+        """
         if self.load_php_composer_json_system_path(api_data=api_data):
             if self.parse_php_composer_json_system_path(api_data=api_data):
                 print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
@@ -417,12 +417,12 @@ class ComponentsHelper(object):
         """
         Get packages from PHP Composer.lock file.
         :return: result
-        """        
+        """
         if self.load_php_composer_lock_system_path(api_data=api_data):
             if self.parse_php_composer_lock_system_path(api_data=api_data):
                 print_line('Collect {0} raw components before processing and verification'.format(len(api_data['components'])))
                 return True
-                
+
         print_line('PHP Composer.lock packages loading error.')
         return False
 
@@ -574,9 +574,9 @@ class ComponentsHelper(object):
         Load OS packages for Windows platform by powershell command.
         :return: result
         """
-        
+
         cmd = "Get-AppxPackage -AllUsers | Select Name, PackageFullName"
-        
+
         try:
             proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
             output, error = proc.communicate()
@@ -606,13 +606,13 @@ class ComponentsHelper(object):
         :param filename: path to file
         :return: result
         """
-        
+
         filename = api_data['file']
-        
+
         if os.path.exists(filename):
-        
+
             enc = self.define_file_encoding(filename=filename)
-        
+
             if enc == 'undefined':
                 print_line('Undefined file encoding. Please, use utf-8 or utf-16.')
                 return False
@@ -620,11 +620,11 @@ class ComponentsHelper(object):
             try:
                 with open(filename, 'r') as cf:
                     os_packages = cf.read()
-                
+
                     if os_packages is None:
                         print_line('Cant read file: {0}.'.format(filename))
                         return False
-                
+
                     api_data['packages'] = os_packages.replace('\r', '').split('\n')[9:]
                     return True
 
@@ -648,19 +648,22 @@ class ComponentsHelper(object):
             if platform.system() == "Linux" or \
                     platform.system() == "linux" or \
                     platform.linux_distribution()[0] == 'debian':
-                
-                output = os.popen(cmd).readlines()
-        
+
+                # output = os.popen(cmd).readlines()
+                proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+                output, error = proc.communicate()
+                proc.kill()
+
                 if error:
                     print_line('Shell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return False
-        
+
                 if output:
-                    api_data['packages'] = output
+                    api_data['packages'] = output.decode("utf-8")
                     return True
 
                 return False
-        
+
             print_line('Platform not defined as Debian.')
             return False
 
@@ -714,7 +717,7 @@ class ComponentsHelper(object):
         Load OS packages for Fedora platform by shell command.
         :return: result
         """
-        
+
         cmd = "rpm -qa"
 
         try:
@@ -871,7 +874,7 @@ class ComponentsHelper(object):
         """
 
         filename = api_data['file']
-        
+
         if os.path.exists(filename):
 
             enc = self.define_file_encoding(filename)
@@ -1037,7 +1040,7 @@ class ComponentsHelper(object):
         if os.path.exists(filename):
 
             enc = self.define_file_encoding(filename)
-            
+
             if enc == 'undefined':
                 print_line('Undefined file {0} encoding.'.format(filename))
                 return False
@@ -1085,13 +1088,13 @@ class ComponentsHelper(object):
                 proc = subprocess.Popen(["powershell", cmd], stdout=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()
-        
+
                 output = output.decode('utf-8').replace('\r', '').split('\n')
-        
+
                 if error:
                     print_line('Powershell command throw {0} code and {1} error message.'.format(proc.returncode, error.strip()))
                     return False
-        
+
                 if output:
                     api_data['packages'] = output
                     return True
@@ -1220,7 +1223,7 @@ class ComponentsHelper(object):
         Load packages from PHP Composer.lock defined by path.
         :param filename: filename
         :return: result
-        """  
+        """
 
         filename = api_data['file']
 
@@ -1324,7 +1327,7 @@ class ComponentsHelper(object):
         :param _report: raw packages.
         :return: result
         """
-        
+
         new_components = []
         number_of_line_breaks = api_data['packages']
         for line in number_of_line_breaks:
@@ -1776,7 +1779,7 @@ class ComponentsHelper(object):
         Parse packages from PHP Composer json file
         :param packages: list of packages
         :return: result
-        """  
+        """
         content = api_data['packages']
         packages = []
         for key in content:
