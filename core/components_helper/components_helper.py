@@ -649,7 +649,6 @@ class ComponentsHelper(object):
                     platform.system() == "linux" or \
                     platform.linux_distribution()[0] == 'debian':
 
-                # output = os.popen(cmd).readlines()
                 proc = subprocess.Popen([cmd], shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
                 output, error = proc.communicate()
                 proc.kill()

@@ -113,9 +113,23 @@ class WebAPI(object):
                 try:
                     text = response.text
                     login_response_text = json.loads(text)
-                    api_data['token'] = login_response_text['token']
-                    api_data['user_id'] = login_response_text['userID']
-                    api_data['org_id'] = login_response_text['orgID']
+                    if 'token' in login_response_text:
+                        api_data['token'] = login_response_text['token']
+                    else:
+                        api_data['token'] = None
+                        print_line('It seems that you have enabled two-factor authentication.')
+                        print_line('CLI App does not support login/password with enabled MFA.')
+                        print_line('To obtain auth token, please visit surepatch.com, login, go to Profile page.')
+                        print_line('For successfull login in this case, use auth token in parameters or config file.')
+                        return False
+                    if 'userID' in login_response_text:
+                        api_data['user_id'] = login_response_text['userID']
+                    else:
+                        api_data['user_id'] = None
+                    if 'orgID' in login_response_text:
+                        api_data['org_id'] = login_response_text['orgID']
+                    else:
+                        api_data['org_id'] = None
                     api_data['organization'] = None
                     print_line('Login success.')
                     return True
